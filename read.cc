@@ -4,4 +4,153 @@
 //
 // Version 1.0 du 05.03.2025
 //
+#include <cstdlib>
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include <cmath>
+#include "message.h"
+#include "constants.h"
 
+using namespace std;
+
+// Enumération pour les codes d'erreur
+enum ErrorCode { OPENING, READING };
+
+enum ObjectType { SCORE, LIVES, PADDLE, BRICK, CO_BRICK, BALL, CO_BALL };
+
+static unsigned object(SCORE);
+static int score(0);
+static int lives(0);
+static string paddle("");
+static int nb_brick(0);
+static int count_brick(0);
+static int nb_ball(0);
+
+void error(ErrorCode code);
+bool read(string filename);
+void use_data(string line);
+
+int main(int argc, char *argv[]) {
+    if(read(argv[1])) {
+        cout << "Lecture reussie" << endl;
+    } else {
+        cout << "Erreur lors de la lecture du fichier." << endl;
+    }
+    cout << "Score: " << score << endl;
+    cout << "Lives: " << lives << endl;
+    cout << "Paddle: " << paddle << endl;
+    cout << "Number of Bricks: " << nb_brick << endl;
+    cout << "Number of Balls: " << nb_ball << endl;
+}
+
+
+bool read(string filename)
+{
+    ifstream file(filename);
+
+    if (!file.fail()) 
+    {
+        string line;
+
+        while (getline(file >> ws, line)) {
+
+            if(line[0]=='#') continue;
+
+            use_data(line);
+        
+        }
+
+        return true;
+    }
+
+    error(OPENING);
+    return false;
+}
+
+void use_data(string line)
+{
+        switch (object)
+        {
+        case SCORE: 
+        {
+            if (stoi(line) >= 0) score = stoi(line);
+            else cout << message::invalid_score(stoi(line)) << endl;
+            object = LIVES;
+            break;
+        }
+
+        case LIVES:
+        {
+            if (stoi(line) >= 0) lives = stoi(line);
+            else cout << message::invalid_lives(stoi(line)) << endl;
+            object = PADDLE;
+            break;
+        }
+
+        case PADDLE:
+        {
+            if (!line.empty()) paddle = line;
+            object = BRICK;
+            break;
+        }
+
+        case BRICK:
+        {
+            nb_brick = stoi(line);
+            object = CO_BRICK;
+            break;
+        }
+
+        case CO_BRICK:
+        {
+            count_brick++;
+            if (count_brick == nb_brick) object = BALL;
+            istringstream passor(line);
+            int type, x, y, size, hit_points;
+            passor >> type >> x >> y >> size >> hit_points;
+            if (size < brick_size_min) cout << message::invalid_brick_size(size) << endl;
+            if (type != 0 and type != 1 and type != 2) cout << message::invalid_brick_type(type) << endl;
+            if (hit_points != 1 and hit_points != 2 and hit_points != 3 and hit_points != 4 and hit_points != 5 and hit_points != 6 and hit_points != 7) cout << message::invalid_hit_points(hit_points) << endl;
+            if (x - size < 0 or x + size > arena_size or y - size < 0 or y + size > arena_size) cout << message::brick_outside(x, y) << endl;
+            break;
+        }
+
+        case BALL:
+        {
+            nb_ball = stoi(line);
+            object = CO_BALL;
+            break;
+        }
+
+        case CO_BALL:
+        {
+            istringstream passor(line);
+            int x, y, radius, delta_x, delta_y;
+            passor >> x >> y >> radius >> delta_x >> delta_y;
+            if (x - radius < 0 or x + radius > arena_size or y < 0 or y + radius > arena_size) cout << message::ball_outside(x, y) << endl;
+            if (sqrt(pow(delta_x, 2) + pow(delta_y, 2)) > delta_norm_max) cout << message::invalid_delta(delta_x, delta_y) << endl;
+            break;
+        }
+
+        default:
+            break;
+    }
+
+}
+
+void error(ErrorCode code)
+{ 
+    switch(code)
+    {
+        case OPENING:
+            cerr << "Erreur lors de l'ouverture du fichier." << endl;
+            break;
+        case READING:
+            cerr << "Erreur lors de la lecture du fichier." << endl;
+            break;
+    }
+
+}
