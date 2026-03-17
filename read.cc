@@ -80,7 +80,7 @@ void use_data(string line)
         case SCORE: 
         {
             if (stoi(line) >= 0) score = stoi(line);
-            else cout << message::invalid_score(stoi(line)) << endl;
+            else cout << message::invalid_score(stoi(line)) << endl;   // Vérification de la validité du score
             object = LIVES;
             break;
         }
@@ -88,7 +88,7 @@ void use_data(string line)
         case LIVES:
         {
             if (stoi(line) >= 0) lives = stoi(line);
-            else cout << message::invalid_lives(stoi(line)) << endl;
+            else cout << message::invalid_lives(stoi(line)) << endl;    // Vérification de la validité du nombre de vies
             object = PADDLE;
             break;
         }
@@ -99,7 +99,7 @@ void use_data(string line)
             int x, y, radius;
             passor >> x >> y >> radius;
             double width = sqrt(pow(radius, 2) - pow(y, 2));
-            if (y + radius <= 0 or y > 0  or x - width < 0 or x + width > arena_size) cout << message::paddle_outside(x, y) << endl;
+            if (y + radius <= 0 or y > 0  or x - width < 0 or x + width > arena_size) cout << message::paddle_outside(x, y) << endl;    // Vérification de la position du paddle
             object = BRICK;
             break;
         }
@@ -118,10 +118,10 @@ void use_data(string line)
             istringstream passor(line);
             int type, x, y, size, hit_points;
             passor >> type >> x >> y >> size >> hit_points;
-            if (size < brick_size_min) cout << message::invalid_brick_size(size) << endl;
-            else if (type != 0 and type != 1 and type != 2) cout << message::invalid_brick_type(type) << endl;
-            else if (hit_points != 1 and hit_points != 2 and hit_points != 3 and hit_points != 4 and hit_points != 5 and hit_points != 6 and hit_points != 7) cout << message::invalid_hit_points(hit_points) << endl;
-            else if (x - size < 0 or x + size > arena_size or y - size < 0 or y + size > arena_size) cout << message::brick_outside(x, y) << endl;
+            if (size < brick_size_min) cout << message::invalid_brick_size(size) << endl;           // Vérification de la validité de la taille de la brick
+            else if (type < 0 or type > 2) cout << message::invalid_brick_type(type) << endl;       // Vérification de la validité du type de la brick
+            else if (hit_points < 0 or hit_points > 7) cout << message::invalid_hit_points(hit_points) << endl;                                      // Vérification de la validité du hit points de la brick
+            else if (x - size < 0 or x + size > arena_size or y - size < 0 or y + size > arena_size) cout << message::brick_outside(x, y) << endl;   // Vérification de la position du brick
             break;
         }
 
@@ -137,8 +137,8 @@ void use_data(string line)
             istringstream passor(line);
             int x, y, radius, delta_x, delta_y;
             passor >> x >> y >> radius >> delta_x >> delta_y;
-            if (x - radius < 0 or x + radius > arena_size or y < 0 or y + radius > arena_size) cout << message::ball_outside(x, y) << endl;
-            if (sqrt(pow(delta_x, 2) + pow(delta_y, 2)) > delta_norm_max) cout << message::invalid_delta(delta_x, delta_y) << endl;
+            if (x - radius < 0 or x + radius > arena_size or y < 0 or y + radius > arena_size) cout << message::ball_outside(x, y) << endl;   // Vérification de la position du ball
+            if (sqrt(pow(delta_x, 2) + pow(delta_y, 2)) > delta_norm_max) cout << message::invalid_delta(delta_x, delta_y) << endl;           // Vérification de la validité du delta
             break;
         }
 
