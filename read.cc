@@ -29,10 +29,12 @@ static int nb_brick(0);
 static int count_brick(0);
 static int nb_ball(0);
 
+// Prototypes des fonctions
 void error(ErrorCode code);
 bool read(string filename);
 void use_data(string line);
 
+// Fonction principale
 int main(int argc, char *argv[]) {
     if(read(argv[1])) {
         cout << "Lecture reussie" << endl;
@@ -46,7 +48,7 @@ int main(int argc, char *argv[]) {
     cout << "Number of Balls: " << nb_ball << endl;
 }
 
-
+// Fonction qui lit le fichier et utilise les données
 bool read(string filename)
 {
     ifstream file(filename);
@@ -70,6 +72,7 @@ bool read(string filename)
     return false;
 }
 
+// Fonction qui utilise les données lues pour vérifier leur validité et les stocker dans les variables globales
 void use_data(string line)
 {
         switch (object)
