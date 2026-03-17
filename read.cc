@@ -75,8 +75,8 @@ bool read(string filename)
 // Fonction qui utilise les données lues pour vérifier leur validité et les stocker dans les variables globales
 void use_data(string line)
 {
-        switch (object)
-        {
+    switch (object)
+    {
         case SCORE: 
         {
             if (stoi(line) >= 0) score = stoi(line);
@@ -95,7 +95,11 @@ void use_data(string line)
 
         case PADDLE:
         {
-            if (!line.empty()) paddle = line;
+            istringstream passor(line);
+            int x, y, radius;
+            passor >> x >> y >> radius;
+            double width = sqrt(pow(radius, 2) - pow(y, 2));
+            if (y + radius <= 0 or y > 0  or x - width < 0 or x + width > arena_size) cout << message::paddle_outside(x, y) << endl;
             object = BRICK;
             break;
         }
@@ -115,9 +119,9 @@ void use_data(string line)
             int type, x, y, size, hit_points;
             passor >> type >> x >> y >> size >> hit_points;
             if (size < brick_size_min) cout << message::invalid_brick_size(size) << endl;
-            if (type != 0 and type != 1 and type != 2) cout << message::invalid_brick_type(type) << endl;
-            if (hit_points != 1 and hit_points != 2 and hit_points != 3 and hit_points != 4 and hit_points != 5 and hit_points != 6 and hit_points != 7) cout << message::invalid_hit_points(hit_points) << endl;
-            if (x - size < 0 or x + size > arena_size or y - size < 0 or y + size > arena_size) cout << message::brick_outside(x, y) << endl;
+            else if (type != 0 and type != 1 and type != 2) cout << message::invalid_brick_type(type) << endl;
+            else if (hit_points != 1 and hit_points != 2 and hit_points != 3 and hit_points != 4 and hit_points != 5 and hit_points != 6 and hit_points != 7) cout << message::invalid_hit_points(hit_points) << endl;
+            else if (x - size < 0 or x + size > arena_size or y - size < 0 or y + size > arena_size) cout << message::brick_outside(x, y) << endl;
             break;
         }
 
