@@ -14,7 +14,7 @@
 
 class Rectangle {
     public :
-        double getCentre() const;
+        Point getCentre();
         double getLength() const;
         double getWidth() const;
 
@@ -24,8 +24,7 @@ class Rectangle {
         ~Rectangle(){} // Destructeur encore à définir
 
     private:
-        double x;
-        double y;
+        Point centre;
         double length;
         double width;
 
@@ -34,7 +33,7 @@ class Rectangle {
 class Circle {
     public:
 
-        double getCentre() const;
+        double getCentre();
         double getRadius() const;
 
         double surface() const;
@@ -43,8 +42,7 @@ class Circle {
         ~Circle(){} // Destructeur encore à définir
 
     private:
-        double x;
-        double y;
+        Point centre;
         double radius;
 };
 
@@ -60,6 +58,13 @@ class Point {
         double y;
 
 };
+
+
+
+bool intersects(Circle c, Rectangle r);
+bool intersects(Circle c1, Circle c2);
+bool intersects(Rectangle r1, Rectangle r2);
+bool is_inside_arena(Rectangle r); 
 
 
 /*bool isInside(double x_, double y_) const{
