@@ -12,30 +12,36 @@
 
 using namespace std;
 
-//------------------------ Définition de la classe Square ------------------------
+//------------------------- Définition de la classe Rectangle -------------------------
 
-double Square::getCentre() const {
+double Rectangle::getCentre() const {
     return x,y;
 }
 
-double Square::getWidth() const {
+double Rectangle::getLength() const {
+    return length;
+}
+
+double Rectangle::getWidth() const {
     return width;
 }
 
-double Square::surface() const {
-    return pow(width, 2);
+double Rectangle::surface() const {
+    return length*width;
 }
 
-Square::Square(double x_, double y_, double width_):x(x_), y(y_), width(width_){
-    if (width_ >= 0){
+Rectangle::Rectangle(double x_, double y_, double length_, double width_):x(x_), y(y_),
+                     length(length_), width(width_){
+    if ((width_ >= 0) && (length_ >= 0)){
                 width = width_;
+                length = length_;
             }
 }
 
-Square::~Square(){}
+Rectangle::~Rectangle(){}
 
 
-//------------------------ Définition de la classe Circle ------------------------
+//-------------------------- Définition de la classe Circle ---------------------------
 
 double Circle::getCentre() const {
     return x,y;
@@ -58,7 +64,7 @@ Circle::Circle (double x_, double y_, double radius_):x(x_), y(y_), radius(radiu
 Circle::~Circle(){}
 
 
-//------------------------ Définition de la classe Point ------------------------
+//--------------------------- Définition de la classe Point ---------------------------
 
 double Point::getCoordinate() const {
     return x,y;
@@ -69,5 +75,5 @@ Point::Point(double x_, double y_):x(x_), y(y_){}
 Point::~Point(){}
 
 
-//----------------------- Définition des fonctions intersect -----------------------
+//------------------------ Définition des fonctions intersect -------------------------
 

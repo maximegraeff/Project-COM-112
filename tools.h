@@ -12,19 +12,21 @@
 #include <sstream>
 #include <cmath>
 
-class Square {
+class Rectangle {
     public :
         double getCentre() const;
+        double getLength() const;
         double getWidth() const;
 
         double surface() const;
 
-        Square (double x_, double y_, double width_);
-        ~Square(){} // Destructeur encore à définir
+        Rectangle (double x_, double y_, double length_, double width_);
+        ~Rectangle(){} // Destructeur encore à définir
 
     private:
         double x;
         double y;
+        double length;
         double width;
 
 };
