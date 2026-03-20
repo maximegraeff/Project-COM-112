@@ -14,7 +14,7 @@
 
 class Rectangle {
     public :
-        Point getCentre();
+        double getCentre();
         double getLength() const;
         double getWidth() const;
 
@@ -60,10 +60,12 @@ class Point {
 };
 
 
-
 bool intersects(Circle c, Rectangle r);
+
 bool intersects(Circle c1, Circle c2);
+
 bool intersects(Rectangle r1, Rectangle r2);
+
 bool is_inside_arena(Rectangle r); 
 
 
