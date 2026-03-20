@@ -22,9 +22,12 @@ Brick
 
 class Brick {
     public:
-        /*void hit() const;
+    
+        
+        void on_hit();
         bool is_alive();
-        void destroy() const;*/
+        void destroy();
+        
 
         Brick(double x_, double y_, double length_, double width_, char color_, 
               int hp_, bool is_destroyed_);
@@ -44,6 +47,13 @@ class Brick {
 class RwBrick : public Brick {
 
     public:
+
+        
+        void on_hit();
+        bool is_alive();
+        void destroy();
+        
+
         char getColor(){}
 
         RwBrick(double x_, double y_, double length_, double width_, char color_, 
@@ -56,21 +66,26 @@ class RwBrick : public Brick {
         int current_color_i;
 };
 
+
 class SpltBrick : public Brick {
 
     public:
-        /*void hit() const;
+
+        
+        void on_hit();
         bool is_alive();
-        void destroy() const;
-        void split();*/
+        void destroy();
+        void split();
+        
 
         int getSplit_count(){}
         int getChildren_creatd(){}
         char getColor(){}
 
         SpltBrick(double x_, double y_, double length_, double width_, char color_, 
-                int hp_, bool is_destroyed_, int split_count, int children_recated, 
-                int current_color_i_);
+                  int hp_, bool is_destroyed_, int split_count, int children_recated, 
+                  int current_color_i_);
+        ~SpltBrick(){}
 
     private:
         int split_count; //Nombre de fois que la brique est cassée
@@ -81,5 +96,48 @@ class SpltBrick : public Brick {
 
 
 };
+
+class Ball {
+
+    public:
+    
+        double getDelta() const;
+        double getCentre_ball();
+
+        void rebond_arena();
+        void rebond_brick(const Brick& brick);
+        void rebond_paddle(const Paddle& paddle);
+        bool is_in_arena();
+
+        Ball(double x_, double y_, double dx_, double dy_, char color_, 
+             bool is_destroyed_);
+        ~Ball(){};
+       
+    private:
+        static int ball_count;
+        char color;
+        bool is_destroyed;
+        Circle ball;   // composition avec tools
+        Point delta;    // vecteur déplacement
+};
+
+
+class Paddle {
+
+    public:
+       
+        double getLast_delta() const;
+        double getCenter_paddle();
+        void move_to(double target_x);
+
+        Paddle(double x_, double y_, double r_, char color_, double l_dx_, double l_dy_);
+        ~Paddle(){};
+        
+    private:
+        char color;
+        Circle paddle;  // seul l'arc supérieur est affiché
+        Point last_delta;
+};
+
 
 #endif
