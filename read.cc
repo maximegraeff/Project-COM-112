@@ -13,13 +13,9 @@
 #include <cmath>
 #include "message.h"
 #include "constants.h"
+#include "read.h"
 
 using namespace std;
-
-// Enumération pour les codes d'erreur
-enum ErrorCode { OPENING, READING };
-
-enum ObjectType { SCORE, LIVES, PADDLE, BRICK, CO_BRICK, BALL, CO_BALL };
 
 static unsigned object(SCORE);
 static int score(0);
@@ -29,24 +25,7 @@ static int nb_brick(0);
 static int count_brick(0);
 static int nb_ball(0);
 
-// Prototypes des fonctions
-void error(ErrorCode code);
-bool read(string filename);
-void use_data(string line);
-
-// Fonction principale
-int main(int argc, char *argv[]) {
-    if(read(argv[1])) {
-        cout << "Lecture reussie" << endl;
-    } else {
-        cout << "Erreur lors de la lecture du fichier." << endl;
-    }
-    cout << "Score: " << score << endl;
-    cout << "Lives: " << lives << endl;
-    cout << "Paddle: " << paddle << endl;
-    cout << "Number of Bricks: " << nb_brick << endl;
-    cout << "Number of Balls: " << nb_ball << endl;
-}
+GameData data;
 
 // Fonction qui lit le fichier et utilise les données
 bool read(string filename)
@@ -61,7 +40,7 @@ bool read(string filename)
 
             if(line[0]=='#') continue;
 
-            use_data(line);
+            use_data(line, data);
         
         }
 
@@ -73,7 +52,7 @@ bool read(string filename)
 }
 
 // Fonction qui utilise les données lues pour vérifier leur validité et les stocker dans les variables globales
-void use_data(string line)
+void use_data(string line, GameData& data)
 {
     switch (object)
     {
@@ -81,6 +60,7 @@ void use_data(string line)
         {
             if (stoi(line) >= 0) score = stoi(line);
             else cout << message::invalid_score(stoi(line)) << endl;   // Vérification de la validité du score
+            data.score = score; // initialisation du score
             object = LIVES;
             break;
         }
