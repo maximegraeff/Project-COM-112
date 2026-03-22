@@ -14,6 +14,7 @@
 #include "message.h"
 #include "constants.h"
 #include "read.h"
+#include "objects.h"
 
 
 using namespace std;
@@ -81,8 +82,11 @@ void use_data(string line, GameData& data)
             double x, y, radius;
             passor >> x >> y >> radius;
             double width = sqrt(pow(radius, 2) - pow(y, 2));
-            if (y + radius <= 0 or y > 0  or x - width < 0 or x + width > arena_size) cout << message::paddle_outside(x, y) << endl;    // Vérification de la position du paddle
-            //data.paddle = Paddle(x, y, radius, ...);  // Initialisation du paddle);
+
+            // Vérification de la position du paddle
+            if (y + radius <= 0 or y > 0  or x - width < 0 or x + width > arena_size) cout << message::paddle_outside(x, y) << endl;
+            // Initialisation du paddle
+            data.paddle = make_unique<Paddle>(x, y, radius);    
             object = BRICK;
             break;
         }
@@ -105,8 +109,10 @@ void use_data(string line, GameData& data)
             is_brick_good(x, y, size, type, hit_points);    
             Rectangle brick(x, y, size, size);
             intersects_rectangle(brick);
+
             // Initialisation de la brick
             data.bricks.push_back(make_unique<Brick>(brick, hit_points));  
+
             // Vérification du nombre de bricks et passage à la lecture des données des balls
             if (brick_count < nb_brick - 1) object = BALL;  
             break;
@@ -129,8 +135,9 @@ void use_data(string line, GameData& data)
             is_ball_good(x, y, radius, delta_x, delta_y);     
             Circle ball(x, y, radius);
             intersects_circle(ball);
+
             // Initialisation de la ball
-            data.balls.push_back(Ball(ball, delta_x, delta_y));  
+            data.balls.push_back(make_unique<Ball>(ball, delta_x, delta_y));
             break;
         }
 
@@ -158,10 +165,13 @@ void is_brick_good(double x, double y, double size, int type, int hit_points)
 {   
     // Vérification de la validité de la taille de la brick
     if (size < brick_size_min) cout << message::invalid_brick_size(size) << endl;
+
     // Vérification de la validité du type de la brick
-    else if (type < 0 or type > 2) cout << message::invalid_brick_type(type) << endl;       
+    else if (type < 0 or type > 2) cout << message::invalid_brick_type(type) << endl; 
+
     // Vérification de la validité du hit points de la brick
-    else if (hit_points < 0 or hit_points > 7) cout << message::invalid_hit_points(hit_points) << endl;                                      
+    else if (hit_points < 0 or hit_points > 7) cout << message::invalid_hit_points(hit_points) << endl; 
+
     // Vérification de la validité de la position de la brick
     else if (x - size < 0 or x + size > arena_size or y - size < 0 or y + size > arena_size) cout << message::brick_outside(x, y) << endl;   
 }
@@ -170,13 +180,14 @@ void is_ball_good(double x, double y, double radius, double delta_x, double delt
 {
     // Vérification de la validité de la position de la ball
     if (x - radius < 0 or x + radius > arena_size or y - radius < 0 or y + radius > arena_size) cout << message::ball_outside(x, y) << endl;   
+
     // Vérification de la validité du delta de la ball
     else if (sqrt(pow(delta_x, 2) + pow(delta_y, 2)) > delta_norm_max) cout << message::invalid_delta(delta_x, delta_y) << endl;        
 }
 void intersects_rectangle(Rectangle r)
 {   
     // Vérification de l'absence de collision avec le paddle
-    if (intersects(data.paddle.getCircle(), r)) {
+    if (intersects(data.paddle->getCircle(), r)) {
         cout << message::collision_paddle_brick(brick_count + 1) << endl;
         return;
     }
@@ -192,7 +203,7 @@ void intersects_rectangle(Rectangle r)
 void intersects_circle(Circle c)
 {   
     // Vérification de l'absence de collision avec le paddle
-    if (intersects(c, data.paddle.getCircle())) {
+    if (intersects(c, data.paddle->getCircle())) {
         cout << message::collision_paddle_ball(ball_count + 1) << endl;
         return;
     }
@@ -204,7 +215,7 @@ void intersects_circle(Circle c)
         }
     }
     for (int i = 0; i < ball_count; i++) {
-        if (intersects(c, data.balls[i].getCircle())) {   
+        if (intersects(c, data.balls[i]->getCircle())) {   
             cout << message::collision_balls(ball_count + 1, i + 1) << endl;
                         return;
         }

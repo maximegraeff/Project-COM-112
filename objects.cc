@@ -12,13 +12,13 @@
 #include "constants.h"
 
 int Brick::brick_count(0);
-int Ball::ball_count(0);
+int Ball::ball_count(0);        // vrmt nécessaire ? on l'a dans read.cc non ?
 
 //--------------------------- Définition de la classe Brick ---------------------------
 
 Brick::Brick(double x_, double y_, double length_, double width_, int hp_ = 0,  // Pq la couleur ? C'est lier aux hp de la brick non ?
              char color_ = 'rouge', bool is_destroyed_ = false)
-      : brick(0,0,0,0), hp(hp_), color(color_), is_destroyed(is_destroyed_)  {
+      : brick(0,0,0,0), hp(hp_), color(color_), is_destroyed(is_destroyed_)  {  // pk 0,0,0,0 ?
 
         brick_count++;
 }
@@ -45,8 +45,8 @@ void Brick::destroy(){
 
 //-------------------------- Définition de la classe RwBrick --------------------------
 
-RwBrick::RwBrick(double x_, double y_, double length_, double width_, char color_, 
-                 int hp_, bool is_destroyed_, int current_color_i_)
+RwBrick::RwBrick(double x_, double y_, double length_, double width_, int hp_,
+                 char color_, bool is_destroyed_, int current_color_i_)
         : Brick(0,0,0,0, color_, hp_, is_destroyed_), 
                 current_color_i(current_color_i_){
              
@@ -80,8 +80,8 @@ void RwBrick::destroy(){
 
 //------------------------- Définition de la classe SpltBrick -------------------------
 
-SpltBrick::SpltBrick(double x_, double y_, double length_, double width_, char color_, 
-                int hp_, bool is_destroyed_, int split_count_, int children_created_, 
+SpltBrick::SpltBrick(double x_, double y_, double length_, double width_, int hp_,
+                char color_, bool is_destroyed_, int split_count_, int children_created_, 
                 int current_color_i_)
           : Brick(0,0,0,0, color_, hp_, is_destroyed_), split_count(split_count_), 
             children_created(children_created_), current_color_i(current_color_i_){
@@ -114,8 +114,8 @@ void SpltBrick::split(){
 
 //-------------------------- Définition de la classe Paddle ---------------------------
 
-Paddle::Paddle(double x_, double y_, double r_, char color_ = 'noir', double l_dx_, 
-               double l_dy_)
+Paddle::Paddle(double x_, double y_, double r_, char color_ = 'noir', double l_dx_ = 0.,
+               double l_dy_ = 0.)
        : paddle(x_, y_, r_), color(color_), last_delta(l_dx_, l_dy_){
     if (y_ <=0){
         paddle = Circle(x_, y_, r_);
@@ -144,7 +144,7 @@ void Paddle::move_to(double target_x){
 
 Ball::Ball(double x_, double y_, double radius_, double dx_, double dy_, char color_ = 'noir', 
            bool is_destroyed_ = false)
-     : ball(0,0,0), delta(dx_, dy_), color(color_), 
+     : ball(x_, y_, radius_), delta(dx_, dy_), color(color_), 
        is_destroyed(is_destroyed_){
 
     ball_count++;

@@ -56,8 +56,8 @@ class RwBrick : public Brick {
 
         char getColor(){}
 
-        RwBrick(double x_, double y_, double length_, double width_, char color_, 
-                int hp_, bool is_destroyed_, int current_color_i_);
+        RwBrick(double x_, double y_, double length_, double width_, int hp_, 
+                char color_, bool is_destroyed_, int current_color_i_);
         ~RwBrick(){}
 
     private:
@@ -82,8 +82,8 @@ class SpltBrick : public Brick {
         int getChildren_creatd(){}
         char getColor(){}
 
-        SpltBrick(double x_, double y_, double length_, double width_, char color_, 
-                  int hp_, bool is_destroyed_, int split_count, int children_recated, 
+        SpltBrick(double x_, double y_, double length_, double width_, int hp_, 
+                  char color_, bool is_destroyed_, int split_count, int children_recated, 
                   int current_color_i_);
         ~SpltBrick(){}
 
@@ -137,6 +137,7 @@ class Ball {
     private:
         static int ball_count;
         char color;
+        double radius;
         bool is_destroyed;
         Circle ball;   // composition avec tools
         Point delta;    // vecteur déplacement
