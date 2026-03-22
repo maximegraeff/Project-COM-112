@@ -12,6 +12,19 @@
 #include <sstream>
 #include <cmath>
 
+class Point {
+    public :
+        double getCoordinate() const;
+
+        Point (double x_, double y_);
+        ~Point(){} // Destructeur encore à définir
+
+    private:
+        double x;
+        double y;
+
+};
+
 class Rectangle {
     public :
         double getCentre();
@@ -44,19 +57,6 @@ class Circle {
     private:
         Point centre;
         double radius;
-};
-
-class Point {
-    public :
-        double getCoordinate() const;
-
-        Point (double x_, double y_);
-        ~Point(){} // Destructeur encore à définir
-
-    private:
-        double x;
-        double y;
-
 };
 
 

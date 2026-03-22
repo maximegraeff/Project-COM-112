@@ -15,15 +15,15 @@
 #include "constants.h"
 #include "read.h"
 
+
 using namespace std;
 
 static unsigned object(SCORE);
-static int score(0);
-static int lives(0);
 static string paddle("");
 static int nb_brick(0);
-static int count_brick(0);
+static int brick_count(0);
 static int nb_ball(0);
+static int ball_count(0);
 
 GameData data;
 
@@ -58,17 +58,19 @@ void use_data(string line, GameData& data)
     {
         case SCORE: 
         {
-            if (stoi(line) >= 0) score = stoi(line);
-            else cout << message::invalid_score(stoi(line)) << endl;   // Vérification de la validité du score
-            data.score = score; // initialisation du score
+            // Vérification de la validité du score et initialisation du score
+            if (stoi(line) >= 0) data.score = stoi(line);    
+            else cout << message::invalid_score(stoi(line)) << endl;   
             object = LIVES;
             break;
         }
 
         case LIVES:
         {
-            if (stoi(line) >= 0) lives = stoi(line);
-            else cout << message::invalid_lives(stoi(line)) << endl;    // Vérification de la validité du nombre de vies
+            
+            // Vérification de la validité du score et initialisation du nombre de vies
+            if (stoi(line) >= 0) data.lives = stoi(line); 
+            else cout << message::invalid_lives(stoi(line)) << endl;
             object = PADDLE;
             break;
         }
@@ -76,10 +78,11 @@ void use_data(string line, GameData& data)
         case PADDLE:
         {
             istringstream passor(line);
-            int x, y, radius;
+            double x, y, radius;
             passor >> x >> y >> radius;
             double width = sqrt(pow(radius, 2) - pow(y, 2));
             if (y + radius <= 0 or y > 0  or x - width < 0 or x + width > arena_size) cout << message::paddle_outside(x, y) << endl;    // Vérification de la position du paddle
+            //data.paddle = Paddle(x, y, radius, ...);  // Initialisation du paddle);
             object = BRICK;
             break;
         }
@@ -93,15 +96,19 @@ void use_data(string line, GameData& data)
 
         case CO_BRICK:
         {
-            count_brick++;
-            if (count_brick == nb_brick) object = BALL;
             istringstream passor(line);
-            int type, x, y, size, hit_points;
-            passor >> type >> x >> y >> size >> hit_points;
-            if (size < brick_size_min) cout << message::invalid_brick_size(size) << endl;           // Vérification de la validité de la taille de la brick
-            else if (type < 0 or type > 2) cout << message::invalid_brick_type(type) << endl;       // Vérification de la validité du type de la brick
-            else if (hit_points < 0 or hit_points > 7) cout << message::invalid_hit_points(hit_points) << endl;                                      // Vérification de la validité du hit points de la brick
-            else if (x - size < 0 or x + size > arena_size or y - size < 0 or y + size > arena_size) cout << message::brick_outside(x, y) << endl;   // Vérification de la position du brick
+            double x, y, size;
+            int type, hit_points;
+            passor >> x >> y >> size >> type >> hit_points;
+
+            // Vérification de la validité des données de la brick
+            is_brick_good(x, y, size, type, hit_points);    
+            Rectangle brick(x, y, size, size);
+            intersects_rectangle(brick);
+            // Initialisation de la brick
+            data.bricks.push_back(make_unique<Brick>(brick, hit_points));  
+            // Vérification du nombre de bricks et passage à la lecture des données des balls
+            if (brick_count < nb_brick - 1) object = BALL;  
             break;
         }
 
@@ -115,10 +122,15 @@ void use_data(string line, GameData& data)
         case CO_BALL:
         {
             istringstream passor(line);
-            int x, y, radius, delta_x, delta_y;
+            double x, y, radius, delta_x, delta_y;
             passor >> x >> y >> radius >> delta_x >> delta_y;
-            if (x - radius < 0 or x + radius > arena_size or y < 0 or y + radius > arena_size) cout << message::ball_outside(x, y) << endl;   // Vérification de la position du ball
-            if (sqrt(pow(delta_x, 2) + pow(delta_y, 2)) > delta_norm_max) cout << message::invalid_delta(delta_x, delta_y) << endl;           // Vérification de la validité du delta
+
+            // Vérification de la validité des données de la ball
+            is_ball_good(x, y, radius, delta_x, delta_y);     
+            Circle ball(x, y, radius);
+            intersects_circle(ball);
+            // Initialisation de la ball
+            data.balls.push_back(Ball(ball, delta_x, delta_y));  
             break;
         }
 
@@ -140,4 +152,61 @@ void error(ErrorCode code)
             break;
     }
 
+}
+
+void is_brick_good(double x, double y, double size, int type, int hit_points)
+{   
+    // Vérification de la validité de la taille de la brick
+    if (size < brick_size_min) cout << message::invalid_brick_size(size) << endl;
+    // Vérification de la validité du type de la brick
+    else if (type < 0 or type > 2) cout << message::invalid_brick_type(type) << endl;       
+    // Vérification de la validité du hit points de la brick
+    else if (hit_points < 0 or hit_points > 7) cout << message::invalid_hit_points(hit_points) << endl;                                      
+    // Vérification de la validité de la position de la brick
+    else if (x - size < 0 or x + size > arena_size or y - size < 0 or y + size > arena_size) cout << message::brick_outside(x, y) << endl;   
+}
+
+void is_ball_good(double x, double y, double radius, double delta_x, double delta_y)
+{
+    // Vérification de la validité de la position de la ball
+    if (x - radius < 0 or x + radius > arena_size or y - radius < 0 or y + radius > arena_size) cout << message::ball_outside(x, y) << endl;   
+    // Vérification de la validité du delta de la ball
+    else if (sqrt(pow(delta_x, 2) + pow(delta_y, 2)) > delta_norm_max) cout << message::invalid_delta(delta_x, delta_y) << endl;        
+}
+void intersects_rectangle(Rectangle r)
+{   
+    // Vérification de l'absence de collision avec le paddle
+    if (intersects(data.paddle.getCircle(), r)) {
+        cout << message::collision_paddle_brick(brick_count + 1) << endl;
+        return;
+    }
+    // Vérification de l'absence de collision avec les autres bricks 
+    for (int j = 0; j < brick_count; j++) {
+        if (intersects(r, data.bricks[j]->getRectangle())) {   
+            cout << message::collision_bricks(brick_count + 1, j + 1) << endl;
+                        return;
+        }
+    }
+}
+
+void intersects_circle(Circle c)
+{   
+    // Vérification de l'absence de collision avec le paddle
+    if (intersects(c, data.paddle.getCircle())) {
+        cout << message::collision_paddle_ball(ball_count + 1) << endl;
+        return;
+    }
+    // Vérification de l'absence de collision avec les bricks 
+    for (int j = 0; j < brick_count; j++) {
+        if (intersects(c, data.bricks[j]->getRectangle())) {   
+            cout << message::collision_ball_brick(ball_count + 1, j + 1) << endl;
+                        return;
+        }
+    }
+    for (int i = 0; i < ball_count; i++) {
+        if (intersects(c, data.balls[i].getCircle())) {   
+            cout << message::collision_balls(ball_count + 1, i + 1) << endl;
+                        return;
+        }
+    }
 }
