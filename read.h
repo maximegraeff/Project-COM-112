@@ -20,9 +20,9 @@ using namespace std;
 struct GameData {
         int score;
         int lives;
-        Paddle paddle;
+        unique_ptr<Paddle> paddle; // Initialisation du paddle avec des valeurs par défaut
         vector<unique_ptr<Brick>> bricks;
-        vector<Ball> balls;
+        vector<unique_ptr<Ball>> balls;
 };
 
 
