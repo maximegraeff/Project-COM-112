@@ -16,15 +16,19 @@ int Ball::ball_count(0);
 
 //--------------------------- Définition de la classe Brick ---------------------------
 
-Brick::Brick(double x_, double y_, double length_, double width_, char color_ = 'rouge',
-             int hp_ = 0, bool is_destroyed_ = false)
-      : brick(0,0,0,0), color(color_), hp(hp_), is_destroyed(is_destroyed_)  {
+Brick::Brick(double x_, double y_, double length_, double width_, int hp_ = 0,  // Pq la couleur ? C'est lier aux hp de la brick non ?
+             char color_ = 'rouge', bool is_destroyed_ = false)
+      : brick(0,0,0,0), hp(hp_), color(color_), is_destroyed(is_destroyed_)  {
 
         brick_count++;
 }
 
 Brick::~Brick(){
     brick_count--;
+}
+
+Rectangle Brick::getRectangle() const {
+    return Rectangle(brick);
 }
 
 void Brick::on_hit(){
@@ -108,11 +112,39 @@ void SpltBrick::split(){
 }
 
 
+//-------------------------- Définition de la classe Paddle ---------------------------
+
+Paddle::Paddle(double x_, double y_, double r_, char color_ = 'noir', double l_dx_, 
+               double l_dy_)
+       : paddle(x_, y_, r_), color(color_), last_delta(l_dx_, l_dy_){
+    if (y_ <=0){
+        paddle = Circle(x_, y_, r_);
+    }
+
+}
+
+Circle Paddle::getCircle() const {
+    return Circle(paddle);
+}
+
+double Paddle::getLast_delta() const {
+    return last_delta.getCoordinate();
+}
+
+double Paddle::getCenter_paddle(){
+    return paddle.getCentre();
+}
+
+void Paddle::move_to(double target_x){
+    std::cout << "Work in progress" << std::endl;
+}
+
+
 //--------------------------- Définition de la classe Ball ----------------------------
 
-Ball::Ball(double x_, double y_, double dx_, double dy_, char color_ = 'noir', 
-           bool is_destroyed_)
-     : ball(x_, y_, new_ball_radius), delta(dx_, dy_), color(color_), 
+Ball::Ball(double x_, double y_, double radius_, double dx_, double dy_, char color_ = 'noir', 
+           bool is_destroyed_ = false)
+     : ball(0,0,0), delta(dx_, dy_), color(color_), 
        is_destroyed(is_destroyed_){
 
     ball_count++;
@@ -121,6 +153,10 @@ Ball::Ball(double x_, double y_, double dx_, double dy_, char color_ = 'noir',
 
 Ball::~Ball(){
     ball_count--;
+}
+
+Circle Ball::getCircle() const {
+    return Circle(ball);
 }
 
 double Ball::getDelta() const {
@@ -150,27 +186,4 @@ bool Ball::is_in_arena(){
         return true;
     }
     else {return false;}
-}
-
-//-------------------------- Définition de la classe Paddle ---------------------------
-
-Paddle::Paddle(double x_, double y_, double r_, char color_ = 'noir', double l_dx_, 
-               double l_dy_)
-       : paddle(x_, y_, r_), color(color_), last_delta(l_dx_, l_dy_){
-    if (y_ <=0){
-        paddle = Circle(x_, y_, r_);
-    }
-
-}
-
-double Paddle::getLast_delta() const {
-    return last_delta.getCoordinate();
-}
-
-double Paddle::getCenter_paddle(){
-    return paddle.getCentre();
-}
-
-void Paddle::move_to(double target_x){
-    std::cout << "Work in progress" << std::endl;
 }

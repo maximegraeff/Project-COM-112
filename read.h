@@ -8,6 +8,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <memory>
 #include <cmath>
 #include "message.h"
 #include "constants.h"
@@ -25,14 +26,18 @@ struct GameData {
 };
 
 
-// Enumération pour les codes d'erreur
+// Enumération pour les codes d'erreur (à dégager)
 enum ErrorCode { OPENING, READING };
 
 enum ObjectType { SCORE, LIVES, PADDLE, BRICK, CO_BRICK, BALL, CO_BALL };
 
 // Prototypes des fonctions
-void error(ErrorCode code);
+void error(ErrorCode code); // à dégager
 bool read(string filename);
 void use_data(string line, GameData& data);
+void is_brick_good(double x, double y, double size, int type, int hit_points);
+void is_ball_good(double x, double y, double radius, double delta_x, double delta_y);
+void intersects_rectangle(Rectangle r);
+void intersects_circle(Circle c);
 
 #endif

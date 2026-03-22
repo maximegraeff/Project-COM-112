@@ -14,6 +14,17 @@
 
 using namespace std;
 
+//--------------------------- Définition de la classe Point ---------------------------
+
+double Point::getCoordinate() const {
+    return x,y;
+}
+
+Point::Point(double x_, double y_):x(x_), y(y_){}
+
+Point::~Point(){}
+
+
 //------------------------- Définition de la classe Rectangle -------------------------
 
 double Rectangle::getCentre(){
@@ -64,17 +75,6 @@ Circle::Circle (double x_, double y_, double radius_):centre(x_, y_), radius(rad
 }
 
 Circle::~Circle(){}
-
-
-//--------------------------- Définition de la classe Point ---------------------------
-
-double Point::getCoordinate() const {
-    return x,y;
-}
-
-Point::Point(double x_, double y_):x(x_), y(y_){}
-
-Point::~Point(){}
 
 
 //------------------------ Définition des fonctions intersect -------------------------
@@ -149,3 +149,4 @@ bool is_inside_arena(Rectangle r){
         return true;
     } else {return false;}
 }
+

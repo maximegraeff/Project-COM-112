@@ -23,14 +23,14 @@ Brick
 class Brick {
     public:
     
-        
+        Rectangle getRectangle() const;
         void on_hit();
         bool is_alive();
         void destroy();
         
 
-        Brick(double x_, double y_, double length_, double width_, char color_, 
-              int hp_, bool is_destroyed_);
+        Brick(double x_, double y_, double length_, double width_, int hp_,  
+               char color_, bool is_destroyed_);
         ~Brick(){}
 
     protected:
@@ -97,35 +97,12 @@ class SpltBrick : public Brick {
 
 };
 
-class Ball {
-
-    public:
-    
-        double getDelta() const;
-        double getCentre_ball();
-
-        void rebond_arena();
-        void rebond_brick(const Brick& brick);
-        void rebond_paddle(const Paddle& paddle);
-        bool is_in_arena();
-
-        Ball(double x_, double y_, double dx_, double dy_, char color_, 
-             bool is_destroyed_);
-        ~Ball(){};
-       
-    private:
-        static int ball_count;
-        char color;
-        bool is_destroyed;
-        Circle ball;   // composition avec tools
-        Point delta;    // vecteur déplacement
-};
-
 
 class Paddle {
 
     public:
        
+        Circle getCircle() const;
         double getLast_delta() const;
         double getCenter_paddle();
         void move_to(double target_x);
@@ -137,6 +114,32 @@ class Paddle {
         char color;
         Circle paddle;  // seul l'arc supérieur est affiché
         Point last_delta;
+};
+
+
+class Ball {
+
+    public:
+    
+        Circle getCircle() const;
+        double getDelta() const;
+        double getCentre_ball();
+
+        void rebond_arena();
+        void rebond_brick(const Brick& brick);
+        void rebond_paddle(const Paddle& paddle);
+        bool is_in_arena();
+
+        Ball(double x_, double y_, double radius_, double dx_, double dy_, char color_, 
+             bool is_destroyed_);
+        ~Ball(){};
+       
+    private:
+        static int ball_count;
+        char color;
+        bool is_destroyed;
+        Circle ball;   // composition avec tools
+        Point delta;    // vecteur déplacement
 };
 
 
