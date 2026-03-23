@@ -29,8 +29,9 @@ class Paddle {
         double getCenter_paddle();
         //void move_to(double target_x);
 
-        Paddle(double x_, double y_, double r_, char color_, double l_dx_, double l_dy_);
-        ~Paddle(){};
+        Paddle(double x_, double y_, double r_, char color_ = 'n', double l_dx_ = 0.0,
+               double l_dy_ = 0.0);
+        ~Paddle();
         
     private:
         char color;
@@ -52,9 +53,9 @@ class Ball {
         //void rebond_paddle(const Paddle& paddle);
         bool is_in_arena();
 
-        Ball(double x_, double y_, double radius_, double dx_, double dy_, char color_, 
-             bool is_destroyed_);
-        ~Ball(){};
+        Ball(double x_, double y_, double radius_, double dx_, double dy_, char color_ = 'n', 
+           bool is_destroyed_ = false);
+        ~Ball();
        
     private:
         static int ball_count;
@@ -73,9 +74,9 @@ class Brick {
         //bool is_alive();
         //void destroy();
 
-        Brick(double x_, double y_, double length_, double width_, int hp_,  
-               char color_, bool is_destroyed_);
-        ~Brick(){}
+        Brick(double x_, double y_, double length_, double width_, int hp_ = 0,  
+             char color_ = 'r', bool is_destroyed_ = false);
+        ~Brick();
 
     protected:
         static int brick_count;
@@ -99,9 +100,9 @@ class RwBrick : public Brick {
 
         char getColor();
 
-        RwBrick(double x_, double y_, double length_, double width_, int hp_, 
-                char color_, bool is_destroyed_, int current_color_i_);
-        ~RwBrick(){}
+        RwBrick(double x_, double y_, double length_, double width_, int hp_,
+                char color_ = 'r', bool is_destroyed_ = false, int current_color_i_ = 0);
+        ~RwBrick();
 
     private:
         const char colors[7] = {'r', 'o', 'j', 'v', 'c', 'b', 'V'};
@@ -118,10 +119,9 @@ class BallBrick : public Brick {
         char getColor();
 
         BallBrick(double x_, double y_, double length_, double width_, int hp_,  
-                  char color_, bool is_destroyed_, double b_x_, double b_y_, 
-                  double b_radius_, double dx_, double dy_, char b_color_ = 'n', 
-                  bool is_b_destroyed_ = false);
-        ~BallBrick(){};
+                  char color_ = 'r', bool is_destroyed_ = false, double b_radius_ = 1,
+                  double dx_ = 0, double dy_ = 0, char b_color_ = 'n', bool is_b_destroyed_ = false);
+        ~BallBrick();
 
     private:
             
@@ -145,10 +145,10 @@ class SpltBrick : public Brick {
         //int getChildren_creatd();
         char getColor();
 
-        SpltBrick(double x_, double y_, double length_, double width_, int hp_, 
-                  char color_, bool is_destroyed_, int split_count, int children_recated, 
-                  int current_color_i_);
-        ~SpltBrick(){}
+        SpltBrick(double x_, double y_, double length_, double width_, int hp_,
+                char color_ = 'r', bool is_destroyed_ = false, int split_count_ = 0,
+                int children_created_ = 0, int current_color_i_ = 0);
+        ~SpltBrick();
 
     private:
         int split_count; //Nombre de fois que la brique est cassée

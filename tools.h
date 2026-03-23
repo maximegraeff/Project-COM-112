@@ -17,7 +17,7 @@ class Point {
         double getCoordinate() const;
 
         Point (double x_, double y_);
-        ~Point(){} // Destructeur encore à définir
+        ~Point(); // Destructeur encore à définir
 
     private:
         double x;
@@ -34,7 +34,7 @@ class Rectangle {
         double surface() const;
 
         Rectangle (double x_, double y_, double length_, double width_);
-        ~Rectangle(){} // Destructeur encore à définir
+        ~Rectangle(); // Destructeur encore à définir
 
     private:
         Point centre;
@@ -52,7 +52,7 @@ class Circle {
         double surface() const;
 
         Circle (double x_, double y_, double radius_);
-        ~Circle(){} // Destructeur encore à définir
+        ~Circle(); // Destructeur encore à définir
 
     private:
         Point centre;

@@ -1,7 +1,7 @@
 # Definitions de macros
 
 CXX     = g++
-CXXFLAGS = -g -Wall -std=c++11
+CXXFLAGS = -g -Wall -std=c++14
 CXXFILES = game.cc read.cc message.cc objects.cc tools.cc
 OFILES = read.h message.h constants.h objects.h tools.h
 
