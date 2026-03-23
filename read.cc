@@ -130,7 +130,7 @@ void paddle_init(string line)
     double width = sqrt(pow(radius, 2) - pow(y, 2));
 
     // Vérification de la position du paddle
-    if (y + radius <= 0 and y > 0 and x - width < 0 and x + width > arena_size){
+    if (y + radius <= 0 or y > 0 or x - width < 0 or x + width > arena_size){
         cout << message::paddle_outside(x, y) << endl;
         exit(0);
     }
