@@ -36,15 +36,15 @@ void read(string filename);
 void score_init(int score);
 void lives_init(int lives);
 void paddle_init(string line);
-void nb_brick_init(int brick_nb);
-void brick_init(string line);
-void nb_ball_init(int ball_nb);
-void ball_init(string line);
+void nb_brick_init(int brick_nb, GameData& data);
+void brick_init(string line, GameData& data);
+void nb_ball_init(int ball_nb, GameData& data);
+void ball_init(string line, GameData& data);
 void use_data(string line, GameData& data);
 void is_brick_good(double x, double y, double size, int type, int hit_points);
 void is_ball_good(double x, double y, double radius, double delta_x, double delta_y);
-void intersects_rectangle(Rectangle r);
-void intersects_circle(Circle c);
+void intersects_rectangle(Rectangle r, GameData& data);
+void intersects_circle(Circle c, GameData& data);
 void set_brick(Rectangle brick, int type, int hit_points);
 
 #endif

@@ -17,7 +17,7 @@ int Ball::ball_count(0);        // vrmt nécessaire ? on l'a dans read.cc non ?
 
 //-------------------------- Définition de la classe Paddle ---------------------------
 
-Paddle::Paddle(double x_, double y_, double r_, char color_ = 'noir', double l_dx_ = 0.,
+Paddle::Paddle(double x_, double y_, double r_, char color_ = 'n', double l_dx_ = 0.,
                double l_dy_ = 0.)
        : paddle(x_, y_, r_), color(color_), last_delta(l_dx_, l_dy_){
     if (y_ <=0){
@@ -38,14 +38,14 @@ double Paddle::getCenter_paddle(){
     return paddle.getCentre();
 }
 
-void Paddle::move_to(double target_x){
+/*void Paddle::move_to(double target_x){
     std::cout << "Work in progress" << std::endl;
-}
+}*/
 
 
 //--------------------------- Définition de la classe Ball ----------------------------
 
-Ball::Ball(double x_, double y_, double radius_, double dx_, double dy_, char color_ = 'noir', 
+Ball::Ball(double x_, double y_, double radius_, double dx_, double dy_, char color_ = 'n', 
            bool is_destroyed_ = false)
      : ball(x_, y_, radius_), delta(dx_, dy_), color(color_), 
        is_destroyed(is_destroyed_){
@@ -70,17 +70,17 @@ double Ball::getCentre_ball() {
     return ball.getCentre();
 }
 
-void Ball::rebond_arena(){
+/*void Ball::rebond_arena(){
     std::cout << "Work in progress" << std::endl;
-}
+}*/
 
-void Ball::rebond_brick(const Brick& brick){
+/*void Ball::rebond_brick(const Brick& brick){
     std::cout << "Work in progress" << std::endl;
-}
+}*/
 
-void Ball::rebond_paddle(const Paddle& paddle){
+/*void Ball::rebond_paddle(const Paddle& paddle){
     std::cout << "Work in progress" << std::endl;
-}
+}*/
 
 bool Ball::is_in_arena(){
     double x,y;
@@ -93,9 +93,9 @@ bool Ball::is_in_arena(){
 
 //--------------------------- Définition de la classe Brick ---------------------------
 
-Brick::Brick(double x_, double y_, double length_, double width_, int hp_ = 0,  // Pq la couleur ? C'est lier aux hp de la brick non ?
-             char color_ = 'rouge', bool is_destroyed_ = false)
-      : brick(0,0,0,0), hp(hp_), color(color_), is_destroyed(is_destroyed_)  {  // pk 0,0,0,0 ?
+Brick::Brick(double x_, double y_, double length_, double width_, int hp_ = 0,  
+             char color_ = 'r', bool is_destroyed_ = false)
+      : brick(0,0,0,0), hp(hp_), color(color_), is_destroyed(is_destroyed_)  {
 
         brick_count++;
 }
@@ -108,7 +108,7 @@ Rectangle Brick::getRectangle() const {
     return Rectangle(brick);
 }
 
-void Brick::on_hit(){
+/*void Brick::on_hit(){
     std::cout << "Work in progress" << std::endl;
 }
 
@@ -118,7 +118,7 @@ bool Brick::is_alive(){
 
 void Brick::destroy(){
     std::cout << "Work in progress" << std::endl;
-}
+}*/
 
 //-------------------------- Définition de la classe RwBrick --------------------------
 
@@ -142,7 +142,7 @@ char RwBrick::getColor(){
     return colors[current_color_i];
 }
 
-void RwBrick::on_hit(){
+/*void RwBrick::on_hit(){
     std::cout << "Work in progress" << std::endl;
 }
 
@@ -152,13 +152,13 @@ bool RwBrick::is_alive(){
 
 void RwBrick::destroy(){
     std::cout << "Work in progress" << std::endl;
-}
+}*/
 
 //------------------------- Définition de la classe BallBrick -------------------------
 
 BallBrick::BallBrick(double x_, double y_, double length_, double width_, int hp_,  
                   char color_, bool is_destroyed_, double b_x_, double b_y_, 
-                  double b_radius_, double dx_, double dy_, char b_color_ = 'noir', 
+                  double b_radius_, double dx_, double dy_, char b_color_ = 'n', 
                   bool is_b_destroyed_ = false)
          : Brick(0, 0, 0, 0, hp_, color_, is_destroyed_), ball_inside(x_, x_, b_radius_, 
                  dx_, dy_, b_color_, is_b_destroyed_){
@@ -173,7 +173,7 @@ char BallBrick::getColor(){
     return color;
 }
 
-void BallBrick::on_hit(){
+/*void BallBrick::on_hit(){
     std::cout << "Work in progress" << std::endl;
 }
 
@@ -183,7 +183,7 @@ bool BallBrick::is_alive(){
 
 void BallBrick::destroy(){
     std::cout << "Work in progress" << std::endl;
-}
+}*/
 
 //------------------------- Définition de la classe SpltBrick -------------------------
 
@@ -205,7 +205,11 @@ SpltBrick::~SpltBrick(){
     brick_count--;
 }
 
-void SpltBrick::on_hit(){
+char SpltBrick::getColor(){
+    return colors[current_color_i];
+}
+
+/*void SpltBrick::on_hit(){
     std::cout << "Work in progress" << std::endl;
 }
 bool SpltBrick::is_alive(){
@@ -216,6 +220,6 @@ void SpltBrick::destroy(){
 }
 void SpltBrick::split(){
     std::cout << "Work in progress" << std::endl;
-}
+}*/
 
 

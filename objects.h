@@ -27,7 +27,7 @@ class Paddle {
         Circle getCircle() const;
         double getLast_delta() const;
         double getCenter_paddle();
-        void move_to(double target_x);
+        //void move_to(double target_x);
 
         Paddle(double x_, double y_, double r_, char color_, double l_dx_, double l_dy_);
         ~Paddle(){};
@@ -47,9 +47,9 @@ class Ball {
         double getDelta() const;
         double getCentre_ball();
 
-        void rebond_arena();
-        void rebond_brick(const Brick& brick);
-        void rebond_paddle(const Paddle& paddle);
+        //void rebond_arena();
+        //void rebond_brick(const Brick& brick);
+        //void rebond_paddle(const Paddle& paddle);
         bool is_in_arena();
 
         Ball(double x_, double y_, double radius_, double dx_, double dy_, char color_, 
@@ -69,10 +69,9 @@ class Brick {
     public:
     
         Rectangle getRectangle() const;
-        void on_hit();
-        bool is_alive();
-        void destroy();
-        
+        //void on_hit();
+        //bool is_alive();
+        //void destroy();
 
         Brick(double x_, double y_, double length_, double width_, int hp_,  
                char color_, bool is_destroyed_);
@@ -93,35 +92,34 @@ class RwBrick : public Brick {
 
     public:
 
-        void on_hit();
-        bool is_alive();
-        void destroy();
+        //void on_hit();
+        //bool is_alive();
+        //void destroy();
         
 
-        char getColor(){}
+        char getColor();
 
         RwBrick(double x_, double y_, double length_, double width_, int hp_, 
                 char color_, bool is_destroyed_, int current_color_i_);
         ~RwBrick(){}
 
     private:
-        const char colors[7] = {'rouge', 'orange', 'jaune', 'vert', 'cyan', 'bleu', 
-                                'violet'};
+        const char colors[7] = {'r', 'o', 'j', 'v', 'c', 'b', 'V'};
         int current_color_i;
 };
 
 class BallBrick : public Brick {
     
     public:
-        void on_hit();
-        bool is_alive();
-        void destroy();
+        //void on_hit();
+        //bool is_alive();
+        //void destroy();
 
         char getColor();
 
         BallBrick(double x_, double y_, double length_, double width_, int hp_,  
                   char color_, bool is_destroyed_, double b_x_, double b_y_, 
-                  double b_radius_, double dx_, double dy_, char b_color_ = 'noir', 
+                  double b_radius_, double dx_, double dy_, char b_color_ = 'n', 
                   bool is_b_destroyed_ = false);
         ~BallBrick(){};
 
@@ -137,15 +135,15 @@ class SpltBrick : public Brick {
     public:
 
         
-        void on_hit();
-        bool is_alive();
-        void destroy();
-        void split();
+        //void on_hit();
+        //bool is_alive();
+        //void destroy();
+        //void split();
         
 
-        int getSplit_count(){}
-        int getChildren_creatd(){}
-        char getColor(){}
+        //int getSplit_count();
+        //int getChildren_creatd();
+        char getColor();
 
         SpltBrick(double x_, double y_, double length_, double width_, int hp_, 
                   char color_, bool is_destroyed_, int split_count, int children_recated, 
@@ -155,8 +153,7 @@ class SpltBrick : public Brick {
     private:
         int split_count; //Nombre de fois que la brique est cassée
         int children_created; //Nombre de SpltBrick crées
-        const char colors[7] = {'rouge', 'orange', 'jaune', 'vert', 'cyan', 'bleu', 
-                                'violet'};
+        const char colors[7] = {'r', 'o', 'j', 'v', 'c', 'b', 'V'};
         int current_color_i;
 
 
