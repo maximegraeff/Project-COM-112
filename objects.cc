@@ -3,7 +3,7 @@
 //
 // Version 1.0 du 05.03.2025
 //
-// Raf: gestion des erreurs
+// Raf: gestion des erreurs, read envoie des erreurs
 
 #include <string>
 #include <iostream>
@@ -11,32 +11,32 @@
 #include "objects.h"
 #include "constants.h"
 
+
 int Brick::brick_count(0);
 int Ball::ball_count(0);        // vrmt nécessaire ? on l'a dans read.cc non ?
 
 
 //-------------------------- Définition de la classe Paddle ---------------------------
 
-Paddle::Paddle(double x_, double y_, double r_, char color_, double l_dx_,
-               double l_dy_)
-       : paddle(x_, y_, r_), color(color_), last_delta(l_dx_, l_dy_){
+Paddle::Paddle(double x_, double y_, double r_, char color_,
+               double l_dx_, double l_dy_)
+    : color(color_), paddle(x_, y_, r_), last_delta(l_dx_, l_dy_) {
     if (y_ <=0){
         paddle = Circle(x_, y_, r_);
     }
-
 }
-
-Paddle::~Paddle(){}
+Paddle::~Paddle() {}
 
 Circle Paddle::getCircle() const {
     return Circle(paddle);
 }
 
 double Paddle::getLast_delta() const {
-    return last_delta.getCoordinate();
+    auto [x, y] = last_delta.getCoordinate();
+    return x; // retourne x; adapter si besoin
 }
 
-double Paddle::getCenter_paddle(){
+std::pair<double,double> Paddle::getCenter_paddle() const {
     return paddle.getCentre();
 }
 
@@ -47,13 +47,11 @@ double Paddle::getCenter_paddle(){
 
 //--------------------------- Définition de la classe Ball ----------------------------
 
-Ball::Ball(double x_, double y_, double radius_, double dx_, double dy_, char color_, 
-           bool is_destroyed_)
-     : ball(x_, y_, radius_), delta(dx_, dy_), color(color_), 
-       is_destroyed(is_destroyed_){
-
+Ball::Ball(double x_, double y_, double radius_, double dx_, double dy_,
+           char color_, bool is_destroyed_)
+    : color(color_), radius(radius_), is_destroyed(is_destroyed_),
+      ball(x_, y_, radius_), delta(dx_, dy_) {
     ball_count++;
-
 }
 
 Ball::~Ball(){
@@ -65,10 +63,11 @@ Circle Ball::getCircle() const {
 }
 
 double Ball::getDelta() const {
-    return delta.getCoordinate();
+    auto [x, y] = delta.getCoordinate();
+    return x;
 }
 
-double Ball::getCentre_ball() {
+std::pair<double,double> Ball::getCentre_ball() const {
     return ball.getCentre();
 }
 
@@ -84,22 +83,18 @@ double Ball::getCentre_ball() {
     std::cout << "Work in progress" << std::endl;
 }*/
 
-bool Ball::is_in_arena(){
-    double x,y;
-    x,y = getCentre_ball();
-    if ((x >= arena_size) or (y >= arena_size)){
-        return true;
-    }
-    else {return false;}
+bool Ball::is_in_arena() const {
+    auto [x, y] = getCentre_ball();
+    return (x >= 0) && (x <= arena_size) && (y >= 0) && (y <= arena_size);
 }
 
 //--------------------------- Définition de la classe Brick ---------------------------
 
-Brick::Brick(double x_, double y_, double length_, double width_, int hp_,  
-             char color_, bool is_destroyed_)
-      : brick(0,0,0,0), hp(hp_), color(color_), is_destroyed(is_destroyed_)  {
-
-        brick_count++;
+Brick::Brick(double x_, double y_, double length_, double width_,
+             int hp_, char color_, bool is_destroyed_)
+    : brick(x_, y_, length_, width_), color(color_), hp(hp_),
+      is_destroyed(is_destroyed_) {
+    brick_count++;
 }
 
 Brick::~Brick(){
@@ -159,8 +154,9 @@ void RwBrick::destroy(){
 //------------------------- Définition de la classe BallBrick -------------------------
 
 BallBrick::BallBrick(double x_, double y_, double length_, double width_, int hp_,  
-                  char color_, bool is_destroyed_, double b_radius_,
-                  double dx_, double dy_, char b_color_, bool is_b_destroyed_)
+                  char color_, bool is_destroyed_, 
+                  double b_radius_, double dx_, double dy_, char b_color_, 
+                  bool is_b_destroyed_)
          : Brick(0, 0, 0, 0, hp_, color_, is_destroyed_), ball_inside(x_, x_, b_radius_, 
                  dx_, dy_, b_color_, is_b_destroyed_){
         if ((width_ >= brick_size_min) && (length_ >= brick_size_min)){
@@ -169,6 +165,8 @@ BallBrick::BallBrick(double x_, double y_, double length_, double width_, int hp
 
         brick_count++;
 }
+
+BallBrick::~BallBrick() {}
 
 char BallBrick::getColor(){
     return color;
@@ -189,8 +187,8 @@ void BallBrick::destroy(){
 //------------------------- Définition de la classe SpltBrick -------------------------
 
 SpltBrick::SpltBrick(double x_, double y_, double length_, double width_, int hp_,
-                char color_, bool is_destroyed_, int split_count_,
-                int children_created_, int current_color_i_)
+                char color_, bool is_destroyed_, int split_count_, int children_created_, 
+                int current_color_i_)
           : Brick(0,0,0,0, hp_, color_, is_destroyed_), split_count(split_count_), 
             children_created(children_created_), current_color_i(current_color_i_){
 
