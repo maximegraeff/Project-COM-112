@@ -6,7 +6,7 @@
 
 using namespace std;
 
-// Fonction principale
+// Fonction principale : g++ -g -Wall -std=c++11 game.cc read.cc message.cc objects.cc tools.cc -o game && ./game.exe < tests\t00.txt
 int main(int argc, char *argv[]) {
     
     read(argv[1]);
