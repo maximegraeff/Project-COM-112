@@ -130,7 +130,7 @@ RwBrick::RwBrick(double x_, double y_, double length_, double width_, int hp_,
         if ((width_ >= brick_size_min) && (length_ >= brick_size_min)){
             brick = Rectangle(x_, y_, length_, width_);
         }
-        
+
         current_color_i = hp_;
         brick_count++;
 }
@@ -200,7 +200,7 @@ SpltBrick::SpltBrick(double x_, double y_, double length_, double width_,
             brick = Rectangle(x_, y_, length_, width_); 
         }
 
-        current_color_i = log2(length_);    //c'est pas ça mais nsm
+        current_color_i = floor(log2(length_/brick_size_min));
         brick_count++;
 }
 
