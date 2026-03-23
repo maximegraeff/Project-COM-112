@@ -9,11 +9,11 @@ using namespace std;
 // Fonction principale
 int main(int argc, char *argv[]) {
 
-    if(read(argv[1])) {
-        cout << "Lecture reussie" << endl;
-    } else {
-        cout << "Erreur lors de la lecture du fichier." << endl;
-    }
+if(read(argv[1])) {
+        cout << message::success() << endl;
+}
+//read(argv[1]);
+
     /*
     cout << "Score: " << score << endl;
     cout << "Lives: " << lives << endl;
