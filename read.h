@@ -45,6 +45,6 @@ void is_brick_good(double x, double y, double size, int type, int hit_points);
 void is_ball_good(double x, double y, double radius, double delta_x, double delta_y);
 void intersects_rectangle(Rectangle r, GameData& data);
 void intersects_circle(Circle c, GameData& data);
-void set_brick(Rectangle brick, int type, int hit_points);
+void set_brick(double x, double y, double size, int type, int hit_points);
 
 #endif

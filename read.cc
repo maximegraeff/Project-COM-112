@@ -11,6 +11,7 @@
 #include <sstream>
 #include <vector>
 #include <cmath>
+#include <memory>
 #include "message.h"
 #include "constants.h"
 #include "read.h"
@@ -129,7 +130,7 @@ void paddle_init(string line)
     // Vérification de la position du paddle
     if (y + radius <= 0 or y > 0  or x - width < 0 or x + width > arena_size) cout << message::paddle_outside(x, y) << endl;
     // Initialisation du paddle
-    data.paddle = make_unique<Paddle>(x, y, radius);    
+    data.paddle = make_unique<Paddle>(x, y, radius); 
     object = BRICK;
 }
 
@@ -152,7 +153,7 @@ void brick_init(string line, GameData& data)
     intersects_rectangle(brick, data);
 
     // Initialisation de la brick
-    set_brick(brick, type, hit_points);  
+    set_brick(x, y, size, type, hit_points);  
 
     // Vérification du nombre de bricks et passage à la lecture des données des balls
     if (data.brick_count < data.nb_brick - 1) object = BALL;  
@@ -176,7 +177,7 @@ void ball_init(string line, GameData& data)
     intersects_circle(ball, data);
 
     // Initialisation de la ball
-    data.balls.push_back(make_unique<Ball>(ball, delta_x, delta_y));
+    data.balls.push_back(make_unique<Ball>(x, y, radius, delta_x, delta_y));
 }
 
 void is_brick_good(double x, double y, double size, int type, int hit_points)
@@ -257,8 +258,8 @@ void intersects_circle(Circle c, GameData& data)
     }
 }
 
-void set_brick(Rectangle brick, int type, int hit_points)  {
-    if (type == 0)data.bricks.push_back(make_unique<RwBrick>(brick, hit_points));
-    else if (type == 1) data.bricks.push_back(make_unique<BallBrick>(brick, hit_points));
-    else if (type == 2) data.bricks.push_back(make_unique<SpltBrick>(brick, hit_points));
+void set_brick(double x, double y, double size, int type, int hit_points)  {
+    if (type == 0) data.bricks.push_back(make_unique<RwBrick>(x, y, size, size, hit_points));
+    else if (type == 1) data.bricks.push_back(make_unique<BallBrick>(x, y, size, size, hit_points));
+    else if (type == 2) data.bricks.push_back(make_unique<SpltBrick>(x, y, size, size, hit_points));
 }
