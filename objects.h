@@ -26,7 +26,7 @@ class Paddle {
        
         Circle getCircle() const;
         double getLast_delta() const;
-        double getCenter_paddle();
+        std::pair<double,double> getCenter_paddle() const;
         //void move_to(double target_x);
 
         Paddle(double x_, double y_, double r_, char color_ = 'n', double l_dx_ = 0.0,
@@ -46,12 +46,12 @@ class Ball {
     
         Circle getCircle() const;
         double getDelta() const;
-        double getCentre_ball();
+        std::pair<double,double> getCentre_ball() const;
 
         //void rebond_arena();
         //void rebond_brick(const Brick& brick);
         //void rebond_paddle(const Paddle& paddle);
-        bool is_in_arena();
+        bool is_in_arena() const;
 
         Ball(double x_, double y_, double radius_, double dx_, double dy_, char color_ = 'n', 
            bool is_destroyed_ = false);

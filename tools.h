@@ -11,10 +11,11 @@
 #include <string> 
 #include <sstream>
 #include <cmath>
+#include <utility>
 
 class Point {
     public :
-        double getCoordinate() const;
+        std::pair<double,double> getCoordinate() const;
 
         Point (double x_, double y_);
         ~Point(); // Destructeur encore à définir
@@ -27,7 +28,7 @@ class Point {
 
 class Rectangle {
     public :
-        double getCentre();
+        std::pair<double,double> getCentre() const;
         double getLength() const;
         double getWidth() const;
 
@@ -45,8 +46,7 @@ class Rectangle {
 
 class Circle {
     public:
-
-        double getCentre();
+        std::pair<double,double> getCentre() const;
         double getRadius() const;
 
         double surface() const;

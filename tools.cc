@@ -14,10 +14,15 @@
 
 using namespace std;
 
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 //--------------------------- Définition de la classe Point ---------------------------
 
-double Point::getCoordinate() const {
-    return x,y;
+std::pair<double,double> Point::getCoordinate() const {
+    return {x, y};
 }
 
 Point::Point(double x_, double y_):x(x_), y(y_){}
@@ -27,7 +32,7 @@ Point::~Point(){}
 
 //------------------------- Définition de la classe Rectangle -------------------------
 
-double Rectangle::getCentre(){
+std::pair<double,double> Rectangle::getCentre() const {
     return centre.getCoordinate();
 }
 
@@ -44,11 +49,7 @@ double Rectangle::surface() const {
 }
 
 Rectangle::Rectangle(double x_, double y_, double length_, double width_):centre(x_, y_),
-                     length(length_), width(width_){
-    if ((width_ >= 0) && (length_ >= 0)){
-                width = width_;
-                length = length_;
-            }
+                     length(length_ >= 0 ? length_ : 0), width(width_ >= 0 ? width_ : 0){
 }
 
 Rectangle::~Rectangle(){}
@@ -56,7 +57,7 @@ Rectangle::~Rectangle(){}
 
 //-------------------------- Définition de la classe Circle ---------------------------
 
-double Circle::getCentre(){
+std::pair<double,double> Circle::getCentre() const {
     return centre.getCoordinate();
 }
 
@@ -68,11 +69,8 @@ double Circle::surface() const {
     return M_PI * pow(radius, 2);
 }
 
-Circle::Circle (double x_, double y_, double radius_):centre(x_, y_), radius(radius_){
-    if (radius_ >= 0){
-        radius = radius_;
-    }
-}
+Circle::Circle (double x_, double y_, double radius_):centre(x_, y_), radius(radius_ >= 0 ? radius_ : 0){}
+
 
 Circle::~Circle(){}
 
@@ -80,16 +78,15 @@ Circle::~Circle(){}
 //------------------------ Définition des fonctions intersect -------------------------
 
 bool intersects(Circle c, Rectangle r){
-    double x_c,y_c ,r_c ,x_r ,y_r ,w ,l ;
 
-    x_c, y_c = c.getCentre();
-    r_c = c.getRadius();
-    x_r, y_r = r.getCentre();
-    l = r.getLength();
-    w = r.getWidth();
+    auto [x_c, y_c] = c.getCentre();
+    double r_c = c.getRadius();
+    auto [x_r, y_r] = r.getCentre();
+    double l = r.getLength();
+    double w = r.getWidth();
 
-    double closest_x = std::max(x_r - w/2, std::min(x_c, x_r + w/2));
-    double closest_y = std::max(y_r - l/2, std::min(y_c, y_r + l/2));
+    double closest_x = max(x_r - w/2, min(x_c, x_r + w/2));
+    double closest_y = max(y_r - l/2, min(y_c, y_r + l/2));
     // Calcul du point du rectangle le plus proche du centre du cercle
 
     double dx = x_c - closest_x;
@@ -103,12 +100,11 @@ bool intersects(Circle c, Rectangle r){
 }
 
 bool intersects(Circle c1, Circle c2){
-    double x1, y1, r1, x2, y2, r2;
 
-    x1, y1 = c1.getCentre();
-    r1 = c1.getRadius();
-    x2, y2 = c2.getCentre();
-    r2 = c2.getRadius();
+    auto [x1, y1] = c1.getCentre();
+    double r1 = c1.getRadius();
+    auto [x2, y2] = c2.getCentre();
+    double r2 = c2.getRadius();
 
     double dist_ctr = sqrt(pow(abs(x2 - x1), 2) + pow(abs(y2 - y1), 2));
 
@@ -118,14 +114,13 @@ bool intersects(Circle c1, Circle c2){
 }
 
 bool intersects(Rectangle r1, Rectangle r2){
-    double x1, y1, l1, w1, x2, y2, l2, w2;
 
-    x1, y1 = r1.getCentre();
-    l1 = r1.getLength();
-    w1 = r1.getWidth();
-    x2, y2 = r2.getCentre();
-    l2 = r2.getLength();
-    w2 = r2.getWidth();
+    auto [x1, y1] = r1.getCentre();
+    double l1 = r1.getLength();
+    double w1 = r1.getWidth();
+    auto [x2, y2] = r2.getCentre();
+    double l2 = r2.getLength();
+    double w2 = r2.getWidth();
 
     double dx = abs(x1 - x2);
     double dy = abs(y1 - y2);
@@ -138,11 +133,10 @@ bool intersects(Rectangle r1, Rectangle r2){
 }
 
 bool is_inside_arena(Rectangle r){
-    double x, y, l, w;
 
-    x, y = r.getCentre();
-    l = r.getLength();
-    w = r.getWidth();
+    auto [x, y] = r.getCentre();
+    double l = r.getLength();
+    double w = r.getWidth();
 
     if (((x - w/2) >= 0) && ((x + w/2) <= arena_size) && ((y - l/2) >= 0) 
         && ((y + l/2) <= arena_size)) {
