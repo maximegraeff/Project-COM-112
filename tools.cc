@@ -78,10 +78,11 @@ Circle::~Circle(){}
 //------------------------ Définition des fonctions intersect -------------------------
 
 bool intersects(Circle c, Rectangle r){
-
-    auto [x_c, y_c] = c.getCentre();
+    double x_c = c.getCentre().first;
+    double y_c = c.getCentre().second;
     double r_c = c.getRadius();
-    auto [x_r, y_r] = r.getCentre();
+    double x_r = r.getCentre().first;
+    double y_r = r.getCentre().second;
     double l = r.getLength();
     double w = r.getWidth();
 
@@ -101,9 +102,11 @@ bool intersects(Circle c, Rectangle r){
 
 bool intersects(Circle c1, Circle c2){
 
-    auto [x1, y1] = c1.getCentre();
+    double x1 = c1.getCentre().first;
+    double y1 = c1.getCentre().second;
     double r1 = c1.getRadius();
-    auto [x2, y2] = c2.getCentre();
+    double x2 = c2.getCentre().first;
+    double y2 = c2.getCentre().second;
     double r2 = c2.getRadius();
 
     double dist_ctr = sqrt(pow(abs(x2 - x1), 2) + pow(abs(y2 - y1), 2));
@@ -115,10 +118,12 @@ bool intersects(Circle c1, Circle c2){
 
 bool intersects(Rectangle r1, Rectangle r2){
 
-    auto [x1, y1] = r1.getCentre();
+    double x1 = r1.getCentre().first;
+    double y1 = r1.getCentre().second;
     double l1 = r1.getLength();
     double w1 = r1.getWidth();
-    auto [x2, y2] = r2.getCentre();
+    double x2 = r2.getCentre().first;
+    double y2 = r2.getCentre().second;
     double l2 = r2.getLength();
     double w2 = r2.getWidth();
 
@@ -134,7 +139,8 @@ bool intersects(Rectangle r1, Rectangle r2){
 
 bool is_inside_arena(Rectangle r){
 
-    auto [x, y] = r.getCentre();
+    double x = r.getCentre().first;
+    double y = r.getCentre().second;
     double l = r.getLength();
     double w = r.getWidth();
 

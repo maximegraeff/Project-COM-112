@@ -32,7 +32,8 @@ Circle Paddle::getCircle() const {
 }
 
 double Paddle::getLast_delta() const {
-    auto [x, y] = last_delta.getCoordinate();
+    double x = last_delta.getCoordinate().first;
+    // double y = last_delta.getCoordinate().second;
     return x; // retourne x; adapter si besoin
 }
 
@@ -63,8 +64,9 @@ Circle Ball::getCircle() const {
 }
 
 double Ball::getDelta() const {
-    auto [x, y] = delta.getCoordinate();
-    return x;
+    double x = delta.getCoordinate().first;
+    // double y = delta.getCoordinate().second;
+    return x; 
 }
 
 std::pair<double,double> Ball::getCentre_ball() const {
@@ -84,7 +86,8 @@ std::pair<double,double> Ball::getCentre_ball() const {
 }*/
 
 bool Ball::is_in_arena() const {
-    auto [x, y] = getCentre_ball();
+    double x = getCentre_ball().first;
+    double y = getCentre_ball().second;
     return (x >= 0) && (x <= arena_size) && (y >= 0) && (y <= arena_size);
 }
 
@@ -126,7 +129,8 @@ RwBrick::RwBrick(double x_, double y_, double length_, double width_, int hp_,
              
         if ((width_ >= brick_size_min) && (length_ >= brick_size_min)){
             brick = Rectangle(x_, y_, length_, width_);
-        } 
+        }
+        
         current_color_i = hp_;
         brick_count++;
 }
@@ -153,11 +157,11 @@ void RwBrick::destroy(){
 
 //------------------------- Définition de la classe BallBrick -------------------------
 
-BallBrick::BallBrick(double x_, double y_, double length_, double width_, int hp_,  
+BallBrick::BallBrick(double x_, double y_, double length_, double width_, 
                   char color_, bool is_destroyed_, 
                   double b_radius_, double dx_, double dy_, char b_color_, 
                   bool is_b_destroyed_)
-         : Brick(0, 0, 0, 0, hp_, color_, is_destroyed_), ball_inside(x_, x_, b_radius_, 
+         : Brick(0, 0, 0, 0, color_, is_destroyed_), ball_inside(x_, x_, b_radius_, 
                  dx_, dy_, b_color_, is_b_destroyed_){
         if ((width_ >= brick_size_min) && (length_ >= brick_size_min)){
             brick = Rectangle(x_, y_, length_, width_); 
@@ -186,17 +190,17 @@ void BallBrick::destroy(){
 
 //------------------------- Définition de la classe SpltBrick -------------------------
 
-SpltBrick::SpltBrick(double x_, double y_, double length_, double width_, int hp_,
+SpltBrick::SpltBrick(double x_, double y_, double length_, double width_,
                 char color_, bool is_destroyed_, int split_count_, int children_created_, 
                 int current_color_i_)
-          : Brick(0,0,0,0, hp_, color_, is_destroyed_), split_count(split_count_), 
+          : Brick(0,0,0,0, color_, is_destroyed_), split_count(split_count_), 
             children_created(children_created_), current_color_i(current_color_i_){
 
         if ((width_ >= brick_size_min) && (length_ >= brick_size_min)){
             brick = Rectangle(x_, y_, length_, width_); 
         }
 
-        current_color_i = hp_;
+        current_color_i = log2(length_);    //c'est pas ça mais nsm
         brick_count++;
 }
 

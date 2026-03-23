@@ -29,7 +29,7 @@ struct GameData {
         vector<unique_ptr<Ball>> balls;
 };
 
-enum ObjectType { SCORE, LIVES, PADDLE, BRICK, CO_BRICK, BALL, CO_BALL };
+enum ObjectType { SCORE, LIVES, PADDLE, BRICK, CO_BRICK, BALL, CO_BALL, END};
 
 // Prototypes des fonctions
 void read(string filename);
