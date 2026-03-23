@@ -118,7 +118,7 @@ class BallBrick : public Brick {
 
         char getColor();
 
-        BallBrick(double x_, double y_, double length_, double width_, int hp_,  
+        BallBrick(double x_, double y_, double length_, double width_,  
                   char color_ = 'r', bool is_destroyed_ = false, double b_radius_ = 1,
                   double dx_ = 0, double dy_ = 0, char b_color_ = 'n', bool is_b_destroyed_ = false);
         ~BallBrick();
@@ -145,7 +145,7 @@ class SpltBrick : public Brick {
         //int getChildren_creatd();
         char getColor();
 
-        SpltBrick(double x_, double y_, double length_, double width_, int hp_,
+        SpltBrick(double x_, double y_, double length_, double width_,
                 char color_ = 'r', bool is_destroyed_ = false, int split_count_ = 0,
                 int children_created_ = 0, int current_color_i_ = 0);
         ~SpltBrick();
