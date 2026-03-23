@@ -20,11 +20,6 @@
 using namespace std;
 
 static unsigned object(SCORE);
-static string paddle("");
-static int nb_brick(0);
-static int brick_count(0);
-static int nb_ball(0);
-static int ball_count(0);
 
 GameData data;
 
@@ -42,7 +37,6 @@ void read(string filename)
     }
 
     cout << message::success() << endl;
-
 }
 
 // Fonction qui utilise les données lues pour vérifier leur validité et les stocker dans les variables globales
@@ -74,28 +68,28 @@ void use_data(string line, GameData& data)
         case BRICK:
         {
             // Initialisation du nombre de bricks
-            nb_brick_init(stoi(line));
+            nb_brick_init(stoi(line), data);
             break;
         }
 
         case CO_BRICK:
         {
             // Vérification de la validité des données de la brick et initialisation de la brick
-            brick_init(line);
+            brick_init(line, data);
             break;
         }
 
         case BALL:
         {
             // Initialisation du nombre de balls
-            nb_ball_init(stoi(line));
+            nb_ball_init(stoi(line), data);
             break;
         }
 
         case CO_BALL:
         {
             // Vérification de la validité des données de la ball et initialisation de la ball
-            ball_init(line);
+            ball_init(line, data);
             break;
         }
 
@@ -139,13 +133,13 @@ void paddle_init(string line)
     object = BRICK;
 }
 
-void nb_brick_init(int brick_nb)
+void nb_brick_init(int brick_nb, GameData& data)
 {
-    nb_brick = brick_nb;      
+    data.nb_brick = brick_nb;      
     object = CO_BRICK;
 }
 
-void brick_init(string line)
+void brick_init(string line, GameData& data)
 {
     istringstream passor(line);
     double x, y, size;
@@ -155,22 +149,22 @@ void brick_init(string line)
     // Vérification de la validité des données de la brick
     is_brick_good(x, y, size, type, hit_points);    
     Rectangle brick(x, y, size, size);
-    intersects_rectangle(brick);
+    intersects_rectangle(brick, data);
 
     // Initialisation de la brick
     set_brick(brick, type, hit_points);  
 
     // Vérification du nombre de bricks et passage à la lecture des données des balls
-    if (brick_count < nb_brick - 1) object = BALL;  
+    if (data.brick_count < data.nb_brick - 1) object = BALL;  
 }
 
-void nb_ball_init(int ball_nb)
+void nb_ball_init(int ball_nb, GameData& data)
 {
-    nb_ball = ball_nb;      
+    data.nb_ball = ball_nb;      
     object = CO_BALL;
 }
 
-void ball_init(string line)
+void ball_init(string line, GameData& data)
 {
     istringstream passor(line);
     double x, y, radius, delta_x, delta_y;
@@ -179,7 +173,7 @@ void ball_init(string line)
     // Vérification de la validité des données de la ball
     is_ball_good(x, y, radius, delta_x, delta_y);     
     Circle ball(x, y, radius);
-    intersects_circle(ball);
+    intersects_circle(ball, data);
 
     // Initialisation de la ball
     data.balls.push_back(make_unique<Ball>(ball, delta_x, delta_y));
@@ -225,39 +219,39 @@ void is_ball_good(double x, double y, double radius, double delta_x, double delt
         exit(0);
     }
 }
-void intersects_rectangle(Rectangle r)
+void intersects_rectangle(Rectangle r, GameData& data)
 {   
     // Vérification de l'absence de collision avec le paddle
     if (intersects(data.paddle->getCircle(), r)) {
-        cout << message::collision_paddle_brick(brick_count + 1) << endl;
+        cout << message::collision_paddle_brick(data.brick_count + 1) << endl;
         exit(0);
     }
     // Vérification de l'absence de collision avec les autres bricks 
-    for (int j = 0; j < brick_count; j++) {
+    for (int j = 0; j < data.brick_count; j++) {
         if (intersects(r, data.bricks[j]->getRectangle())) {   
-            cout << message::collision_bricks(brick_count + 1, j + 1) << endl;
+            cout << message::collision_bricks(data.brick_count + 1, j + 1) << endl;
             exit(0);
         }
     }
 }
 
-void intersects_circle(Circle c)
+void intersects_circle(Circle c, GameData& data)
 {   
     // Vérification de l'absence de collision avec le paddle
     if (intersects(c, data.paddle->getCircle())) {
-        cout << message::collision_paddle_ball(ball_count + 1) << endl;
+        cout << message::collision_paddle_ball(data.ball_count + 1) << endl;
         exit(0);
     }
     // Vérification de l'absence de collision avec les bricks 
-    for (int j = 0; j < brick_count; j++) {
+    for (int j = 0; j < data.brick_count; j++) {
         if (intersects(c, data.bricks[j]->getRectangle())) {   
-            cout << message::collision_ball_brick(ball_count + 1, j + 1) << endl;
+            cout << message::collision_ball_brick(data.ball_count + 1, j + 1) << endl;
             exit(0);
         }
     }
-    for (int i = 0; i < ball_count; i++) {
+    for (int i = 0; i < data.ball_count; i++) {
         if (intersects(c, data.balls[i]->getCircle())) {   
-            cout << message::collision_balls(ball_count + 1, i + 1) << endl;
+            cout << message::collision_balls(data.ball_count + 1, i + 1) << endl;
             exit(0);
         }
     }

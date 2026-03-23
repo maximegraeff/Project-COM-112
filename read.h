@@ -20,6 +20,10 @@ using namespace std;
 struct GameData {
         int score;
         int lives;
+        int nb_brick;
+        int nb_ball;
+        int brick_count;
+        int ball_count;
         unique_ptr<Paddle> paddle; // Initialisation du paddle avec des valeurs par défaut
         vector<unique_ptr<Brick>> bricks;
         vector<unique_ptr<Ball>> balls;

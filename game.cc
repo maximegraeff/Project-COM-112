@@ -8,11 +8,8 @@ using namespace std;
 
 // Fonction principale
 int main(int argc, char *argv[]) {
-
-if(read(argv[1])) {
-        cout << message::success() << endl;
-}
-//read(argv[1]);
+    
+    read(argv[1]);
 
     /*
     cout << "Score: " << score << endl;
@@ -22,4 +19,3 @@ if(read(argv[1])) {
     cout << "Number of Balls: " << nb_ball << endl;
     */
 }
- 
