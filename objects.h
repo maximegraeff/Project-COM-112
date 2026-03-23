@@ -20,84 +20,6 @@ Brick
 #include <sstream>
 #include "tools.h"
 
-class Brick {
-    public:
-    
-        Rectangle getRectangle() const;
-        void on_hit();
-        bool is_alive();
-        void destroy();
-        
-
-        Brick(double x_, double y_, double length_, double width_, int hp_,  
-               char color_, bool is_destroyed_);
-        ~Brick(){}
-
-    protected:
-        static int brick_count;
-        Rectangle brick; //Position, width, length
-        char color; //Brick color
-        int hp; //lives points
-        bool is_destroyed; 
-
-
-};
-
-
-class RwBrick : public Brick {
-
-    public:
-
-        
-        void on_hit();
-        bool is_alive();
-        void destroy();
-        
-
-        char getColor(){}
-
-        RwBrick(double x_, double y_, double length_, double width_, int hp_, 
-                char color_, bool is_destroyed_, int current_color_i_);
-        ~RwBrick(){}
-
-    private:
-        const char colors[7] = {'rouge', 'orange', 'jaune', 'vert', 'cyan', 'bleu', 
-                                'violet'};
-        int current_color_i;
-};
-
-
-class SpltBrick : public Brick {
-
-    public:
-
-        
-        void on_hit();
-        bool is_alive();
-        void destroy();
-        void split();
-        
-
-        int getSplit_count(){}
-        int getChildren_creatd(){}
-        char getColor(){}
-
-        SpltBrick(double x_, double y_, double length_, double width_, int hp_, 
-                  char color_, bool is_destroyed_, int split_count, int children_recated, 
-                  int current_color_i_);
-        ~SpltBrick(){}
-
-    private:
-        int split_count; //Nombre de fois que la brique est cassée
-        int children_created; //Nombre de SpltBrick crées
-        const char colors[7] = {'rouge', 'orange', 'jaune', 'vert', 'cyan', 'bleu', 
-                                'violet'};
-        int current_color_i;
-
-
-};
-
-
 class Paddle {
 
     public:
@@ -141,6 +63,103 @@ class Ball {
         bool is_destroyed;
         Circle ball;   // composition avec tools
         Point delta;    // vecteur déplacement
+};
+
+class Brick {
+    public:
+    
+        Rectangle getRectangle() const;
+        void on_hit();
+        bool is_alive();
+        void destroy();
+        
+
+        Brick(double x_, double y_, double length_, double width_, int hp_,  
+               char color_, bool is_destroyed_);
+        ~Brick(){}
+
+    protected:
+        static int brick_count;
+        Rectangle brick; //Position, width, length
+        char color; //Brick color
+        int hp; //lives points
+        bool is_destroyed; 
+
+
+};
+
+
+class RwBrick : public Brick {
+
+    public:
+
+        void on_hit();
+        bool is_alive();
+        void destroy();
+        
+
+        char getColor(){}
+
+        RwBrick(double x_, double y_, double length_, double width_, int hp_, 
+                char color_, bool is_destroyed_, int current_color_i_);
+        ~RwBrick(){}
+
+    private:
+        const char colors[7] = {'rouge', 'orange', 'jaune', 'vert', 'cyan', 'bleu', 
+                                'violet'};
+        int current_color_i;
+};
+
+class BallBrick : public Brick {
+    
+    public:
+        void on_hit();
+        bool is_alive();
+        void destroy();
+
+        char getColor();
+
+        BallBrick(double x_, double y_, double length_, double width_, int hp_,  
+                  char color_, bool is_destroyed_, double b_x_, double b_y_, 
+                  double b_radius_, double dx_, double dy_, char b_color_ = 'noir', 
+                  bool is_b_destroyed_ = false);
+        ~BallBrick(){};
+
+    private:
+            
+        Ball ball_inside;
+        
+};
+
+
+class SpltBrick : public Brick {
+
+    public:
+
+        
+        void on_hit();
+        bool is_alive();
+        void destroy();
+        void split();
+        
+
+        int getSplit_count(){}
+        int getChildren_creatd(){}
+        char getColor(){}
+
+        SpltBrick(double x_, double y_, double length_, double width_, int hp_, 
+                  char color_, bool is_destroyed_, int split_count, int children_recated, 
+                  int current_color_i_);
+        ~SpltBrick(){}
+
+    private:
+        int split_count; //Nombre de fois que la brique est cassée
+        int children_created; //Nombre de SpltBrick crées
+        const char colors[7] = {'rouge', 'orange', 'jaune', 'vert', 'cyan', 'bleu', 
+                                'violet'};
+        int current_color_i;
+
+
 };
 
 
