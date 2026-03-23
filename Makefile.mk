@@ -1,28 +1,30 @@
-# Makefile pour le projet COM-112
-# Utilise g++ pour compiler
+# Definitions de macros
 
-CXX = g++
-CXXFLAGS = -std=c++11 -Wall -Wextra -O2
-TARGET = game
-SOURCES = game.cc read.cc message.cc objects.cc tools.cc
-HEADERS = read.h message.h constants.h objects.h tools.h
+CXX     = g++
+CXXFLAGS = -g -Wall -std=c++11
+CXXFILES = game.cc read.cc message.cc objects.cc tools.cc
+OFILES = read.h message.h constants.h objects.h tools.h
 
-# Règle par défaut : compile le programme
-all: $(TARGET)
+# Definition de la premiere regle
 
-# Compilation du programme
-$(TARGET): $(SOURCES) $(HEADERS)
-	$(CXX) $(CXXFLAGS) $(SOURCES) -o $(TARGET)
+prog: $(OFILES)
+	$(CXX) $(OFILES) -o game
 
-# Nettoyage des fichiers générés
+# Definitions de cibles particulieres
+
+depend:
+	@echo " *** MISE A JOUR DES DEPENDANCES ***"
+	@(sed '/^# DO NOT DELETE THIS LINE/q' Makefile && \
+	  $(CXX) -MM $(CXXFLAGS) $(CXXFILES) | \
+	  egrep -v "/usr/include" \
+	 ) >Makefile.new
+	@mv Makefile.new Makefile
+
 clean:
-	rm -f $(TARGET)
+	@echo " *** EFFACE MODULES OBJET ET EXECUTABLE ***"
+	@/bin/rm -f *.o *.x *.cc~ *.h~ prog
 
-# Recompilation complète
-rebuild: clean all
-
-# Test avec t00.txt (ajuste si nécessaire)
-test: $(TARGET)
-	./$(TARGET) tests/t00.txt
-
-.PHONY: all clean rebuild test
+#
+# -- Regles de dependances generees automatiquement
+#
+# DO NOT DELETE THIS LINE

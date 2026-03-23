@@ -14,103 +14,6 @@
 int Brick::brick_count(0);
 int Ball::ball_count(0);        // vrmt nécessaire ? on l'a dans read.cc non ?
 
-//--------------------------- Définition de la classe Brick ---------------------------
-
-Brick::Brick(double x_, double y_, double length_, double width_, int hp_ = 0,  // Pq la couleur ? C'est lier aux hp de la brick non ?
-             char color_ = 'rouge', bool is_destroyed_ = false)
-      : brick(0,0,0,0), hp(hp_), color(color_), is_destroyed(is_destroyed_)  {  // pk 0,0,0,0 ?
-
-        brick_count++;
-}
-
-Brick::~Brick(){
-    brick_count--;
-}
-
-Rectangle Brick::getRectangle() const {
-    return Rectangle(brick);
-}
-
-void Brick::on_hit(){
-    std::cout << "Work in progress" << std::endl;
-}
-
-bool Brick::is_alive(){
-    std::cout << "Work in progress" << std::endl;
-}
-
-void Brick::destroy(){
-    std::cout << "Work in progress" << std::endl;
-}
-
-//-------------------------- Définition de la classe RwBrick --------------------------
-
-RwBrick::RwBrick(double x_, double y_, double length_, double width_, int hp_,
-                 char color_, bool is_destroyed_, int current_color_i_)
-        : Brick(0,0,0,0, color_, hp_, is_destroyed_), 
-                current_color_i(current_color_i_){
-             
-        if ((width_ >= brick_size_min) && (length_ >= brick_size_min)){
-            brick = Rectangle(x_, y_, length_, width_);
-        } 
-        current_color_i = hp_;
-        brick_count++;
-}
-
-RwBrick::~RwBrick(){
-    brick_count--;
-}
-
-char RwBrick::getColor(){
-    return colors[current_color_i];
-}
-
-void RwBrick::on_hit(){
-    std::cout << "Work in progress" << std::endl;
-}
-
-bool RwBrick::is_alive(){
-    std::cout << "Work in progress" << std::endl;
-}
-
-void RwBrick::destroy(){
-    std::cout << "Work in progress" << std::endl;
-}
-
-
-//------------------------- Définition de la classe SpltBrick -------------------------
-
-SpltBrick::SpltBrick(double x_, double y_, double length_, double width_, int hp_,
-                char color_, bool is_destroyed_, int split_count_, int children_created_, 
-                int current_color_i_)
-          : Brick(0,0,0,0, color_, hp_, is_destroyed_), split_count(split_count_), 
-            children_created(children_created_), current_color_i(current_color_i_){
-
-        if ((width_ >= brick_size_min) && (length_ >= brick_size_min)){
-            brick = Rectangle(x_, y_, length_, width_); 
-        }
-
-        current_color_i = hp_;
-        brick_count++;
-}
-
-SpltBrick::~SpltBrick(){
-    brick_count--;
-}
-
-void SpltBrick::on_hit(){
-    std::cout << "Work in progress" << std::endl;
-}
-bool SpltBrick::is_alive(){
-    std::cout << "Work in progress" << std::endl;
-}
-void SpltBrick::destroy(){
-    std::cout << "Work in progress" << std::endl;
-}
-void SpltBrick::split(){
-    std::cout << "Work in progress" << std::endl;
-}
-
 
 //-------------------------- Définition de la classe Paddle ---------------------------
 
@@ -187,3 +90,132 @@ bool Ball::is_in_arena(){
     }
     else {return false;}
 }
+
+//--------------------------- Définition de la classe Brick ---------------------------
+
+Brick::Brick(double x_, double y_, double length_, double width_, int hp_ = 0,  // Pq la couleur ? C'est lier aux hp de la brick non ?
+             char color_ = 'rouge', bool is_destroyed_ = false)
+      : brick(0,0,0,0), hp(hp_), color(color_), is_destroyed(is_destroyed_)  {  // pk 0,0,0,0 ?
+
+        brick_count++;
+}
+
+Brick::~Brick(){
+    brick_count--;
+}
+
+Rectangle Brick::getRectangle() const {
+    return Rectangle(brick);
+}
+
+void Brick::on_hit(){
+    std::cout << "Work in progress" << std::endl;
+}
+
+bool Brick::is_alive(){
+    std::cout << "Work in progress" << std::endl;
+}
+
+void Brick::destroy(){
+    std::cout << "Work in progress" << std::endl;
+}
+
+//-------------------------- Définition de la classe RwBrick --------------------------
+
+RwBrick::RwBrick(double x_, double y_, double length_, double width_, int hp_,
+                 char color_, bool is_destroyed_, int current_color_i_)
+        : Brick(0,0,0,0, color_, hp_, is_destroyed_), 
+                current_color_i(current_color_i_){
+             
+        if ((width_ >= brick_size_min) && (length_ >= brick_size_min)){
+            brick = Rectangle(x_, y_, length_, width_);
+        } 
+        current_color_i = hp_;
+        brick_count++;
+}
+
+RwBrick::~RwBrick(){
+    brick_count--;
+}
+
+char RwBrick::getColor(){
+    return colors[current_color_i];
+}
+
+void RwBrick::on_hit(){
+    std::cout << "Work in progress" << std::endl;
+}
+
+bool RwBrick::is_alive(){
+    std::cout << "Work in progress" << std::endl;
+}
+
+void RwBrick::destroy(){
+    std::cout << "Work in progress" << std::endl;
+}
+
+//------------------------- Définition de la classe BallBrick -------------------------
+
+BallBrick::BallBrick(double x_, double y_, double length_, double width_, int hp_,  
+                  char color_, bool is_destroyed_, double b_x_, double b_y_, 
+                  double b_radius_, double dx_, double dy_, char b_color_ = 'noir', 
+                  bool is_b_destroyed_ = false)
+         : Brick(0, 0, 0, 0, hp_, color_, is_destroyed_), ball_inside(x_, x_, b_radius_, 
+                 dx_, dy_, b_color_, is_b_destroyed_){
+        if ((width_ >= brick_size_min) && (length_ >= brick_size_min)){
+            brick = Rectangle(x_, y_, length_, width_); 
+        }
+
+        brick_count++;
+}
+
+char BallBrick::getColor(){
+    return color;
+}
+
+void BallBrick::on_hit(){
+    std::cout << "Work in progress" << std::endl;
+}
+
+bool BallBrick::is_alive(){
+    std::cout << "Work in progress" << std::endl;
+}
+
+void BallBrick::destroy(){
+    std::cout << "Work in progress" << std::endl;
+}
+
+//------------------------- Définition de la classe SpltBrick -------------------------
+
+SpltBrick::SpltBrick(double x_, double y_, double length_, double width_, int hp_,
+                char color_, bool is_destroyed_, int split_count_, int children_created_, 
+                int current_color_i_)
+          : Brick(0,0,0,0, hp_, color_, is_destroyed_), split_count(split_count_), 
+            children_created(children_created_), current_color_i(current_color_i_){
+
+        if ((width_ >= brick_size_min) && (length_ >= brick_size_min)){
+            brick = Rectangle(x_, y_, length_, width_); 
+        }
+
+        current_color_i = hp_;
+        brick_count++;
+}
+
+SpltBrick::~SpltBrick(){
+    brick_count--;
+}
+
+void SpltBrick::on_hit(){
+    std::cout << "Work in progress" << std::endl;
+}
+bool SpltBrick::is_alive(){
+    std::cout << "Work in progress" << std::endl;
+}
+void SpltBrick::destroy(){
+    std::cout << "Work in progress" << std::endl;
+}
+void SpltBrick::split(){
+    std::cout << "Work in progress" << std::endl;
+}
+
+
