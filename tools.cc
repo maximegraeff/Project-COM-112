@@ -1,9 +1,9 @@
-// tools.cc  : 3 définitions de classes qui forment les outils utilisés pour créer
-//            les objets de briques, balle et de la raquette
+// tools.cc  : Définiton des classes de formes géométriques (Point, Rectangle, Circle)
+//             et des fonctions intersect
 //
-// Version 1.0 du 07.03.2025
+// Version 2.5
 //
-// Raf : fonctions intersect
+
 
 #include <string> 
 #include <sstream>
@@ -14,14 +14,13 @@
 
 using namespace std;
 
-
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
 
 //--------------------------- Définition de la classe Point ---------------------------
 
-std::pair<double,double> Point::getCoordinate() const {
+std::pair<double,double> Point::getCoordinate() const { // Coordonées du point
     return {x, y};
 }
 
@@ -48,9 +47,9 @@ double Rectangle::surface() const {
     return length*width;
 }
 
-Rectangle::Rectangle(double x_, double y_, double length_, double width_):centre(x_, y_),
-                     length(length_ >= 0 ? length_ : 0), width(width_ >= 0 ? width_ : 0){
-}
+Rectangle::Rectangle(double x_, double y_, double length_, double width_)
+        :centre(x_, y_), length(length_ >= 0 ? length_ : 0), 
+         width(width_ >= 0 ? width_ : 0){}
 
 Rectangle::~Rectangle(){}
 
@@ -69,7 +68,8 @@ double Circle::surface() const {
     return M_PI * pow(radius, 2);
 }
 
-Circle::Circle (double x_, double y_, double radius_):centre(x_, y_), radius(radius_ >= 0 ? radius_ : 0){}
+Circle::Circle (double x_, double y_, double radius_)
+      :centre(x_, y_), radius(radius_ >= 0 ? radius_ : 0){}
 
 
 Circle::~Circle(){}
@@ -77,7 +77,9 @@ Circle::~Circle(){}
 
 //------------------------ Définition des fonctions intersect -------------------------
 
+// Intersection entre un cercle et un rectangle
 bool intersects(Circle c, Rectangle r){
+
     double x_c = c.getCentre().first;
     double y_c = c.getCentre().second;
     double r_c = c.getRadius();
@@ -97,9 +99,9 @@ bool intersects(Circle c, Rectangle r){
     if (sqrt(pow(dx, 2) + pow(dy, 2)) < sqrt(pow(r_c, 2))){
         return true;
     } else return false;
-
 }
 
+// Intersection entre deux cercles
 bool intersects(Circle c1, Circle c2){
 
     double x1 = c1.getCentre().first;
@@ -116,6 +118,7 @@ bool intersects(Circle c1, Circle c2){
     } else { return false; }
 }
 
+// Intersection entre deux rectangles
 bool intersects(Rectangle r1, Rectangle r2){
 
     double x1 = r1.getCentre().first;
@@ -137,6 +140,7 @@ bool intersects(Rectangle r1, Rectangle r2){
     } else { return false; }     // x et y.
 }
 
+// Controle si le rectangle est dans l'arène
 bool is_inside_arena(Rectangle r){
 
     double x = r.getCentre().first;

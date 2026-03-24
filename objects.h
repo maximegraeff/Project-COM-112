@@ -1,17 +1,11 @@
-// objects.h  : 3 déclarations de classes les objets briques, balle et raquette
+// objects.h  : Déclaration des méthodes, constructeurs et destructeurs des classes de
+//              type Brick (RwBrick: Rainbow Brick, BallBrick: Ball Brick, SpltBrick:
+//              Split Brick), Paddle et Ball. Ces objects seront visibles dans l'arène.
 //
 //
-// Version 1.0 du 07.03.2025
+// Version 3.0 du 07.03.2025
 //
-// Raf : déclaration des classes brick, ball, padel
 
-/*
-Brick
-│
-├── NormalBrick
-├── RainbowBrick
-└── SplitBrick
-*/
 
 #ifndef OBJECTS_H
 #define OBJECTS_H
@@ -20,25 +14,34 @@ Brick
 #include <sstream>
 #include "tools.h"
 
+using namespace std;
+
+
+//-------------------------- Déclaration de la classe Paddle --------------------------
+// Paddle consiruté d'un cercle dont le centre est hors de l'arène
+
 class Paddle {
 
     public:
        
         Circle getCircle() const;
         double getLast_delta() const;
-        std::pair<double,double> getCenter_paddle() const;
-        //void move_to(double target_x);
+        pair<double,double> getCenter_paddle() const;
 
         Paddle(double x_, double y_, double r_, char color_ = 'n', double l_dx_ = 0.0,
                double l_dy_ = 0.0);
         ~Paddle();
         
     private:
+
         char color;
         Circle paddle;  // seul l'arc supérieur est affiché
-        Point last_delta;
+        Point last_delta; // dernier vecteur déplcament
 };
 
+
+//-------------------------- Déclaration de la classe Ball ----------------------------
+// Ball constituée d'un cercle et d'un vecteur de classe Point
 
 class Ball {
 
@@ -46,103 +49,100 @@ class Ball {
     
         Circle getCircle() const;
         double getDelta() const;
-        std::pair<double,double> getCentre_ball() const;
-
-        //void rebond_arena();
-        //void rebond_brick(const Brick& brick);
-        //void rebond_paddle(const Paddle& paddle);
+        pair<double,double> getCentre_ball() const;
         bool is_in_arena() const;
 
-        Ball(double x_, double y_, double radius_, double dx_, double dy_, char color_ = 'n', 
-           bool is_destroyed_ = false);
+        Ball(double x_, double y_, double radius_, double dx_, double dy_, 
+             char color_ = 'n', bool is_destroyed_ = false);
         ~Ball();
        
     private:
+
         static int ball_count;
         char color;
         double radius;
         bool is_destroyed;
-        Circle ball;   // composition avec tools
+        Circle ball;
         Point delta;    // vecteur déplacement
 };
 
+//-------------------------- Déclaration de la classe Brick ---------------------------
+// Super-classe Brick constitutée d'une rectangle. Les autres Brick sont dérivées de 
+// cette classe.
+
 class Brick {
+
     public:
     
         Rectangle getRectangle() const;
-        //void on_hit();
-        //bool is_alive();
-        //void destroy();
 
         Brick(double x_, double y_, double length_, double width_, int hp_ = 0,  
              char color_ = 'r', bool is_destroyed_ = false);
         ~Brick();
 
     protected:
+
         static int brick_count;
-        Rectangle brick; //Position, width, length
-        char color; //Brick color
-        int hp; //lives points
+        Rectangle brick; 
+        char color; // Couleur de la brique en fonction du nombre de vies restantes
+        int hp; // Points de vie
         bool is_destroyed; 
-
-
 };
 
+
+//------------------------- Déclaration de la classe RwBrick --------------------------
+// Sous-classe RwBrick(Rainbow Brick) héritée de Brick. Spécificité : Change de couleur
+// à chaque coup dans un ordre prédéfini dans la liste colors.
 
 class RwBrick : public Brick {
 
     public:
 
-        //void on_hit();
-        //bool is_alive();
-        //void destroy();
-        
-
         char getColor();
 
         RwBrick(double x_, double y_, double length_, double width_, int hp_,
-                char color_ = 'r', bool is_destroyed_ = false, int current_color_i_ = 0);
+                char color_ = 'r', bool is_destroyed_ = false, 
+                int current_color_i_ = 0);
         ~RwBrick();
 
     private:
-        const char colors[7] = {'r', 'o', 'j', 'v', 'c', 'b', 'V'};
+
+        const char colors[7] = {'r', 'o', 'j', 'v', 'c', 'b', 'V'}; // Liste des
+        // couleurs dans l'ordre du violet au rouge
         int current_color_i;
 };
+
+
+//------------------------ Déclaration de la classe BallBrick -------------------------
+// Sous-classe BallBrick(Ball Brick) héritée de Brick. Spécificité : Possède une balle 
+// en son centre qui est libérée à la mort de la BallBrick.
 
 class BallBrick : public Brick {
     
     public:
-        //void on_hit();
-        //bool is_alive();
-        //void destroy();
 
         char getColor();
 
         BallBrick(double x_, double y_, double length_, double width_,  
                   char color_ = 'r', bool is_destroyed_ = false, double b_radius_ = 1,
-                  double dx_ = 0, double dy_ = 0, char b_color_ = 'n', bool is_b_destroyed_ = false);
+                  double dx_ = 0, double dy_ = 0, char b_color_ = 'n', 
+                  bool is_b_destroyed_ = false);
         ~BallBrick();
 
     private:
             
         Ball ball_inside;
-        
 };
 
+
+//------------------------ Déclaration de la classe SpltBrick -------------------------
+// Sous-classe SpltBrick(Split Brick) héritée de Brick. Spécificité : Se divise en 4 à 
+// chaque coup et change de couleurs en conséquence.
 
 class SpltBrick : public Brick {
 
     public:
 
-        
-        //void on_hit();
-        //bool is_alive();
-        //void destroy();
-        //void split();
-        
-
-        //int getSplit_count();
-        //int getChildren_creatd();
         char getColor();
 
         SpltBrick(double x_, double y_, double length_, double width_,
@@ -151,12 +151,11 @@ class SpltBrick : public Brick {
         ~SpltBrick();
 
     private:
-        int split_count; //Nombre de fois que la brique est cassée
-        int children_created; //Nombre de SpltBrick crées
+
+        int split_count; //Nombre de nouvelle briques une fois que la brique est cassée
+        int children_created; // Nombre de SpltBrick crées
         const char colors[7] = {'r', 'o', 'j', 'v', 'c', 'b', 'V'};
         int current_color_i;
-
-
 };
 
 
