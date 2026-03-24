@@ -3,12 +3,15 @@
 CXX     = g++
 CXXFLAGS = -g -Wall -std=c++17
 CXXFILES = game.cc read.cc message.cc objects.cc tools.cc
-OFILES = read.h message.h constants.h objects.h tools.h
+OFILES = $(CXXFILES:.cc=.o)
 
 # Definition de la premiere regle
 
-prog: $(OFILES)
-	$(CXX) $(OFILES) -o game
+game: $(OFILES)
+	$(CXX) $(CXXFLAGS) $(OFILES) -o game
+
+%.o: %.cc
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Definitions de cibles particulieres
 
@@ -17,12 +20,12 @@ depend:
 	@(sed '/^# DO NOT DELETE THIS LINE/q' Makefile && \
 	  $(CXX) -MM $(CXXFLAGS) $(CXXFILES) | \
 	  egrep -v "/usr/include" \
-	 ) >Makefile.new
+	 ) > Makefile.new
 	@mv Makefile.new Makefile
 
 clean:
 	@echo " *** EFFACE MODULES OBJET ET EXECUTABLE ***"
-	@/bin/rm -f *.o *.x *.cc~ *.h~ prog
+	@/bin/rm -f *.o *.x *.cc~ *.h~ game
 
 #
 # -- Regles de dependances generees automatiquement
