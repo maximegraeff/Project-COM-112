@@ -1,9 +1,9 @@
-// tools.h  : 3 déclarations de classes qui forment les outils utilisés pour créer
-//            les objets de briques, balle et de la raquette
+// tools.h  : Déclaration des classes de formes géométriques (Point, Rectangle, Circle)
+//            et des fonctions intersect
 //
-// Version 1.0 du 07.03.2025
+// Version 2.5
 //
-// Raf : fonctions intersect
+
 
 #ifndef TOOLS_H
 #define TOOLS_H
@@ -12,6 +12,8 @@
 #include <sstream>
 #include <cmath>
 #include <utility>
+
+//--------------------------- Déclaration de la classe Point --------------------------
 
 class Point {
     public :
@@ -25,6 +27,10 @@ class Point {
         double y;
 
 };
+
+
+//------------------------ Déclaration de la classe Rectangle -------------------------
+
 
 class Rectangle {
     public :
@@ -44,6 +50,9 @@ class Rectangle {
 
 };
 
+//-------------------------- Déclaration de la classe Circle --------------------------
+
+
 class Circle {
     public:
         std::pair<double,double> getCentre() const;
@@ -60,19 +69,20 @@ class Circle {
 };
 
 
+//----------------------- Déclaration des fonctions intersect -------------------------
+
+// Intersection entre un cercle et un rectangle
 bool intersects(Circle c, Rectangle r);
 
+// Intersection entre deux cercles
 bool intersects(Circle c1, Circle c2);
 
+// Intersection entre deux rectangles
 bool intersects(Rectangle r1, Rectangle r2);
 
+// Controle si le rectangle est dans l'arène
 bool is_inside_arena(Rectangle r); 
 
 
-/*bool isInside(double x_, double y_) const{
-            double dist = sqrt(pow(x - x_, 2) + pow(y - x_, 2));
-            if (dist <= radius) {return true;}
-            else {return false;}
-        }*/
 
 #endif
