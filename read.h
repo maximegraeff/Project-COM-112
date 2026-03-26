@@ -3,8 +3,9 @@
 //          de lecture et d'initialisation des objets du jeu.
 //
 //
-// Version 3.3 du 05.03.2025
+// Version 3.3
 //
+
 #ifndef READ_H
 #define READ_H
 

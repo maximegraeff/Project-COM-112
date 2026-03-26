@@ -85,7 +85,7 @@ class Brick {
         static int brick_count;
         Rectangle brick; 
         char color; // Couleur de la brique en fonction du nombre de vies restantes
-        int hp; // Points de vie
+        int hp; // hit_point de la brick en question
         bool is_destroyed; 
 };
 

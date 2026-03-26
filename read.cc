@@ -3,7 +3,7 @@
 //            les fonctions de objects.cc pour créer les objets.            
 //
 //
-// Version 3.3 du 24.03.2025
+// Version 3.3
 //
 #include <cstdlib>
 #include <string>
