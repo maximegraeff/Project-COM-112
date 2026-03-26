@@ -1,7 +1,7 @@
 # Definitions de macros
 
 CXX     = g++
-CXXFLAGS = -g -Wall -std=c++17
+CXXFLAGS = -g -Wall -Wextra -std=c++17
 CXXFILES = project.cc game.cc message.cc objects.cc tools.cc
 OFILES = $(CXXFILES:.cc=.o)
 
@@ -31,3 +31,8 @@ clean:
 # -- Regles de dependances generees automatiquement
 #
 # DO NOT DELETE THIS LINE
+project.o: project.cc game.h message.h constants.h tools.h objects.h
+game.o: game.cc message.h constants.h tools.h game.h objects.h
+message.o: message.cc message.h
+objects.o: objects.cc objects.h tools.h constants.h
+tools.o: tools.cc tools.h constants.h
