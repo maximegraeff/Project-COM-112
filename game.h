@@ -1,13 +1,13 @@
 
-// read.h : header du fichier read.cc, contenant les prototypes des fonctions 
+// game.h : header du fichier game.cc, contenant les prototypes des fonctions 
 //          de lecture et d'initialisation des objets du jeu.
 //
 //
-// Version 3.3
+// Version 3.4
 //
 
-#ifndef READ_H
-#define READ_H
+#ifndef GAME_H
+#define GAME_H
 
 #include <cstdlib>
 #include <string>

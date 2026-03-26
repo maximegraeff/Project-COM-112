@@ -3,7 +3,7 @@
 //              Split Brick), Paddle et Ball. Ces objects seront visibles dans l'arène.
 //
 //
-// Version 3.0 du 07.03.2025
+// Version 3.0
 //
 
 

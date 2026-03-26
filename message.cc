@@ -2,7 +2,7 @@
 //              et une fonction supplémentaire pour indiquer le succès de la lecture
 //
 //
-// Version 1.0 du 24.02.2025
+// Version 1.0 
 //
 
 #include "message.h"
