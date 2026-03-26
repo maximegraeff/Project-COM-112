@@ -2,13 +2,13 @@
 
 CXX     = g++
 CXXFLAGS = -g -Wall -std=c++17
-CXXFILES = game.cc read.cc message.cc objects.cc tools.cc
+CXXFILES = project.cc game.cc message.cc objects.cc tools.cc
 OFILES = $(CXXFILES:.cc=.o)
 
 # Definition de la premiere regle
 
-game: $(OFILES)
-	$(CXX) $(CXXFLAGS) $(OFILES) -o game
+project: $(OFILES)
+	$(CXX) $(CXXFLAGS) $(OFILES) -o project
 
 %.o: %.cc
 	$(CXX) $(CXXFLAGS) -c $< -o $@
@@ -25,7 +25,7 @@ depend:
 
 clean:
 	@echo " *** EFFACE MODULES OBJET ET EXECUTABLE ***"
-	@/bin/rm -f *.o *.x *.cc~ *.h~ game
+	@/bin/rm -f *.o *.x *.cc~ *.h~ project
 
 #
 # -- Regles de dependances generees automatiquement

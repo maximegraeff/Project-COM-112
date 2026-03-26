@@ -6,6 +6,11 @@
             "cwd": "/Users/maximegraeff/Library/CloudStorage/OneDrive-epfl.ch/Cours/BA2/POO/Projet/Project-COM-112",
             "binaryPath": "/Users/maximegraeff/Library/CloudStorage/OneDrive-epfl.ch/Cours/BA2/POO/Projet/Project-COM-112/game",
             "binaryArgs": []
+        },
+        {
+            "cwd": "/Users/maximegraeff/Library/CloudStorage/OneDrive-epfl.ch/Cours/BA2/POO/Projet/Project-COM-112",
+            "binaryPath": "/Users/maximegraeff/Library/CloudStorage/OneDrive-epfl.ch/Cours/BA2/POO/Projet/Project-COM-112/project",
+            "binaryArgs": []
         }
     ]
 }
