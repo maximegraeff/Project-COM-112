@@ -1,9 +1,9 @@
-// read.cc  : # fonctions qui lisent le fichier passé en entrée, qui verifie si 
+// game.cc  : # fonctions qui lisent le fichier passé en entrée, qui verifie si 
 //            les données sont conformes aux spécificaitons et qui appelle 
 //            les fonctions de objects.cc pour créer les objets.            
 //
 //
-// Version 3.3
+// Version 3.4
 //
 #include <cstdlib>
 #include <string>
@@ -68,10 +68,12 @@ void use_data(string line, GameData& game_data)
 
 }
 
+//-------------------------- Functions d'initialisation -------------------------------
+
 // Vérification et initialisation du score
 void score_init(int score)
 {
-    if (score >= 0) {game_data.score = score; cout << game_data.score << endl;}     ///////////////////
+    if (score >= 0) game_data.score = score;
     else {
         cout << message::invalid_score(score) << endl;   
         exit(0);
@@ -82,7 +84,7 @@ void score_init(int score)
 // Vérification et initialisation du nombre de vies
 void lives_init(int lives)
 {
-    if (lives >= 0) {game_data.lives = lives; cout << game_data.lives << endl;  }   ////////////////
+    if (lives >= 0) game_data.lives = lives;
     else {
         cout << message::invalid_lives(lives) << endl;   
         exit(0);
@@ -106,7 +108,6 @@ void paddle_init(string line)
 
     // Initialisation du paddle
     game_data.paddle = make_unique<Paddle>(x, y, radius); 
-    cout << game_data.paddle->getCenter_paddle().first << ", " << game_data.paddle->getCenter_paddle().second << endl;  /////////////////////////
     object = BRICK;
 }
 
@@ -114,7 +115,6 @@ void paddle_init(string line)
 void nb_brick_init(int brick_nb, GameData& game_data)
 {
     game_data.nb_brick = brick_nb;
-    cout << "Number of bricks: " << game_data.nb_brick << endl;    ///////////////////
 
     // vérification du nombre de bricks et passage à la lecture des données des bricks
     // ou du nombre de balls s'il n'y a pas de brick
@@ -153,7 +153,6 @@ void brick_init(string line, GameData& game_data)
 void nb_ball_init(int ball_nb, GameData& game_data)
 {
     game_data.nb_ball = ball_nb;
-    cout << "Number of balls: " << game_data.nb_ball << endl;  /////////////////////
 
     // vérification du nombre de balls et passage à la lecture des données des balls
     // si le nombre de ball est supérieur à 0
@@ -180,10 +179,10 @@ void ball_init(string line, GameData& game_data)
 
     // Initialisation de la ball
     game_data.balls.push_back(make_unique<Ball>(x, y, radius, delta_x, delta_y));
-    cout << "Ball created : " << "x : "<< x << ", " << "y : " << y << ", " << 
-    "radius : " << radius << ", " << "delta_x : " << delta_x << ", " << "delta_y : " << delta_y << endl;  ////////////////////////
     game_data.ball_count++;
 }
+
+//-------------------------- Fonctions de vérification --------------------------------
 
 // Vérification des données de la brick
 void is_brick_good(double x, double y, double size, int type, int hit_points)
@@ -276,21 +275,20 @@ void intersects_circle(Circle c, GameData& game_data)
     }
 }
 
+//-------------------------- Fonction d'initialisation --------------------------------
+
 // Initialisation de la brick en fonction de son type
 void set_brick(double x, double y, double size, int type, int hit_points) {
     
     // Rainbow brick
-    if (type == 0) {
+    if (type == 0)
         game_data.bricks.push_back(make_unique<RwBrick>(x, y, size, size, hit_points));
-        cout << "RwBrick created : " << "x : "<< x << ", " << "y : " << y << ", " << "size : " << size << ", " << "hp : " << hit_points << endl;} ////////////////////////
     
     // Ball brick
-    else if (type == 1) {
+    else if (type == 1)
         game_data.bricks.push_back(make_unique<BallBrick>(x, y, size, size)); 
-        cout << "BallBrick created : " << "x : "<< x << ", " << "y : " << y << ", " << "size : " << size << endl;}  ////////////////////////
     
     // Split brick
-    else if (type == 2) {
+    else if (type == 2) 
         game_data.bricks.push_back(make_unique<SpltBrick>(x, y, size, size));
-        cout << "SpltBrick created : " << "x : "<< x << ", " << "y : " << y << ", " << "size : " << size << endl;}  ////////////////////////
 }
