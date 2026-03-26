@@ -46,13 +46,9 @@ std::pair<double,double> Paddle::getCenter_paddle() const { // Centre du Paddle
 Ball::Ball(double x_, double y_, double radius_, double dx_, double dy_, char color_, 
            bool is_destroyed_)
     : color(color_), radius(radius_), is_destroyed(is_destroyed_),
-      ball(x_, y_, radius_), delta(dx_, dy_) {
-    ball_count++;
-}
+      ball(x_, y_, radius_), delta(dx_, dy_) {}
 
-Ball::~Ball(){
-    ball_count--;
-}
+Ball::~Ball(){}
 
 Circle Ball::getCircle() const {
     return Circle(ball);
@@ -82,9 +78,7 @@ bool Ball::is_in_arena() const { // S'assure que la balle est dans
 Brick::Brick(double x_, double y_, double length_, double width_,
              int hp_, char color_, bool is_destroyed_)
     : brick(x_, y_, length_, width_), color(color_), hp(hp_),
-      is_destroyed(is_destroyed_) {
-    brick_count++;
-}
+      is_destroyed(is_destroyed_) {}
 
 Brick::~Brick(){}
 
@@ -107,7 +101,6 @@ RwBrick::RwBrick(double x_, double y_, double length_, double width_, int hp_,
     }
 
     current_color_i = hp_;
-    brick_count++;
 }
 
 RwBrick::~RwBrick(){}
@@ -131,7 +124,6 @@ BallBrick::BallBrick(double x_, double y_, double length_, double width_,
         brick = Rectangle(x_, y_, length_, width_); 
     }
 
-    brick_count++;
 }
 
 BallBrick::~BallBrick() {}
@@ -139,6 +131,7 @@ BallBrick::~BallBrick() {}
 char BallBrick::getColor(){
     return color;
 }
+
 
 
 //------------------------- Définition de la classe SpltBrick -------------------------
@@ -156,7 +149,6 @@ SpltBrick::SpltBrick(double x_, double y_, double length_, double width_,
         }
 
         current_color_i = floor(log2(length_/brick_size_min));
-        brick_count++;
 }
 
 SpltBrick::~SpltBrick(){}

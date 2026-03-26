@@ -58,7 +58,6 @@ class Ball {
        
     private:
 
-        static int ball_count;
         char color;
         double radius;
         bool is_destroyed;
@@ -82,7 +81,6 @@ class Brick {
 
     protected:
 
-        static int brick_count;
         Rectangle brick; 
         char color; // Couleur de la brique en fonction du nombre de vies restantes
         int hp; // hit_point de la brick en question
