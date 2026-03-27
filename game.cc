@@ -16,7 +16,9 @@
 #include "message.h"
 #include "constants.h"
 #include "game.h"
-#include "objects.h"
+#include "bricks.h"
+#include "ball.h"
+#include "paddle.h"
 
 using namespace std;
 
