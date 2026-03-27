@@ -137,9 +137,9 @@ bool intersects(Rectangle r1, Rectangle r2){
     double cx = (w1 + w2)/2;
     double cy = (l1 + l2)/2;
 
-    if ((dx < cx) && (dy < cy)){ // Intersection si les distances entre les deux centres 
-        return true;             // sont inférieures aux moyennes de leurs côtés selon 
-    } else { return false; }     // x et y.
+    if ((dx < cx) && (dy < cy)){ //Intersection si les distances entre les deux centres 
+        return true;             //sont inférieures aux moyennes de leurs côtés selon 
+    } else { return false; }     //x et y.
 }
 
 // Controle si le rectangle est dans l'arène

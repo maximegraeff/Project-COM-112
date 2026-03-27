@@ -1,6 +1,6 @@
 // paddle.cc  : Définition des méthodes, constructeurs et destructeurs de la classe de
-//              type Paddle. Cet object sera visible dans l'arène et intéragira avec les 
-//              Ball et les Brick.
+//              type Paddle. Cet object sera visible dans l'arène et intéragira avec
+//              les Ball et les Brick.
 //
 //
 // Version 1.0
