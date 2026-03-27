@@ -8,7 +8,6 @@
 #include <iostream>
 #include <sstream>
 #include "game.h"
-#include "objects.h"
 
 using namespace std;
 

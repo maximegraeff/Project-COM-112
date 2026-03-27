@@ -9,66 +9,8 @@
 #include <string>
 #include <iostream>
 #include <sstream>
-#include "objects.h"
+#include "bricks.h"
 #include "constants.h"
-
-
-
-//-------------------------- Définition de la classe Paddle ---------------------------
-// Paddle consiruté d'un cercle dont le centre est hors de l'arène
-
-Paddle::Paddle(double x_, double y_, double r_, char color_, double l_dx_, 
-               double l_dy_)
-      : color(color_), paddle(x_, y_, r_), last_delta(l_dx_, l_dy_) {
-    if (y_ <=0){
-        paddle = Circle(x_, y_, r_);
-    }
-}
-Paddle::~Paddle() {}
-
-Circle Paddle::getCircle() const {
-    return Circle(paddle);
-}
-
-double Paddle::getLast_delta() const { // Dernier vecteur de déplacement
-    double x = last_delta.getCoordinate().first;
-    return x;
-}
-
-std::pair<double,double> Paddle::getCenter_paddle() const { // Centre du Paddle
-    return paddle.getCentre();
-}
-
-
-//--------------------------- Définition de la classe Ball ----------------------------
-// Ball constituée d'un cercle et d'un vecteur de classe Point
-
-Ball::Ball(double x_, double y_, double radius_, double dx_, double dy_, char color_, 
-           bool is_destroyed_)
-    : color(color_), radius(radius_), is_destroyed(is_destroyed_),
-      ball(x_, y_, radius_), delta(dx_, dy_) {}
-
-Ball::~Ball(){}
-
-Circle Ball::getCircle() const {
-    return Circle(ball);
-}
-
-double Ball::getDelta() const { // vecteur vitesse de la balle dans l'arène
-    double x = delta.getCoordinate().first;
-    return x; 
-}
-
-std::pair<double,double> Ball::getCentre_ball() const {
-    return ball.getCentre();
-}
-
-
-bool Ball::is_in_arena() const { // S'assure que la balle est dans 
-    double x = getCentre_ball().first;
-    double y = getCentre_ball().second;
-    return (x >= 0) && (x <= arena_size) && (y >= 0) && (y <= arena_size);
-}
 
 
 //--------------------------- Définition de la classe Brick ---------------------------
