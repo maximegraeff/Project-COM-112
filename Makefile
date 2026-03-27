@@ -2,7 +2,7 @@
 
 CXX     = g++
 CXXFLAGS = -g -Wall -Wextra -std=c++17
-CXXFILES = project.cc game.cc message.cc objects.cc tools.cc
+CXXFILES = project.cc game.cc message.cc bricks.cc ball.cc paddle.cc tools.cc
 OFILES = $(CXXFILES:.cc=.o)
 
 # Definition de la premiere regle
@@ -31,8 +31,12 @@ clean:
 # -- Regles de dependances generees automatiquement
 #
 # DO NOT DELETE THIS LINE
-project.o: project.cc game.h message.h constants.h tools.h objects.h
-game.o: game.cc message.h constants.h tools.h game.h objects.h
+project.o: project.cc game.h message.h constants.h tools.h bricks.h \
+  ball.h paddle.h
+game.o: game.cc message.h constants.h tools.h game.h bricks.h ball.h \
+  paddle.h
 message.o: message.cc message.h
-objects.o: objects.cc objects.h tools.h constants.h
+bricks.o: bricks.cc bricks.h tools.h ball.h constants.h
+ball.o: ball.cc ball.h tools.h constants.h
+paddle.o: paddle.cc paddle.h tools.h constants.h
 tools.o: tools.cc tools.h constants.h

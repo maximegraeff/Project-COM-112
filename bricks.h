@@ -13,57 +13,10 @@
 #include <string> 
 #include <sstream>
 #include "tools.h"
+#include "ball.h"
 
 using namespace std;
 
-
-//-------------------------- Déclaration de la classe Paddle --------------------------
-// Paddle consiruté d'un cercle dont le centre est hors de l'arène
-
-class Paddle {
-
-    public:
-       
-        Circle getCircle() const;
-        double getLast_delta() const;
-        pair<double,double> getCenter_paddle() const;
-
-        Paddle(double x_, double y_, double r_, char color_ = 'n', double l_dx_ = 0.0,
-               double l_dy_ = 0.0);
-        ~Paddle();
-        
-    private:
-
-        char color;
-        Circle paddle;  // seul l'arc supérieur est affiché
-        Point last_delta; // dernier vecteur déplcament
-};
-
-
-//-------------------------- Déclaration de la classe Ball ----------------------------
-// Ball constituée d'un cercle et d'un vecteur de classe Point
-
-class Ball {
-
-    public:
-    
-        Circle getCircle() const;
-        double getDelta() const;
-        pair<double,double> getCentre_ball() const;
-        bool is_in_arena() const;
-
-        Ball(double x_, double y_, double radius_, double dx_, double dy_, 
-             char color_ = 'n', bool is_destroyed_ = false);
-        ~Ball();
-       
-    private:
-
-        char color;
-        double radius;
-        bool is_destroyed;
-        Circle ball;
-        Point delta;    // vecteur déplacement
-};
 
 //-------------------------- Déclaration de la classe Brick ---------------------------
 // Super-classe Brick constitutée d'une rectangle. Les autres Brick sont dérivées de 
