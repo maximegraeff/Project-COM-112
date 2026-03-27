@@ -18,6 +18,8 @@ using namespace std;
 #define M_PI 3.14159265358979323846
 #endif
 
+constexpr double epsil_zero = 0.125;
+
 //--------------------------- Définition de la classe Point ---------------------------
 
 std::pair<double,double> Point::getCoordinate() const { // Coordonées du point
@@ -148,8 +150,8 @@ bool is_inside_arena(Rectangle r){
     double l = r.getLength();
     double w = r.getWidth();
 
-    if (((x - w/2) >= 0) && ((x + w/2) <= arena_size) && ((y - l/2) >= 0) 
-        && ((y + l/2) <= arena_size)) {
+    if (((x - w/2) >= epsil_zero) && ((x + w/2) <= arena_size) 
+        && ((y - l/2) >= epsil_zero) && ((y + l/2) <= arena_size)) {
         return true;
     } else {return false;}
 }
