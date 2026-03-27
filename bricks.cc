@@ -81,8 +81,8 @@ char BallBrick::getColor(){
 // chaque coup et change de couleurs en conséquence.
 
 SpltBrick::SpltBrick(double x_, double y_, double length_, double width_,
-                char color_, bool is_destroyed_, int split_count_, int children_created_, 
-                int current_color_i_)
+                char color_, bool is_destroyed_, int split_count_, 
+                int children_created_, int current_color_i_)
           : Brick(0,0,0,0, color_, is_destroyed_), split_count(split_count_), 
             children_created(children_created_), current_color_i(current_color_i_){
 
