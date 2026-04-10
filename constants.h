@@ -1,7 +1,7 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-#include "tools.h" // for epsil_zero
+#include "tools.h" // for epsil_zero and graphic.h enum Color
 
 constexpr double arena_size = 100.0;
 constexpr double new_ball_radius = 1.;
