@@ -16,7 +16,7 @@ using namespace std;
 
 int main(int argc, char *argv[]){
     // Lecture des données du fichier et initialisation des objets
-    read(argv[1]);
+    // read(argv[1]);
 
    string file_name("");
    if (argc > 1)

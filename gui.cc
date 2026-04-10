@@ -1,8 +1,10 @@
 #include <filesystem>
 #include <iostream>
 #include "constants.h"
+#include "game.h"
 #include "graphic_gui.h"
 #include "gui.h"
+#include "game.h"
 
 using namespace std;
 
@@ -24,13 +26,14 @@ enum Buttons
 
 constexpr unsigned drawing_size(500);
 
-My_window::My_window(string file_name)
+My_window::My_window(string file_name, GameData& game_data_)
     : main_box(Gtk::Orientation::HORIZONTAL), panel_box(Gtk::Orientation::VERTICAL),
       command_box(Gtk::Orientation::VERTICAL), loop_activated(false),
       buttons({Gtk::Button("exit"), Gtk::Button("open"), Gtk::Button("save"),
                Gtk::Button("restart"), Gtk::Button("start"), Gtk::Button("step")}),
       info_frame("Infos :"), info_text({Gtk::Label("score:"), Gtk::Label("lives:"),
-                                        Gtk::Label("bricks:"), Gtk::Label("balls:")})
+                                        Gtk::Label("bricks:"), Gtk::Label("balls:")}),
+      game_data(game_data_)
 {
     set_title("Brick Breaker");
     set_child(main_box);
@@ -75,8 +78,11 @@ void My_window::exit_clicked()
 }
 void My_window::open_clicked()
 {
+    cout << "open_clicked\n" << endl;
+    cout.flush();
     auto dialog = new Gtk::FileChooserDialog("Choose a text file",
                                              Gtk::FileChooserDialog::Action::OPEN);
+    dialog->set_transient_for(*this); //
     set_dialog(dialog);
 }
 void My_window::save_clicked()
@@ -153,6 +159,7 @@ void My_window::set_dialog(Gtk::FileChooserDialog *dialog)
     dialog->set_select_multiple(false);
     dialog->signal_response().connect(
         sigc::bind(sigc::mem_fun(*this, &My_window::dialog_response), dialog));
+    
 
     dialog->add_button("_Cancel", CANCEL);
     switch (dialog->get_action())
@@ -177,10 +184,12 @@ void My_window::set_dialog(Gtk::FileChooserDialog *dialog)
     filter_any->add_pattern("*");
     dialog->add_filter(filter_any);
 
+    dialog->set_hide_on_close(false);
     dialog->show();
 }
 void My_window::dialog_response(int response, Gtk::FileChooserDialog *dialog)
 {
+    cerr << "dialog_response called, response=" << response << endl; //
     filesystem::path file_name = "";
     if (dialog->get_file())
     {
@@ -190,6 +199,7 @@ void My_window::dialog_response(int response, Gtk::FileChooserDialog *dialog)
             file_name = "";
         }
     }
+    cout << "response = " << response << endl; //
     switch (response)
     {
     case CANCEL:
@@ -198,7 +208,14 @@ void My_window::dialog_response(int response, Gtk::FileChooserDialog *dialog)
     case OPEN_FILE:
         if (file_name != "")
         {
-            cout << "open file " << file_name << endl; // TODO: set game from a file
+            cout << "open file " << file_name << endl;
+            cout << "%" << endl;
+            read(file_name.string());
+            cout << "$" << endl;
+            update_infos();
+            cout << "@" << endl;
+            drawing.queue_draw();
+            cout << "ç" << endl;
             dialog->hide();
         }
         break;
@@ -218,7 +235,8 @@ bool My_window::loop()
 {
     if (loop_activated)
     {
-        // TODO: update the game and the interface
+        update_infos();
+        drawing.queue_draw();
         return true;
     }
     return false;
@@ -237,15 +255,20 @@ void My_window::set_infos()
         info_text[i].set_margin(3);
         info_value[i].set_margin(3);
     }
+    update_infos();
 }
 
 void My_window::update_infos()
 // TODO: update the different counters
 {
-    for (auto &value : info_value)
-    {
-        value.set_text("0");
-    }
+    // for (auto &value : info_value)
+    // {
+    //     value.set_text("0");
+    // }
+    info_value[0].set_text(to_string(game_data.score));
+    info_value[1].set_text(to_string(game_data.lives));
+    info_value[2].set_text(to_string(game_data.nb_brick));
+    info_value[3].set_text(to_string(game_data.nb_ball));
 }
 
 void My_window::set_drawing()
