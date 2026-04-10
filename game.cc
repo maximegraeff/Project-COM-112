@@ -29,8 +29,16 @@ GameData game_data;
 // Lecture du fichier et utilisation des données
 void read(string filename)
 {
+    cerr << "score: " << game_data.score << endl;
+    cerr << "lives: " << game_data.lives << endl;
+    cerr << "nb_brick: " << game_data.nb_brick << endl;
+    cerr << "nb_ball: " << game_data.nb_ball << endl;
+    cerr << "brick_count: " << game_data.brick_count << endl;
+    cerr << "ball_count: " << game_data.ball_count << endl;
+    cerr << "bricks size: " << game_data.bricks.size() << endl;
+    cerr << "balls size: " << game_data.balls.size() << endl;
+
     ifstream file(filename);
-    cerr << "READ CALLED with: " << filename << endl;
     string line;
 
     while (getline(file >> ws, line)) {
@@ -92,6 +100,7 @@ void lives_init(int lives)
         cout << message::invalid_lives(lives) << endl;   
         exit(0);
     }
+    cout << "lives " << lives << endl;
     object = PADDLE;
 }
 
