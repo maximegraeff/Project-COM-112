@@ -9,7 +9,7 @@
 class My_window : public Gtk::Window
 {
 public:
-    My_window(std::string file_name);
+    My_window(std::string file_name, GameData& game_data);
 
 private:
     Gtk::Box main_box, panel_box, command_box;
@@ -20,6 +20,7 @@ private:
     Gtk::Frame info_frame;
     std::array<Gtk::Label, 4> info_text, info_value;
     Gtk::DrawingArea drawing;
+    GameData& game_data;
 
     void set_commands();
 

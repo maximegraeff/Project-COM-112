@@ -30,6 +30,7 @@ GameData game_data;
 void read(string filename)
 {
     ifstream file(filename);
+    cerr << "READ CALLED with: " << filename << endl;
     string line;
 
     while (getline(file >> ws, line)) {
