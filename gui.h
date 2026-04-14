@@ -21,6 +21,7 @@ private:
     Gtk::Frame info_frame;
     std::array<Gtk::Label, 4> info_text, info_value;
     Gtk::DrawingArea drawing;
+    std::string last_read_file;
 
     void set_commands();
 

@@ -32,7 +32,8 @@ My_window::My_window(string file_name)
       buttons({Gtk::Button("exit"), Gtk::Button("open"), Gtk::Button("save"),
                Gtk::Button("restart"), Gtk::Button("start"), Gtk::Button("step")}),
       info_frame("Infos :"), info_text({Gtk::Label("score:"), Gtk::Label("lives:"),
-                                        Gtk::Label("bricks:"), Gtk::Label("balls:")})
+                                        Gtk::Label("bricks:"), Gtk::Label("balls:")}),
+      last_read_file(file_name)
 {
     set_title("Brick Breaker");
     set_child(main_box);
@@ -46,7 +47,11 @@ My_window::My_window(string file_name)
     set_mouse_controller();
     set_infos();
     set_drawing();
-    // TODO: set the game
+    if (!last_read_file.empty())
+    {
+        read(last_read_file);
+        update_infos();
+    }
 }
 void My_window::set_commands()
 {
@@ -91,7 +96,13 @@ void My_window::save_clicked()
 }
 void My_window::restart_clicked()
 {
-    cout << __func__ << endl; // TODO: reset the game from the last read file
+    cout << __func__ << endl;
+    if (!last_read_file.empty())
+    {
+        read(last_read_file);
+        update_infos();
+        drawing.queue_draw();
+    }
 }
 void My_window::start_clicked()
 {
@@ -205,6 +216,7 @@ void My_window::dialog_response(int response, Gtk::FileChooserDialog *dialog)
         if (file_name != "")
         {
             cout << "open file " << file_name << endl;
+            last_read_file = file_name.string();
             read(file_name.string());
             update_infos();
             drawing.queue_draw();
@@ -212,12 +224,23 @@ void My_window::dialog_response(int response, Gtk::FileChooserDialog *dialog)
         }
         break;
     case SAVE_FILE:
-        if (file_name != "")
         {
-            cout << "save file " << file_name << endl; // TODO: save the game
-            dialog->hide();
+            string save_path = "";
+            if (dialog->get_file()){
+                save_path = dialog->get_file()->get_path();
+                if (filesystem::path(save_path).extension() != ".txt"){
+                    save_path += ".txt";
+                }
+            }
+            if (!save_path.empty()){
+                cout << "save file " << save_path << endl;
+                //string filename = filesystem::path(file_name).stem().string();
+                save_game(game_data, save_path);
+                drawing.queue_draw();
+                dialog->hide();
+            }
+            break;
         }
-        break;
     default:
         break;
     }
