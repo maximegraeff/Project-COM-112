@@ -29,13 +29,17 @@ Circle Ball::getCircle() const {
     return Circle(ball);
 }
 
-double Ball::getDelta() const { // vecteur vitesse de la balle dans l'arène
-    double x = delta.getCoordinate().first;
-    return x; 
-}
+// double Ball::getDelta() const { 
+//     double x = delta.getCoordinate().first;
+//     return x; 
+// }
 
 std::pair<double,double> Ball::getCentre_ball() const {
     return ball.getCentre();
+}
+
+std::pair<double,double> Ball::getDeltaVector() const {
+    return delta.getCoordinate(); // vecteur vitesse de la balle dans l'arène
 }
 
 

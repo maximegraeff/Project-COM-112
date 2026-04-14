@@ -24,8 +24,9 @@ class Ball {
     public:
     
         Circle getCircle() const;
-        double getDelta() const;
+        // double getDelta() const;
         pair<double,double> getCentre_ball() const;
+        pair<double,double> getDeltaVector() const;
         bool is_in_arena() const;
         void draw_ball() const;
 

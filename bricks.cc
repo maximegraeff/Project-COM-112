@@ -30,6 +30,14 @@ Rectangle Brick::getRectangle() const {
     return Rectangle(brick);
 }
 
+int Brick::getType() const {
+    return -1;
+}
+
+int Brick::getHitPoints() const {
+    return hp;
+}
+
 
 //-------------------------- Définition de la classe RwBrick --------------------------
 // Sous-classe RwBrick(Rainbow Brick) héritée de Brick. Spécificité : Change de couleur
@@ -51,6 +59,10 @@ RwBrick::~RwBrick(){}
 
 char RwBrick::getColor(){ // Changement de la couleur à chaque coup
     return colors[current_color_i];
+}
+
+int RwBrick::getType() const {
+    return 0;
 }
 
 void RwBrick::draw_brick() const {
@@ -79,6 +91,10 @@ BallBrick::~BallBrick() {}
 
 char BallBrick::getColor(){
     return color;
+}
+
+int BallBrick::getType() const {
+    return 1;
 }
 
 void BallBrick::draw_brick() const {
@@ -111,6 +127,10 @@ SpltBrick::~SpltBrick(){}
 
 char SpltBrick::getColor(){ // Changement de couleur à chaque division
     return colors[current_color_i];
+}
+
+int SpltBrick::getType() const {
+    return 2;
 }
 
 void SpltBrick::draw_brick() const {

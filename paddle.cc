@@ -37,3 +37,7 @@ double Paddle::getLast_delta() const { // Dernier vecteur de déplacement
 std::pair<double,double> Paddle::getCenter_paddle() const { // Centre du Paddle
     return paddle.getCentre();
 }
+
+// std::pair<double,double> Paddle::getLastDeltaVector() const {
+//     return last_delta.getCoordinate();
+// }

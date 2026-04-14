@@ -91,4 +91,7 @@ void intersects_circle(Circle c, GameData& data);
 // Fonction d'initialisation de la brick en fonction de son type
 void set_brick(double x, double y, double size, int type, int hit_points);
 
+// Fonction d'écriture et de sauvegarde du fichier
+void save_game(GameData& data, string& file_name);
+
 #endif
