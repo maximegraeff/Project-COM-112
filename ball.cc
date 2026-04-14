@@ -11,6 +11,8 @@
 #include <sstream>
 #include "ball.h"
 #include "constants.h"
+#include "tools.h"
+#include "graphic.h"
 
 
 //--------------------------- Définition de la classe Ball ----------------------------
@@ -41,4 +43,8 @@ bool Ball::is_in_arena() const { // S'assure que la balle est dans
     double x = getCentre_ball().first;
     double y = getCentre_ball().second;
     return (x >= 0) && (x <= arena_size) && (y >= 0) && (y <= arena_size);
+}
+
+void Ball::draw_ball() const {
+    draw_balls(getCentre_ball().first, getCentre_ball().second, radius);
 }

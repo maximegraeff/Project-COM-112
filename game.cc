@@ -29,6 +29,8 @@ GameData game_data;
 // Lecture du fichier et utilisation des données
 void read(string filename)
 {
+    // réinitialisation des données du jeu avant la lecture du fichier
+    reset_(); 
     ifstream file(filename);
     string line;
 
@@ -41,6 +43,20 @@ void read(string filename)
 
     // Données du fichier vérifiées et objets initialisés avec succès
     cout << message::success() << endl;
+}
+
+void reset_()
+{
+    object = SCORE;
+    game_data.score = 0;
+    game_data.lives = 0;
+    game_data.nb_brick = 0;
+    game_data.nb_ball = 0;
+    game_data.brick_count = 0;
+    game_data.ball_count = 0;
+    game_data.paddle.reset();
+    game_data.bricks.clear();
+    game_data.balls.clear();
 }
 
 // Redirection vers la fonction d'initialisation de l'objet correspondant 

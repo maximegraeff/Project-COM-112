@@ -11,6 +11,7 @@
 #include <cmath>
 #include "tools.h"
 #include "constants.h"
+#include "graphic.h"
 
 using namespace std;
 

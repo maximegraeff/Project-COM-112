@@ -28,6 +28,8 @@ class Brick {
     
         Rectangle getRectangle() const;
 
+        virtual void draw_brick() const = 0;
+
         Brick(double x_, double y_, double length_, double width_, int hp_ = 0,  
              char color_ = 'r', bool is_destroyed_ = false);
         ~Brick();
@@ -50,6 +52,8 @@ class RwBrick : public Brick {
     public:
 
         char getColor();
+
+        void draw_brick() const override;
 
         RwBrick(double x_, double y_, double length_, double width_, int hp_,
                 char color_ = 'r', bool is_destroyed_ = false, 
@@ -74,6 +78,8 @@ class BallBrick : public Brick {
 
         char getColor();
 
+        void draw_brick() const override;
+
         BallBrick(double x_, double y_, double length_, double width_,  
                   char color_ = 'r', bool is_destroyed_ = false, double b_radius_ = 1,
                   double dx_ = 0, double dy_ = 0, char b_color_ = 'n', 
@@ -95,6 +101,8 @@ class SpltBrick : public Brick {
     public:
 
         char getColor();
+
+        void draw_brick() const override;
 
         SpltBrick(double x_, double y_, double length_, double width_,
                 char color_ = 'r', bool is_destroyed_ = false, int split_count_ = 0,

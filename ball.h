@@ -27,6 +27,7 @@ class Ball {
         double getDelta() const;
         pair<double,double> getCentre_ball() const;
         bool is_in_arena() const;
+        void draw_ball() const;
 
         Ball(double x_, double y_, double radius_, double dx_, double dy_, 
              char color_ = 'n', bool is_destroyed_ = false);

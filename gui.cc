@@ -5,6 +5,7 @@
 #include "graphic_gui.h"
 #include "gui.h"
 #include "game.h"
+#include "graphic.h"
 
 using namespace std;
 
@@ -47,6 +48,7 @@ My_window::My_window(string file_name)
     set_infos();
     set_drawing();
     // TODO: set the game
+    
 }
 void My_window::set_commands()
 {
@@ -272,6 +274,8 @@ void My_window::on_draw(const Cairo::RefPtr<Cairo::Context> &cr, int width, int 
     double side(min(width, height));
     cr->translate((width - side) / 2, (height + side) / 2);
     cr->scale(side / (arena_size), -side / (arena_size));
+    for (const auto& brick : game_data.bricks) brick->draw_brick();
+    for (const auto& ball : game_data.balls) ball->draw_ball();
     // TODO: draw the game
 }
 

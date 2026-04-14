@@ -9,9 +9,11 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <math.h>
 #include "bricks.h"
 #include "constants.h"
-
+#include "tools.h"
+#include "graphic.h"
 
 //--------------------------- Définition de la classe Brick ---------------------------
 // Super-classe Brick constitutée d'une rectangle. Les autres Brick sont dérivées de 
@@ -51,6 +53,11 @@ char RwBrick::getColor(){ // Changement de la couleur à chaque coup
     return colors[current_color_i];
 }
 
+void RwBrick::draw_brick() const {
+    draw_rectangles(brick.getCentre().first, brick.getCentre().second, brick.getLength(), brick.getWidth(),
+                    current_color_i);
+}
+
 
 //------------------------- Définition de la classe BallBrick -------------------------
 // Sous-classe BallBrick(Ball Brick) héritée de Brick. Spécificité : Possède une balle 
@@ -74,6 +81,12 @@ char BallBrick::getColor(){
     return color;
 }
 
+void BallBrick::draw_brick() const {
+    draw_rectangles(brick.getCentre().first, brick.getCentre().second, 
+                    brick.getLength(), brick.getWidth());
+    draw_balls(brick.getCentre().first, brick.getCentre().second, new_ball_radius);
+}
+
 
 
 //------------------------- Définition de la classe SpltBrick -------------------------
@@ -90,11 +103,35 @@ SpltBrick::SpltBrick(double x_, double y_, double length_, double width_,
             brick = Rectangle(x_, y_, length_, width_); 
         }
 
-        current_color_i = floor(log2(length_/brick_size_min));
+        current_color_i = floor(log2((length_ + split_brick_gap)/
+                                (brick_size_min + split_brick_gap)) + 1);
 }
 
 SpltBrick::~SpltBrick(){}
 
 char SpltBrick::getColor(){ // Changement de couleur à chaque division
     return colors[current_color_i];
+}
+
+void SpltBrick::draw_brick() const {
+    draw_rectangles(brick.getCentre().first, brick.getCentre().second, 
+                    brick.getLength(), brick.getWidth(), current_color_i); 
+
+    int s = current_color_i - 1; // Couleur des briques filles
+    while (s > 0) {
+        int d = pow(2,s-1) - 1;
+        for (int j = pow(2, s-1) ; j > 0; --j) {
+            draw_rectangles(brick.getCentre().first,
+                            brick.getCentre().second - (((split_brick_gap + brick.getLength())/pow(2, s-1)) * d/2),
+                            split_brick_gap, 
+                            brick.getWidth(), s);
+            draw_rectangles(brick.getCentre().first - (((split_brick_gap + brick.getLength())/pow(2, s-1)) * d/2),
+                            brick.getCentre().second, brick.getLength(), 
+                            split_brick_gap, s);
+            cout << "passage : " << j << " " << s << endl;
+            d = d - 2;
+        }
+    s--;
+    }
+    
 }
