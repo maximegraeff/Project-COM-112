@@ -38,6 +38,11 @@ std::pair<double,double> Paddle::getCenter_paddle() const { // Centre du Paddle
     return paddle.getCentre();
 }
 
+void Paddle::draw_paddle() const {
+    draw_circles(getCenter_paddle().first, getCenter_paddle().second, paddle.getRadius());
+    draw_circles(getCenter_paddle().first, getCenter_paddle().second, paddle.getRadius() - 1, 9);
+}
+
 // std::pair<double,double> Paddle::getLastDeltaVector() const {
 //     return last_delta.getCoordinate();
 // }

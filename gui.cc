@@ -298,6 +298,7 @@ void My_window::on_draw(const Cairo::RefPtr<Cairo::Context> &cr, int width, int 
     cr->scale(side / (arena_size), -side / (arena_size));
     for (const auto& brick : game_data.bricks) brick->draw_brick();
     for (const auto& ball : game_data.balls) ball->draw_ball();
+    if (game_data.paddle) game_data.paddle->draw_paddle();
     // TODO: draw the game
 }
 
@@ -317,9 +318,9 @@ void My_window::set_mouse_controller()
 }
 void My_window::on_drawing_left_click(int n_press, double x, double y)
 {
-    cout << __func__ << endl; // TODO
+    //cout << __func__ << endl; // TODO
 }
 void My_window::on_drawing_move(double x, double y)
 {
-    cout << __func__ << endl; // TODO
+    //cout << __func__ << endl; // TODO
 }

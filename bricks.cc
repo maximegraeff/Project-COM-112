@@ -100,7 +100,7 @@ int BallBrick::getType() const {
 void BallBrick::draw_brick() const {
     draw_rectangles(brick.getCentre().first, brick.getCentre().second, 
                     brick.getLength(), brick.getWidth());
-    draw_balls(brick.getCentre().first, brick.getCentre().second, new_ball_radius);
+    draw_circles(brick.getCentre().first, brick.getCentre().second, new_ball_radius);
 }
 
 
@@ -148,7 +148,6 @@ void SpltBrick::draw_brick() const {
             draw_rectangles(brick.getCentre().first - (((split_brick_gap + brick.getLength())/pow(2, s-1)) * d/2),
                             brick.getCentre().second, brick.getLength(), 
                             split_brick_gap, s);
-            cout << "passage : " << j << " " << s << endl;
             d = d - 2;
         }
     s--;

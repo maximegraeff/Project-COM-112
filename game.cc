@@ -38,7 +38,7 @@ void read(string filename)
     ifstream file(filename);
     string line;
 
-    while (getline(file >> ws, line)) {
+    while (getline(file >> ws, line) and game_data.file_good) {
 
         if(line[0]=='#') continue;
         use_data(line, game_data);
@@ -46,12 +46,14 @@ void read(string filename)
     }
 
     // Données du fichier vérifiées et objets initialisés avec succès
-    cout << message::success() << endl;
+    if (game_data.file_good) cout << message::success() << endl;
+    else cout << "Error in file reading. Game reset." << endl;
 }
 
 void reset_()
 {
     object = SCORE;
+    game_data.file_good = true;
     game_data.score = 0;
     game_data.lives = 0;
     game_data.nb_brick = 0;
@@ -61,6 +63,12 @@ void reset_()
     game_data.paddle.reset();
     game_data.bricks.clear();
     game_data.balls.clear();
+}
+
+void file_error()
+{
+    reset_();
+    game_data.file_good = false;
 }
 
 // Redirection vers la fonction d'initialisation de l'objet correspondant 
@@ -98,7 +106,7 @@ void score_init(int score)
     if (score >= 0) game_data.score = score;
     else {
         cout << message::invalid_score(score) << endl;   
-        exit(0);
+        file_error();
     }
     object = LIVES;
 }
@@ -109,7 +117,7 @@ void lives_init(int lives)
     if (lives >= 0) game_data.lives = lives;
     else {
         cout << message::invalid_lives(lives) << endl;   
-        exit(0);
+        file_error();
     }
     object = PADDLE;
 }
@@ -125,7 +133,7 @@ void paddle_init(string line)
     // Vérification de la position du paddle
     if (y + radius <= 0 or y > 0 or x - width < 0 or x + width > arena_size)    {
         cout << message::paddle_outside(x, y) << endl;
-        exit(0);
+        file_error();
     }
 
     // Initialisation du paddle
@@ -212,12 +220,12 @@ void is_brick_good(double x, double y, double size, int type, int hit_points)
     // Vérification de la validité de la taille de la brick
     if (size < brick_size_min) {
         cout << message::invalid_brick_size(size) << endl;
-        exit(0);
+        file_error();
     }
     // Vérification de la validité du type de la brick
     else if (type < 0 or type > 2) {
         cout << message::invalid_brick_type(type) << endl;
-        exit(0);
+        file_error();
     }
 
     // Vérification de la validité du hit points de la brick lorsque la brick est de 
@@ -225,7 +233,7 @@ void is_brick_good(double x, double y, double size, int type, int hit_points)
     else if (type ==0) {
         if (hit_points < 0 or hit_points > 7) {
         cout << message::invalid_hit_points(hit_points) << endl;
-        exit(0);
+        file_error();
         }
     }
 
@@ -233,7 +241,7 @@ void is_brick_good(double x, double y, double size, int type, int hit_points)
     else if (x - size/2 < 0 or x + size/2 > arena_size or y - size/2 < 0 
         or y + size/2 > arena_size) {
         cout << message::brick_outside(x, y) << endl;
-        exit(0);
+        file_error();
     }
 }
 
@@ -244,13 +252,13 @@ void is_ball_good(double x, double y, double radius, double delta_x, double delt
     if (x - radius < 0 or x + radius > arena_size or y - radius < 0 
         or y + radius > arena_size) {
         cout << message::ball_outside(x, y) << endl;
-        exit(0);
+        file_error();
     }
 
     // Vérification de la validité du delta de la ball
     else if (sqrt(pow(delta_x, 2) + pow(delta_y, 2)) > delta_norm_max) {
         cout << message::invalid_delta(delta_x, delta_y) << endl;
-        exit(0);
+        file_error();
     }
 }
 
@@ -261,13 +269,13 @@ void intersects_rectangle(Rectangle r, GameData& game_data)
     // Vérification de l'absence de collision avec le paddle
     if (intersects(game_data.paddle->getCircle(), r)) {
         cout << message::collision_paddle_brick(game_data.brick_count) << endl;
-        exit(0);
+        file_error();
     }
     // Vérification de l'absence de collision avec les autres bricks 
     for (int j = 0; j < game_data.brick_count; j++) {
         if (intersects(r, game_data.bricks[j]->getRectangle())) {   
             cout << message::collision_bricks(game_data.brick_count, j) << endl;
-            exit(0);
+            file_error();
         }
     }
 }
@@ -279,20 +287,20 @@ void intersects_circle(Circle c, GameData& game_data)
     // Vérification de l'absence de collision avec le paddle
     if (intersects(c, game_data.paddle->getCircle())) {
         cout << message::collision_paddle_ball(game_data.ball_count) << endl;
-        exit(0);
+        file_error();
     }
     // Vérification de l'absence de collision avec les bricks 
     for (int j = 0; j < game_data.brick_count; j++) {
         if (intersects(c, game_data.bricks[j]->getRectangle())) {   
             cout << message::collision_ball_brick(game_data.ball_count, j) << endl;
-            exit(0);
+            file_error();
         }
     }
     // Vérification de l'absence de collision avec les autres balls
     for (int i = 0; i < game_data.ball_count; i++) {
         if (intersects(c, game_data.balls[i]->getCircle())) {   
             cout << message::collision_balls(game_data.ball_count, i) << endl;
-            exit(0);
+            file_error();
         }
     }
 }
