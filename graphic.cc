@@ -20,50 +20,49 @@ void draw_rectangles(double center_x, double center_y, double length, double wid
                      int hp)
 {
     if (!ptcr or !*ptcr) return;  // protection si ptcr est nullptr
-    get_brick_color(hp);
+    get_color(hp);
     (*ptcr)->rectangle(center_x - width / 2, center_y - length / 2, width, length);
     (*ptcr)->fill();
 }
 
-void draw_balls(double center_x, double center_y, double radius)
+void draw_circles(double center_x, double center_y, double radius, int c)
 {
     if (!ptcr or !*ptcr) return;  // protection si ptcr est nullptr
-    set_color(BLACK);
+    get_color(c);
     (*ptcr)->arc(center_x, center_y, radius, 0, 2 * M_PI);
     (*ptcr)->fill();
 }
 
-void get_brick_color(int hp)
+void get_color(int color)
 {
-    switch (hp)
+    switch (color)
     {
     case 1:
         set_color(RED);
-        cout << "color : red" << endl;
         break;
     case 2:
         set_color(ORANGE);
-        cout << "color : orange" << endl;
         break;
     case 3:
         set_color(YELLOW);
-        cout << "color : yellow" << endl;   
         break;
     case 4:
         set_color(GREEN);
-        cout << "color : green" << endl;
         break;
     case 5:
         set_color(CYAN);
-        cout << "color : cyan" << endl;
         break;
     case 6:
         set_color(BLUE);
-        cout << "color : blue" << endl;
         break;
     case 7:
         set_color(PURPLE);
-        cout << "color : purple" << endl;
+        break;
+    case 8:
+        set_color(BLACK);
+        break;
+    case 9:
+        set_color(WHITE);
         break;
     default:
         set_color(GREY);

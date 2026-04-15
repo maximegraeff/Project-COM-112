@@ -27,6 +27,7 @@ using namespace std;
 
 // Structure de données globale pour stocker les données du jeu
 struct GameData {
+        bool file_good = true;
         int score;
         int lives;
         int nb_brick;
@@ -46,8 +47,11 @@ enum ObjectType { SCORE, LIVES, PADDLE, BRICK, CO_BRICK, BALL, CO_BALL, END};
 // Fonction qui lit le fichier et utilise les données
 void read(string filename);
 
-// Fonction de réinitialisation des données du jeu avant la lecture du fichier
+// Fonction de réinitialisation des données du jeu
 void reset_();
+
+// Fonction d'arret de lecture
+void file_error();
 
 // Fonction redirigeant vers la fonction d'initialisation de l'objet correspondant 
 // à l'étape de lecture
