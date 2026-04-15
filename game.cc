@@ -337,40 +337,40 @@ void save_game(GameData& data, string& file_name){
     }
     else{
         // Score & lives
-     out << "# score\n" << data.score << "\n";
-     out << "# lives\n" << data.lives << "\n";
+        out << "# score\n" << data.score << "\n";
+        out << "# lives\n" << data.lives << "\n";
 
         // Paddle
-     out << "# paddle\n";
+        out << "# paddle\n";
         if (data.paddle)
         {
             const Circle paddle_circle = data.paddle->getCircle();
             const auto paddle_center = paddle_circle.getCentre();
-         out << paddle_center.first << " " << paddle_center.second << " "
+            out << paddle_center.first << " " << paddle_center.second << " "
                         << paddle_circle.getRadius() << "\n";
         }
 
         // Bricks
-     out << "# bricks\n";
-     out << data.bricks.size() << "\n";
+        out << "# bricks\n";
+        out << data.bricks.size() << "\n";
         for (const auto& b : data.bricks) {
             const Rectangle brick_rect = b->getRectangle();
             const auto brick_center = brick_rect.getCentre();
-         out << b->getType() << " " << brick_center.first << " "
+            out << b->getType() << " " << brick_center.first << " "
                         << brick_center.second << " " << brick_rect.getLength();
             if (b->getType() == 0)
-             out << " " << b->getHitPoints();
-         out << "\n";
+                out << " " << b->getHitPoints();
+                out << "\n";
         }
 
         // Balls
-     out << "# balls\n";
-     out << data.balls.size() << "\n";
+        out << "# balls\n";
+        out << data.balls.size() << "\n";
         for (const auto& b : data.balls) {
             const Circle ball_circle = b->getCircle();
             const auto ball_center = ball_circle.getCentre();
             const auto delta = b->getDeltaVector();
-         out << ball_center.first << " " << ball_center.second << " "
+            out << ball_center.first << " " << ball_center.second << " "
                         << ball_circle.getRadius() << " " << delta.first << " "
                         << delta.second << "\n";
         } 
