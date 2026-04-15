@@ -9,6 +9,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <ostream>
 #include <sstream>
 #include <vector>
 #include <cmath>
@@ -31,6 +32,9 @@ void read(string filename)
 {
     // réinitialisation des données du jeu avant la lecture du fichier
     reset_(); 
+    object = SCORE;
+    game_data = GameData{};
+
     ifstream file(filename);
     string line;
 
@@ -317,4 +321,58 @@ void set_brick(double x, double y, double size, int type, int hit_points) {
     // Split brick
     else if (type == 2) 
         game_data.bricks.push_back(make_unique<SpltBrick>(x, y, size, size));
+}
+
+
+//---------------------------- Fonction de sauvegrade ---------------------------------
+
+// Ecriture d'un fichier pour la sauvegarde du jeu
+
+void save_game(GameData& data, string& file_name){
+
+    ofstream out(file_name);
+
+    if (!out){
+            cout << "Error: Unable to open the backup file" << endl;
+    }
+    else{
+        // Score & lives
+     out << "# score\n" << data.score << "\n";
+     out << "# lives\n" << data.lives << "\n";
+
+        // Paddle
+     out << "# paddle\n";
+        if (data.paddle)
+        {
+            const Circle paddle_circle = data.paddle->getCircle();
+            const auto paddle_center = paddle_circle.getCentre();
+         out << paddle_center.first << " " << paddle_center.second << " "
+                        << paddle_circle.getRadius() << "\n";
+        }
+
+        // Bricks
+     out << "# bricks\n";
+     out << data.bricks.size() << "\n";
+        for (const auto& b : data.bricks) {
+            const Rectangle brick_rect = b->getRectangle();
+            const auto brick_center = brick_rect.getCentre();
+         out << b->getType() << " " << brick_center.first << " "
+                        << brick_center.second << " " << brick_rect.getLength();
+            if (b->getType() == 0)
+             out << " " << b->getHitPoints();
+         out << "\n";
+        }
+
+        // Balls
+     out << "# balls\n";
+     out << data.balls.size() << "\n";
+        for (const auto& b : data.balls) {
+            const Circle ball_circle = b->getCircle();
+            const auto ball_center = ball_circle.getCentre();
+            const auto delta = b->getDeltaVector();
+         out << ball_center.first << " " << ball_center.second << " "
+                        << ball_circle.getRadius() << " " << delta.first << " "
+                        << delta.second << "\n";
+        } 
+    }
 }

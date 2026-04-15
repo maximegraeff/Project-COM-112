@@ -27,6 +27,8 @@ class Brick {
     public:
     
         Rectangle getRectangle() const;
+        virtual int getType() const;
+        int getHitPoints() const;
 
         virtual void draw_brick() const = 0;
 
@@ -52,6 +54,7 @@ class RwBrick : public Brick {
     public:
 
         char getColor();
+        int getType() const override;
 
         void draw_brick() const override;
 
@@ -77,6 +80,7 @@ class BallBrick : public Brick {
     public:
 
         char getColor();
+        int getType() const override;
 
         void draw_brick() const override;
 
@@ -101,6 +105,7 @@ class SpltBrick : public Brick {
     public:
 
         char getColor();
+        int getType() const override;
 
         void draw_brick() const override;
 

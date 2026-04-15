@@ -1,2 +1,5 @@
 .vscode/
 game.dSYM/
+.DS_Store
+build/
+project.exe

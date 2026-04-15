@@ -28,6 +28,7 @@ class Paddle {
         double getLast_delta() const;
         pair<double,double> getCenter_paddle() const;
         void draw_paddle() const;
+        //pair<double,double> getLastDeltaVector() const;
 
         Paddle(double x_, double y_, double r_, char color_ = 'n', double l_dx_ = 0.0,
                double l_dy_ = 0.0);
