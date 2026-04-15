@@ -1,6 +1,8 @@
 #include <iostream>
+#include <math.h>
 #include "graphic.h"
 #include "graphic_gui.h"
+#include "constants.h"
 
 using namespace std;
 
@@ -16,21 +18,36 @@ void graphic_set_context(const Cairo::RefPtr<Cairo::Context> &cr)
     ptcr = &cr;
 }
 
-void draw_rectangles(const double center_x, const double center_y, const double length, const double width,
-                     const int hp)
+void draw_rectangles(const double x_, const double y_, const double length,
+                     const double width, const int hp)
 {
     if (!ptcr or !*ptcr) return;  // protection si ptcr est nullptr
     get_color(hp);
-    (*ptcr)->rectangle(center_x - width / 2, center_y - length / 2, width, length);
+    (*ptcr)->rectangle(x_ - width / 2, y_ - length / 2, width, length);
     (*ptcr)->fill();
 }
 
-void draw_circles(const double center_x, const double center_y, const double radius, const int c)
+void draw_circles(const double x_, const double y_, const double r, const int c)
 {
     if (!ptcr or !*ptcr) return;  // protection si ptcr est nullptr
     get_color(c);
-    (*ptcr)->arc(center_x, center_y, radius, 0, 2 * M_PI);
+    (*ptcr)->arc(x_, y_, r, 0, 2 * M_PI);
     (*ptcr)->fill();
+}
+
+void draw_arc(const double x_, const double y_, const double r, const int c)
+{
+    if (!ptcr or !*ptcr) return;  // protection si ptcr est nullptr
+    get_color(c);
+    (*ptcr)->set_line_width(1.0);
+    (*ptcr)->rectangle(x_ - r, - y_, 2 * r, y_);
+    (*ptcr)->clip();
+    (*ptcr)->arc(x_, y_, r - (*ptcr)->get_line_width()/2, 0, M_PI);
+    (*ptcr)->stroke();
+}
+
+void draw_arena() {
+    draw_rectangles(arena_size / 2, arena_size / 2, arena_size, arena_size, 9);
 }
 
 void get_color(const int color)

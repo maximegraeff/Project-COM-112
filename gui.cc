@@ -1,5 +1,6 @@
 #include <filesystem>
 #include <iostream>
+#include <algorithm>
 #include "constants.h"
 #include "game.h"
 #include "graphic_gui.h"
@@ -296,6 +297,7 @@ void My_window::on_draw(const Cairo::RefPtr<Cairo::Context> &cr, int width, int 
     double side(min(width, height));
     cr->translate((width - side) / 2, (height + side) / 2);
     cr->scale(side / (arena_size), -side / (arena_size));
+    draw_arena();
     for (const auto& brick : game_data.bricks) brick->draw_brick();
     for (const auto& ball : game_data.balls) ball->draw_ball();
     if (game_data.paddle) game_data.paddle->draw_paddle();
@@ -319,7 +321,23 @@ void My_window::on_drawing_left_click(int n_press, double x, double y)
 {
     //cout << __func__ << endl; // TODO
 }
-void My_window::on_drawing_move(double x, double y)
-{
-    //cout << x << ", " << y << endl; // TODO
-}
+void My_window::on_drawing_move(double x_, double y_)
+{   
+    if (game_data.paddle) {
+        int width = drawing.get_width();
+        int height = drawing.get_height();
+        double side = std::min(width, height);
+        
+        // Convertir les coordonnées de pixels GTK au système du jeu
+        double x = (x_ - (width - side)/2) * arena_size/side;
+        
+        // Limiter le mouvement à l'intérieur de l'arène;
+        if (x < game_data.paddle->getWidth()) x = game_data.paddle->getWidth();
+        if (x > arena_size - game_data.paddle->getWidth()) {
+            x = arena_size - game_data.paddle->getWidth();
+        }
+        game_data.paddle->setCentrePaddle(x, 
+                                          game_data.paddle->getCenter_paddle().second);
+        drawing.queue_draw();
+    }
+}  

@@ -20,23 +20,25 @@ using namespace std;
 //-------------------------- Déclaration de la classe Paddle --------------------------
 // Paddle consiruté d'un cercle dont le centre est hors de l'arène
 
-class Paddle {
+class Paddle : public Circle {
 
     public:
        
         Circle getCircle() const;
+        void setCentrePaddle(double x_, double y_);
         double getLast_delta() const;
         pair<double,double> getCenter_paddle() const;
+        double getWidth() const;
         void draw_paddle() const;
         //pair<double,double> getLastDeltaVector() const;
 
-        Paddle(double x_, double y_, double r_, char color_ = 'n', double l_dx_ = 0.0,
+        Paddle(double x_, double y_, double r_, double width_, double l_dx_ = 0.0,
                double l_dy_ = 0.0);
         ~Paddle();
         
     private:
 
-        char color;
+        double width;
         Circle paddle;  // seul l'arc supérieur est affiché
         Point last_delta; // dernier vecteur déplcament
 };

@@ -16,17 +16,19 @@
 //-------------------------- Définition de la classe Paddle ---------------------------
 // Paddle consiruté d'un cercle dont le centre est hors de l'arène
 
-Paddle::Paddle(double x_, double y_, double r_, char color_, double l_dx_, 
-               double l_dy_)
-      : color(color_), paddle(x_, y_, r_), last_delta(l_dx_, l_dy_) {
-    if (y_ <=0){
-        paddle = Circle(x_, y_, r_);
-    }
-}
+Paddle::Paddle(double x_, double y_, double r_, double width_, 
+               double l_dx_, double l_dy_)
+      : Circle(x_, y_, r_), width(width_), paddle(x_, y_, r_),
+        last_delta(l_dx_, l_dy_) {}
+
 Paddle::~Paddle() {}
 
 Circle Paddle::getCircle() const {
     return Circle(paddle);
+}
+
+void Paddle::setCentrePaddle(double x_, double y_){
+    paddle.setCentre(x_, y_);
 }
 
 double Paddle::getLast_delta() const { // Dernier vecteur de déplacement
@@ -38,11 +40,10 @@ std::pair<double,double> Paddle::getCenter_paddle() const { // Centre du Paddle
     return paddle.getCentre();
 }
 
-void Paddle::draw_paddle() const {
-    draw_circles(getCenter_paddle().first, getCenter_paddle().second, paddle.getRadius());
-    draw_circles(getCenter_paddle().first, getCenter_paddle().second, paddle.getRadius() - 1, 9);
+double Paddle::getWidth() const {
+    return width;
 }
 
-// std::pair<double,double> Paddle::getLastDeltaVector() const {
-//     return last_delta.getCoordinate();
-// }
+void Paddle::draw_paddle() const {
+    draw_arc(getCenter_paddle().first, getCenter_paddle().second, paddle.getRadius());
+}
