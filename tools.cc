@@ -71,6 +71,10 @@ double Circle::surface() const {
     return M_PI * pow(radius, 2);
 }
 
+void Circle::setCentre(double x_, double y_){
+    centre = Point(x_, y_);
+}
+
 Circle::Circle (double x_, double y_, double radius_)
       :centre(x_, y_), radius(radius_ >= 0 ? radius_ : 0){}
 

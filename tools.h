@@ -57,8 +57,8 @@ class Circle {
     public:
         std::pair<double,double> getCentre() const;
         double getRadius() const;
-
         double surface() const;
+        void setCentre(double x_, double y_);
 
         Circle (double x_, double y_, double radius_);
         ~Circle(); // Destructeur encore à définir

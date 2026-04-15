@@ -137,7 +137,7 @@ void paddle_init(string line)
     }
 
     // Initialisation du paddle
-    game_data.paddle = make_unique<Paddle>(x, y, radius); 
+    game_data.paddle = make_unique<Paddle>(x, y, radius, width); 
     object = BRICK;
 }
 
