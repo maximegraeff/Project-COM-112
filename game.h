@@ -46,6 +46,8 @@ enum ObjectType { SCORE, LIVES, PADDLE, BRICK, CO_BRICK, BALL, CO_BALL, END};
 // Fonction qui lit le fichier et utilise les données
 void read(string filename);
 
+void reset_();
+
 // Fonction redirigeant vers la fonction d'initialisation de l'objet correspondant 
 // à l'étape de lecture
 void use_data(string line, GameData& data);
