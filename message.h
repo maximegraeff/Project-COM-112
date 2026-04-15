@@ -4,7 +4,7 @@
 // message.h  : 13 fonctions pour l'affichage des messages d'erreur
 //              et une fonction supplémentaire pour indiquer le succès de la lecture
 //
-// Version 1.0 du 24.02.2025
+// Version 1.0 
 //
 
 #include <string>
