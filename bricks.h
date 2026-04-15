@@ -28,7 +28,7 @@ class Brick {
     
         Rectangle getRectangle() const;
         virtual int getType() const;
-        int getHitPoints() const;
+        virtual int getHitPoints() const;
 
         virtual void draw_brick() const = 0;
 
@@ -53,10 +53,9 @@ class RwBrick : public Brick {
 
     public:
 
-        char getColor();
         int getType() const override;
-
         void draw_brick() const override;
+        int getHitPoints() const;
 
         RwBrick(double x_, double y_, double length_, double width_, int hp_,
                 char color_ = 'r', bool is_destroyed_ = false, 
@@ -65,7 +64,7 @@ class RwBrick : public Brick {
 
     private:
 
-        const char colors[7] = {'r', 'o', 'j', 'v', 'c', 'b', 'V'}; // Liste des
+        //const char colors[7] = {'r', 'o', 'j', 'v', 'c', 'b', 'V'}; // Liste des
         // couleurs dans l'ordre du violet au rouge
         int current_color_i;
 };
@@ -79,10 +78,9 @@ class BallBrick : public Brick {
     
     public:
 
-        char getColor();
         int getType() const override;
-
         void draw_brick() const override;
+        int getHitPoints() const;
 
         BallBrick(double x_, double y_, double length_, double width_,  
                   char color_ = 'r', bool is_destroyed_ = false, double b_radius_ = 1,
@@ -104,10 +102,9 @@ class SpltBrick : public Brick {
 
     public:
 
-        char getColor();
-        int getType() const override;
-
-        void draw_brick() const override;
+    int getType() const override;
+    void draw_brick() const override;
+    int getHitPoints() const;
 
         SpltBrick(double x_, double y_, double length_, double width_,
                 char color_ = 'r', bool is_destroyed_ = false, int split_count_ = 0,
@@ -118,7 +115,7 @@ class SpltBrick : public Brick {
 
         int split_count; //Nombre de nouvelle briques une fois que la brique est cassée
         int children_created; // Nombre de SpltBrick crées
-        const char colors[7] = {'r', 'o', 'j', 'v', 'c', 'b', 'V'};
+        //const char colors[7] = {'r', 'o', 'j', 'v', 'c', 'b', 'V'};
         int current_color_i;
 };
 
