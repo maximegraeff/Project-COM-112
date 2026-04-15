@@ -46,7 +46,6 @@ private:
     void set_drawing();
     void on_draw(const Cairo::RefPtr<Cairo::Context> &cr, int width, int height);
     
-    void draw_bricks();
     void set_mouse_controller();
     void on_drawing_left_click(int n_press, double x, double y);
     void on_drawing_move(double x, double y);

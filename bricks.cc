@@ -57,19 +57,18 @@ RwBrick::RwBrick(double x_, double y_, double length_, double width_, int hp_,
 
 RwBrick::~RwBrick(){}
 
-char RwBrick::getColor(){ // Changement de la couleur à chaque coup
-    return colors[current_color_i];
-}
-
 int RwBrick::getType() const {
     return 0;
 }
 
 void RwBrick::draw_brick() const {
-    draw_rectangles(brick.getCentre().first, brick.getCentre().second, brick.getLength(), brick.getWidth(),
-                    current_color_i);
+    draw_rectangles(brick.getCentre().first, brick.getCentre().second,
+                    brick.getLength(), brick.getWidth(), current_color_i);
 }
 
+int RwBrick::getHitPoints() const {
+    return current_color_i;
+}
 
 //------------------------- Définition de la classe BallBrick -------------------------
 // Sous-classe BallBrick(Ball Brick) héritée de Brick. Spécificité : Possède une balle 
@@ -89,10 +88,6 @@ BallBrick::BallBrick(double x_, double y_, double length_, double width_,
 
 BallBrick::~BallBrick() {}
 
-char BallBrick::getColor(){
-    return color;
-}
-
 int BallBrick::getType() const {
     return 1;
 }
@@ -101,6 +96,10 @@ void BallBrick::draw_brick() const {
     draw_rectangles(brick.getCentre().first, brick.getCentre().second, 
                     brick.getLength(), brick.getWidth());
     draw_circles(brick.getCentre().first, brick.getCentre().second, new_ball_radius);
+}
+
+int BallBrick::getHitPoints() const {
+    return 1;
 }
 
 
@@ -125,10 +124,6 @@ SpltBrick::SpltBrick(double x_, double y_, double length_, double width_,
 
 SpltBrick::~SpltBrick(){}
 
-char SpltBrick::getColor(){ // Changement de couleur à chaque division
-    return colors[current_color_i];
-}
-
 int SpltBrick::getType() const {
     return 2;
 }
@@ -137,15 +132,15 @@ void SpltBrick::draw_brick() const {
     draw_rectangles(brick.getCentre().first, brick.getCentre().second, 
                     brick.getLength(), brick.getWidth(), current_color_i); 
 
-    int s = current_color_i - 1; // Couleur des briques filles
+    int s = current_color_i - 1;
     while (s > 0) {
         int d = pow(2,s-1) - 1;
         for (int j = pow(2, s-1) ; j > 0; --j) {
-            draw_rectangles(brick.getCentre().first,
-                            brick.getCentre().second - (((split_brick_gap + brick.getLength())/pow(2, s-1)) * d/2),
-                            split_brick_gap, 
-                            brick.getWidth(), s);
-            draw_rectangles(brick.getCentre().first - (((split_brick_gap + brick.getLength())/pow(2, s-1)) * d/2),
+            draw_rectangles(brick.getCentre().first, brick.getCentre().second - 
+                            (((split_brick_gap + brick.getLength())/pow(2, s)) * d),
+                            split_brick_gap, brick.getWidth(), s);
+            draw_rectangles(brick.getCentre().first - 
+                            (((split_brick_gap + brick.getLength())/pow(2, s)) * d),
                             brick.getCentre().second, brick.getLength(), 
                             split_brick_gap, s);
             d = d - 2;
@@ -153,4 +148,8 @@ void SpltBrick::draw_brick() const {
     s--;
     }
     
+}
+
+int SpltBrick::getHitPoints() const {
+    return current_color_i;
 }

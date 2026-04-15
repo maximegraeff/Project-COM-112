@@ -16,8 +16,8 @@ void graphic_set_context(const Cairo::RefPtr<Cairo::Context> &cr)
     ptcr = &cr;
 }
 
-void draw_rectangles(double center_x, double center_y, double length, double width,
-                     int hp)
+void draw_rectangles(const double center_x, const double center_y, const double length, const double width,
+                     const int hp)
 {
     if (!ptcr or !*ptcr) return;  // protection si ptcr est nullptr
     get_color(hp);
@@ -25,7 +25,7 @@ void draw_rectangles(double center_x, double center_y, double length, double wid
     (*ptcr)->fill();
 }
 
-void draw_circles(double center_x, double center_y, double radius, int c)
+void draw_circles(const double center_x, const double center_y, const double radius, const int c)
 {
     if (!ptcr or !*ptcr) return;  // protection si ptcr est nullptr
     get_color(c);
@@ -33,7 +33,7 @@ void draw_circles(double center_x, double center_y, double radius, int c)
     (*ptcr)->fill();
 }
 
-void get_color(int color)
+void get_color(const int color)
 {
     switch (color)
     {
