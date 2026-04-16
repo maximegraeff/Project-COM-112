@@ -103,7 +103,7 @@ bool intersects(Circle c, Rectangle r){
     double dy = y_c - closest_y;
     // Calcul de la distance entre le point precedent et le centre du cercle
 
-    if (sqrt(pow(dx, 2) + pow(dy, 2)) < sqrt(pow(r_c, 2))){
+    if (sqrt(pow(dx, 2) + pow(dy, 2)) < sqrt(pow(r_c, 2)) - epsil_zero){
         return true;
     } else return false;
 }

@@ -135,7 +135,9 @@ void My_window::start_clicked()
 }
 void My_window::step_clicked()
 {
-    cout << __func__ << endl; // TODO: make a single update
+    loop_activated = true;
+    loop_activated = !loop();
+    cout << __func__ << endl;
 }
 void My_window::set_key_controller()
 {
@@ -149,13 +151,13 @@ bool My_window::key_pressed(guint keyval, guint keycode, Gdk::ModifierType state
     switch (keyval)
     {
     case '1':
-        // TODO: make a single update
+        if (!loop_activated) step_clicked();
         return true;
     case 's':
-        // TODO: pause or unpause the game
+        start_clicked();
         return true;
     case 'r':
-        // TODO: reset the game from the last read file
+        restart_clicked();
         return true;
     default:
         break;
@@ -251,7 +253,9 @@ void My_window::dialog_response(int response, Gtk::FileChooserDialog *dialog)
 bool My_window::loop()
 {
     if (loop_activated)
-    {
+    {   
+        update_balls();
+        update_paddle();
         update_infos();
         drawing.queue_draw();
         return true;
@@ -320,7 +324,36 @@ void My_window::set_mouse_controller()
 void My_window::on_drawing_left_click(int n_press, double x, double y)
 {
     //cout << __func__ << endl; // TODO
+    if (game_data.lives > 0) {
+        double x_p = game_data.paddle->getCenter_paddle().first;
+        double y_p = game_data.paddle->getCenter_paddle().second;
+        double r_p = game_data.paddle->getCircle().getRadius();
+        Circle new_ball(x_p, y_p + r_p + new_ball_radius, new_ball_radius);
+        if (!new_ball_intersects(new_ball)){
+            game_data.balls.push_back(make_unique<Ball>(x_p, y_p + r_p + 
+                          new_ball_radius, new_ball_radius, 0.0, new_ball_delta_norm));
+            game_data.nb_ball++;
+            game_data.lives--;
+            update_infos();
+            drawing.queue_draw();
+        }
+    }
 }
+
+bool My_window::new_ball_intersects(const Circle& new_ball) const {
+    for (const auto& brick : game_data.bricks) {
+        if (brick and intersects(new_ball, brick->getRectangle())) {
+            return true;
+        }
+    }
+    for (const auto& ball : game_data.balls) {
+        if (ball and intersects(new_ball, ball->getCircle())) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void My_window::on_drawing_move(double x_, double y_)
 {   
     if (game_data.paddle) {
@@ -328,16 +361,82 @@ void My_window::on_drawing_move(double x_, double y_)
         int height = drawing.get_height();
         double side = std::min(width, height);
         
-        // Convertir les coordonnées de pixels GTK au système du jeu
-        double x = (x_ - (width - side)/2) * arena_size/side;
-        
-        // Limiter le mouvement à l'intérieur de l'arène;
-        if (x < game_data.paddle->getWidth()) x = game_data.paddle->getWidth();
-        if (x > arena_size - game_data.paddle->getWidth()) {
-            x = arena_size - game_data.paddle->getWidth();
-        }
-        game_data.paddle->setCentrePaddle(x, 
-                                          game_data.paddle->getCenter_paddle().second);
-        drawing.queue_draw();
+        game_data.paddle->set_target_x((x_ - (width - side)/2) * arena_size/side);
     }
-}  
+}
+
+void My_window::update_paddle()
+{   
+    if (game_data.paddle) {
+        int width = drawing.get_width();
+        int height = drawing.get_height();
+        double side = std::min(width, height);
+        double x_t = game_data.paddle->get_target_x();
+        double x = game_data.paddle->getCenter_paddle().first;
+        double y = game_data.paddle->getCenter_paddle().second;
+        double w = game_data.paddle->getWidth();
+        double r = game_data.paddle->getCircle().getRadius();
+    
+        x_t = max(w, min(arena_size - w, x_t));
+
+        double dx = x_t - x;
+        if (abs(dx) > delta_norm_max) {
+            dx = delta_norm_max*dx/abs(dx);
+        }
+        double temp_x = x + dx;
+        // x le plus proche possible de x_t sans collision avec les briques
+        double new_x = paddle_collision(x, temp_x, y, r, dx);
+
+        if (new_x != x) {
+            game_data.paddle->setCentrePaddle(new_x, y);
+            drawing.queue_draw();
+            cout << "paddle drawn" << endl;
+        }
+    }
+}
+
+double My_window::paddle_collision(double x, double temp_x, double y, double r, 
+                                   double dx) {
+    
+    Circle new_paddle_circle(temp_x, y, r);
+    bool collision = false;
+    for (const auto& brick : game_data.bricks) {
+        if (brick and intersects(new_paddle_circle, brick->getRectangle())) {
+            collision = true;
+            break;
+        }
+    }
+
+    if (collision) {
+        double step = 0;
+        if (dx > 0) step = 0.1;
+        else step = -0.1;
+        double best_x = x;
+        double test_x = x + step;
+        while (abs(test_x - x) <= abs(dx)) {
+            Circle test_circle(test_x, y, r);
+            bool hit = false;
+            for (const auto& brick : game_data.bricks) {
+                if (brick and intersects(test_circle, brick->getRectangle())) {
+                    hit = true;
+                    break;
+                }
+            }
+            if (hit) break;
+            best_x = test_x;
+            test_x += step;
+        }
+        return best_x;
+    }
+    else {
+        return temp_x;
+    }
+}
+
+void My_window::update_balls() {
+    for (const auto& ball : game_data.balls) {
+        if (ball){
+            ball->update_position();
+        }
+    }
+}

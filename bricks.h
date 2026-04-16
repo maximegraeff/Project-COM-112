@@ -29,7 +29,6 @@ class Brick {
         Rectangle getRectangle() const;
         virtual int getType() const;
         virtual int getHitPoints() const;
-
         virtual void draw_brick() const = 0;
 
         Brick(double x_, double y_, double length_, double width_, int hp_ = 0,  
