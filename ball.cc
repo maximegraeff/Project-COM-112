@@ -52,3 +52,9 @@ bool Ball::is_in_arena() const { // S'assure que la balle est dans
 void Ball::draw_ball() const {
     draw_circles(getCentre_ball().first, getCentre_ball().second, radius);
 }
+
+void Ball::update_position() {
+    double x = getCentre_ball().first;
+    double y = getCentre_ball().second;
+    ball.setCentre(x + getDeltaVector().first, y + getDeltaVector().second);
+}

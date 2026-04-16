@@ -19,7 +19,7 @@
 Paddle::Paddle(double x_, double y_, double r_, double width_, 
                double l_dx_, double l_dy_)
       : Circle(x_, y_, r_), width(width_), paddle(x_, y_, r_),
-        last_delta(l_dx_, l_dy_) {}
+        last_delta(l_dx_, l_dy_), paddle_target_x(x_) {}
 
 Paddle::~Paddle() {}
 
@@ -46,4 +46,12 @@ double Paddle::getWidth() const {
 
 void Paddle::draw_paddle() const {
     draw_arc(getCenter_paddle().first, getCenter_paddle().second, paddle.getRadius());
+}
+
+void Paddle::set_target_x(double x) {
+    paddle_target_x = x;
+} 
+
+double Paddle::get_target_x() const {
+    return paddle_target_x;
 }
