@@ -87,7 +87,7 @@ void My_window::open_clicked()
     cout.flush();
     auto dialog = new Gtk::FileChooserDialog("Choose a text file",
                                              Gtk::FileChooserDialog::Action::OPEN);
-    dialog->set_transient_for(*this); //
+    dialog->set_transient_for(*this); 
     set_dialog(dialog);
 }
 void My_window::save_clicked()
@@ -238,7 +238,6 @@ void My_window::dialog_response(int response, Gtk::FileChooserDialog *dialog)
             }
             if (!save_path.empty()){
                 cout << "save file " << save_path << endl;
-                //string filename = filesystem::path(file_name).stem().string();
                 save_game(game_data, save_path);
                 drawing.queue_draw();
                 dialog->hide();
@@ -280,7 +279,7 @@ void My_window::set_infos()
 }
 
 void My_window::update_infos()
-// TODO: update the different counters
+
 {
     info_value[0].set_text(to_string(game_data.score));
     info_value[1].set_text(to_string(game_data.lives));
