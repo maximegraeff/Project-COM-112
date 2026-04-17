@@ -21,7 +21,7 @@
 Ball::Ball(double x_, double y_, double radius_, double dx_, double dy_, char color_, 
            bool is_destroyed_)
     : color(color_), radius(radius_), is_destroyed(is_destroyed_),
-      ball(x_, y_, radius_), delta(dx_, dy_) {}
+      ball(x_, y_, radius_), delta(dx_, dy_), bounces(0) {}
 
 Ball::~Ball(){}
 
@@ -61,4 +61,12 @@ void Ball::update_position() {
 
 void Ball::setDeltaVector(double dx_, double dy_) {
     delta = Point(dx_, dy_);
+}
+
+int Ball::get_bounces() const {
+    return bounces;
+}
+
+void Ball::add_bounce() {
+    bounces = bounces + 1;
 }
