@@ -54,7 +54,7 @@ class RwBrick : public Brick {
 
         int getType() const override;
         void draw_brick() const override;
-        int getHitPoints() const;
+        int getHitPoints() const override;
 
         RwBrick(double x_, double y_, double length_, double width_, int hp_,
                 char color_ = 'r', bool is_destroyed_ = false, 
@@ -79,7 +79,7 @@ class BallBrick : public Brick {
 
         int getType() const override;
         void draw_brick() const override;
-        int getHitPoints() const;
+        int getHitPoints() const override;
 
         BallBrick(double x_, double y_, double length_, double width_,  
                   char color_ = 'r', bool is_destroyed_ = false, double b_radius_ = 1,
@@ -103,7 +103,7 @@ class SpltBrick : public Brick {
 
     int getType() const override;
     void draw_brick() const override;
-    int getHitPoints() const;
+    int getHitPoints() const override ;
 
         SpltBrick(double x_, double y_, double length_, double width_,
                 char color_ = 'r', bool is_destroyed_ = false, int split_count_ = 0,

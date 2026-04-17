@@ -222,27 +222,31 @@ void is_brick_good(double x, double y, double size, int type, int hit_points)
     if (size < brick_size_min) {
         cout << message::invalid_brick_size(size) << endl;
         file_error();
+        return;
     }
     // Vérification de la validité du type de la brick
-    else if (type < 0 or type > 2) {
+    if (type < 0 or type > 2) {
         cout << message::invalid_brick_type(type) << endl;
         file_error();
+        return;
     }
 
     // Vérification de la validité du hit points de la brick lorsque la brick est de 
     // type rainbow
-    else if (type ==0) {
+    if (type ==0) {
         if (hit_points < 0 or hit_points > 7) {
         cout << message::invalid_hit_points(hit_points) << endl;
         file_error();
+        return;
         }
     }
 
     // Vérification de la validité de la position de la brick
-    else if (x - size/2 < 0 or x + size/2 > arena_size or y - size/2 < 0 
+    if (x - size/2 < 0 or x + size/2 > arena_size or y - size/2 < 0 
         or y + size/2 > arena_size) {
         cout << message::brick_outside(x, y) << endl;
         file_error();
+        return;
     }
 }
 
