@@ -53,6 +53,8 @@ private:
     void update_paddle();
     double paddle_collision(double x, double temp_x, double y, double r, double dx);
     void update_balls();
+    pair<double, double> ball_bricks_collision(double x_b, double y_b, double r, 
+        double dx, double dy, double x_brick, double y_brick, double w);
 };
 
 #endif

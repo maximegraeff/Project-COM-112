@@ -389,7 +389,6 @@ void My_window::update_paddle()
         if (new_x != x) {
             game_data.paddle->setCentrePaddle(new_x, y);
             drawing.queue_draw();
-            cout << "paddle drawn" << endl;
         }
     }
 }
@@ -433,6 +432,7 @@ double My_window::paddle_collision(double x, double temp_x, double y, double r,
 }
 
 void My_window::update_balls() {
+    if (game_data.balls.empty()) return;
     auto ball = game_data.balls.begin();
     while (ball != game_data.balls.end()) {
         if (*ball) {
@@ -441,6 +441,7 @@ void My_window::update_balls() {
             double x_b  = (*ball)->getCentre_ball().first;
             double y_b  = (*ball)->getCentre_ball().second;
             double r  = (*ball)->getCircle().getRadius();
+            bool ball_destroyed = false;
 
             // Rebond sur les murs gauche/droite
             if (x_b + dx < r or x_b + dx > arena_size - r) dx = -dx;
@@ -449,21 +450,65 @@ void My_window::update_balls() {
             if (y_b + dy > arena_size - r) dy = -dy;
 
             // Suppression de la ball si sortie par le bas
-            if (y_b + dy < 0) {
+            if (y_b + dy < 0) ball_destroyed = true;
+
+            // Rebond sur les briques
+            for (const auto& brick : game_data.bricks) {
+                if (brick) {
+                    double x_brick = brick->getRectangle().getCentre().first;
+                    double y_brick = brick->getRectangle().getCentre().second;
+                    double w = brick->getRectangle().getWidth();
+                    if (intersects(Circle(x_b + dx, y_b + dy, r),
+                                   brick->getRectangle())) {
+                        
+                        //brick->get_hit();
+                        update_infos();
+                        dx = ball_bricks_collision(x_b, y_b, r, dx, dy, x_brick,
+                                                   y_brick, w).first;
+                        dy = ball_bricks_collision(x_b, y_b, r, dx, dy, x_brick,
+                                                   y_brick, w).second;
+                    }  
+                }
+            } 
+
+            if (intersects((*ball)->getCircle(), game_data.paddle->getCircle())) {
+                //dx = ball_ball_collision().first;
+                //dy = ball_ball_collision().second;
+            }
+            
+            // Limite de delta
+            if (abs(dx) > delta_norm_max) dx = delta_norm_max*dx/abs(dx);
+            if (abs(dy) > delta_norm_max) dy = delta_norm_max*dy/abs(dy);
+
+            if (dx != (*ball)->getDeltaVector().first or 
+                dy != (*ball)->getDeltaVector().second) {
+                if ((*ball)->get_bounces() >= nb_bounce_max) ball_destroyed = true;
+                else (*ball)->add_bounce();
+            }
+            // Destruction de la ball
+            if (ball_destroyed) {
+                ball = game_data.balls.erase(ball);
                 game_data.nb_ball--;
                 update_infos();
-                ball = game_data.balls.erase(ball);
-                continue;
             }
-            // Rebond sur les briques
-            //for (const auto& brick : game_data.bricks) {
-                //double x_brick = brick->getRectangle().getCentre().first;
-                //double y_brick = brick->getRectangle().getCentre().second;
-                //double w = brick->getRectangle().getWidth();
-            //}
-            (*ball)->setDeltaVector(dx, dy);
-            (*ball)->update_position();
+            // Mise à jour du delta et de la position de la ball
+            else {
+                (*ball)->setDeltaVector(dx, dy);
+                (*ball)->update_position();
+                ++ball;
+            }
         }
-        ++ball;
     }
 }
+
+pair<double, double> My_window::ball_bricks_collision(double x_b, double y_b, double r,
+                                double dx, double dy, double x_brick, double y_brick, 
+                                double w) {        
+    double w_rebond = (abs(x_b - x_brick) < w/2) ? x_b - x_brick : (x_b < x_brick) ? 
+                      -w/2 : w/2;
+    double l_rebond = (abs(y_b - y_brick) < w/2) ? y_b - y_brick : (y_b < y_brick) ?
+                      -w/2 : w/2;
+
+    return {dx - 2*(x_brick - x_b + w_rebond), dy - 2*(y_brick - y_b + l_rebond)};
+}  
+ 

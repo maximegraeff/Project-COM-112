@@ -31,13 +31,16 @@ class Ball {
         void draw_ball() const;
         void update_position();
         void setDeltaVector(double dx_, double dy_);
+        int get_bounces() const;
+        void add_bounce();
 
         Ball(double x_, double y_, double radius_, double dx_, double dy_, 
              char color_ = 'n', bool is_destroyed_ = false);
         ~Ball();
        
     private:
-
+        
+        int bounces;
         char color;
         double radius;
         bool is_destroyed;
