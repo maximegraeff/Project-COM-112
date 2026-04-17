@@ -13,7 +13,7 @@ public:
     My_window(std::string file_name);
 
 private:
-    Gtk::Box main_box, panel_box, command_box;
+    Gtk::Box main_box,drawing_box, panel_box, command_box;
     Gtk::Grid info_grid;
     bool loop_activated;
     sigc::connection loop_conn;

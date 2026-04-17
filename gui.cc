@@ -29,7 +29,7 @@ enum Buttons
 constexpr unsigned drawing_size(500);
 
 My_window::My_window(string file_name)
-    : main_box(Gtk::Orientation::HORIZONTAL), panel_box(Gtk::Orientation::VERTICAL),
+    : main_box(Gtk::Orientation::HORIZONTAL),drawing_box(Gtk::Orientation::HORIZONTAL), panel_box(Gtk::Orientation::VERTICAL),
       command_box(Gtk::Orientation::VERTICAL), loop_activated(false),
       buttons({Gtk::Button("exit"), Gtk::Button("open"), Gtk::Button("save"),
                Gtk::Button("restart"), Gtk::Button("start"), Gtk::Button("step")}),
@@ -37,10 +37,12 @@ My_window::My_window(string file_name)
                                         Gtk::Label("bricks:"), Gtk::Label("balls:")}),
       last_read_file(file_name)
 {
+
     set_title("Brick Breaker");
     set_child(main_box);
     main_box.append(panel_box);
-    main_box.append(drawing);
+    main_box.append(drawing_box);
+    drawing_box.append(drawing);
     panel_box.append(command_box);
     panel_box.append(info_frame);
 
@@ -49,11 +51,23 @@ My_window::My_window(string file_name)
     set_mouse_controller();
     set_infos();
     set_drawing();
+
     if (!last_read_file.empty())
     {
         read(last_read_file);
         update_infos();
     }
+
+    // Remplace le bloc CSS actuel par ceci :
+    drawing_box.set_name("drawing-box");
+
+    auto css = Gtk::CssProvider::create();
+    css->load_from_data("#drawing-box { background-color: #888888; }");
+    Gtk::StyleContext::add_provider_for_display(
+        Gdk::Display::get_default(), css,
+        GTK_STYLE_PROVIDER_PRIORITY_USER
+    );
+
 }
 void My_window::set_commands()
 {
@@ -293,7 +307,11 @@ void My_window::set_drawing()
     drawing.set_content_height(drawing_size);
     drawing.set_expand();
     drawing.set_draw_func(sigc::mem_fun(*this, &My_window::on_draw));
+    drawing.set_margin(5);
+
+
 }
+
 void My_window::on_draw(const Cairo::RefPtr<Cairo::Context> &cr, int width, int height)
 {
     graphic_set_context(cr);
