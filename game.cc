@@ -33,7 +33,7 @@ void read(string filename)
     // réinitialisation des données du jeu avant la lecture du fichier
     reset_(); 
     object = SCORE;
-    game_data = GameData{};
+    // game_data = GameData{};
 
     ifstream file(filename);
     string line;
@@ -134,6 +134,7 @@ void paddle_init(string line)
     if (y + radius <= 0 or y > 0 or x - width < 0 or x + width > arena_size)    {
         cout << message::paddle_outside(x, y) << endl;
         file_error();
+        return;
     }
 
     // Initialisation du paddle
@@ -267,7 +268,7 @@ void is_ball_good(double x, double y, double radius, double delta_x, double delt
 void intersects_rectangle(Rectangle r, GameData& game_data)
 {   
     // Vérification de l'absence de collision avec le paddle
-    if (intersects(game_data.paddle->getCircle(), r)) {
+    if (game_data.paddle && intersects(game_data.paddle->getCircle(), r)) {
         cout << message::collision_paddle_brick(game_data.brick_count) << endl;
         file_error();
     }
@@ -285,7 +286,7 @@ void intersects_rectangle(Rectangle r, GameData& game_data)
 void intersects_circle(Circle c, GameData& game_data)
 {   
     // Vérification de l'absence de collision avec le paddle
-    if (intersects(c, game_data.paddle->getCircle())) {
+    if (game_data.paddle && intersects(c, game_data.paddle->getCircle())) {
         cout << message::collision_paddle_ball(game_data.ball_count) << endl;
         file_error();
     }

@@ -33,7 +33,7 @@ class Brick {
 
         Brick(double x_, double y_, double length_, double width_, int hp_ = 0,  
              char color_ = 'r', bool is_destroyed_ = false);
-        ~Brick();
+        virtual ~Brick();
 
     protected:
 
