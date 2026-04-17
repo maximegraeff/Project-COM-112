@@ -28,12 +28,12 @@ using namespace std;
 // Structure de données globale pour stocker les données du jeu
 struct GameData {
         bool file_good = true;
-        int score;
-        int lives;
-        int nb_brick;
-        int nb_ball;
-        int brick_count;
-        int ball_count;
+        int score = 0;
+        int lives = 0;
+        int nb_brick = 0;
+        int nb_ball = 0;
+        int brick_count = 0;
+        int ball_count = 0;
         unique_ptr<Paddle> paddle;
         vector<unique_ptr<Brick>> bricks;
         vector<unique_ptr<Ball>> balls;
