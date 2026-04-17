@@ -58,3 +58,7 @@ void Ball::update_position() {
     double y = getCentre_ball().second;
     ball.setCentre(x + getDeltaVector().first, y + getDeltaVector().second);
 }
+
+void Ball::setDeltaVector(double dx_, double dy_) {
+    delta = Point(dx_, dy_);
+}

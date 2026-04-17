@@ -433,9 +433,37 @@ double My_window::paddle_collision(double x, double temp_x, double y, double r,
 }
 
 void My_window::update_balls() {
-    for (const auto& ball : game_data.balls) {
-        if (ball){
-            ball->update_position();
+    auto ball = game_data.balls.begin();
+    while (ball != game_data.balls.end()) {
+        if (*ball) {
+            double dx = (*ball)->getDeltaVector().first;
+            double dy = (*ball)->getDeltaVector().second;
+            double x_b  = (*ball)->getCentre_ball().first;
+            double y_b  = (*ball)->getCentre_ball().second;
+            double r  = (*ball)->getCircle().getRadius();
+
+            // Rebond sur les murs gauche/droite
+            if (x_b + dx < r or x_b + dx > arena_size - r) dx = -dx;
+
+            // Rebond sur le mur du haut
+            if (y_b + dy > arena_size - r) dy = -dy;
+
+            // Suppression de la ball si sortie par le bas
+            if (y_b + dy < 0) {
+                game_data.nb_ball--;
+                update_infos();
+                ball = game_data.balls.erase(ball);
+                continue;
+            }
+            // Rebond sur les briques
+            //for (const auto& brick : game_data.bricks) {
+                //double x_brick = brick->getRectangle().getCentre().first;
+                //double y_brick = brick->getRectangle().getCentre().second;
+                //double w = brick->getRectangle().getWidth();
+            //}
+            (*ball)->setDeltaVector(dx, dy);
+            (*ball)->update_position();
         }
+        ++ball;
     }
 }

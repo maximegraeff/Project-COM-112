@@ -30,6 +30,7 @@ class Ball {
         bool is_in_arena() const;
         void draw_ball() const;
         void update_position();
+        void setDeltaVector(double dx_, double dy_);
 
         Ball(double x_, double y_, double radius_, double dx_, double dy_, 
              char color_ = 'n', bool is_destroyed_ = false);
