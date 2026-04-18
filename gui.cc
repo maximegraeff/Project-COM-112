@@ -69,6 +69,9 @@ My_window::My_window(string file_name)
         GTK_STYLE_PROVIDER_PRIORITY_USER
     );
 
+    drawing_box.set_hexpand_set(false);
+    drawing_box.set_vexpand_set(false);
+
 }
 void My_window::set_commands()
 {
@@ -309,6 +312,11 @@ void My_window::set_drawing()
     drawing.set_expand();
     drawing.set_draw_func(sigc::mem_fun(*this, &My_window::on_draw));
     drawing.set_margin(5);
+
+    // drawing_box.set_halign(Gtk::Align::FILL);
+    // drawing_box.set_valign(Gtk::Align::FILL);
+    // drawing.set_halign(Gtk::Align::CENTER);
+    // drawing.set_valign(Gtk::Align::CENTER);
 
 
 }
