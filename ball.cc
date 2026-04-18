@@ -18,21 +18,16 @@
 //--------------------------- Définition de la classe Ball ----------------------------
 // Ball constituée d'un cercle et d'un vecteur de classe Point
 
-Ball::Ball(double x_, double y_, double radius_, double dx_, double dy_, char color_, 
+Ball::Ball(double x_, double y_, double radius_, double dx_, double dy_, 
            bool is_destroyed_)
-    : color(color_), radius(radius_), is_destroyed(is_destroyed_),
-      ball(x_, y_, radius_), delta(dx_, dy_), bounces(0) {}
+    : radius(radius_), is_destroyed(is_destroyed_),
+      ball(x_, y_, radius_), delta(dx_, dy_), bounces(0), delta_temp(dx_,dy_){}
 
 Ball::~Ball(){}
 
 Circle Ball::getCircle() const {
     return Circle(ball);
 }
-
-// double Ball::getDelta() const { 
-//     double x = delta.getCoordinate().first;
-//     return x; 
-// }
 
 std::pair<double,double> Ball::getCentre_ball() const {
     return ball.getCentre();
@@ -60,13 +55,24 @@ void Ball::update_position() {
 }
 
 void Ball::setDeltaVector(double dx_, double dy_) {
-    delta = Point(dx_, dy_);
+    delta_temp = Point(dx_, dy_);
 }
 
-int Ball::get_bounces() const {
-    return bounces;
+bool Ball::bounce() {
+    if (bounces < nb_bounce_max) {
+        return true;
+    }
+    return false;
 }
 
 void Ball::add_bounce() {
     bounces = bounces + 1;
+}
+
+void Ball::reset_bounces() {
+    bounces = 0;
+}
+
+void Ball::update_delta() {
+    delta = delta_temp;
 }

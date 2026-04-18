@@ -32,13 +32,12 @@ class Brick {
         virtual void draw_brick() const = 0;
 
         Brick(double x_, double y_, double length_, double width_, int hp_ = 0,  
-             char color_ = 'r', bool is_destroyed_ = false);
+              bool is_destroyed_ = false);
         virtual ~Brick();
 
     protected:
 
         Rectangle brick; 
-        char color; // Couleur de la brique en fonction du nombre de vies restantes
         int hp; // hit_point de la brick en question
         bool is_destroyed; 
 };
@@ -57,14 +56,12 @@ class RwBrick : public Brick {
         int getHitPoints() const override;
 
         RwBrick(double x_, double y_, double length_, double width_, int hp_,
-                char color_ = 'r', bool is_destroyed_ = false, 
+                bool is_destroyed_ = false, 
                 int current_color_i_ = 0);
         ~RwBrick();
 
     private:
 
-        //const char colors[7] = {'r', 'o', 'j', 'v', 'c', 'b', 'V'}; // Liste des
-        // couleurs dans l'ordre du violet au rouge
         int current_color_i;
 };
 
@@ -82,9 +79,8 @@ class BallBrick : public Brick {
         int getHitPoints() const override;
 
         BallBrick(double x_, double y_, double length_, double width_,  
-                  char color_ = 'r', bool is_destroyed_ = false, double b_radius_ = 1,
-                  double dx_ = 0, double dy_ = 0, char b_color_ = 'n', 
-                  bool is_b_destroyed_ = false);
+                  bool is_destroyed_ = false, double b_radius_ = 1,
+                  double dx_ = 0, double dy_ = 0, bool is_b_destroyed_ = false);
         ~BallBrick();
 
     private:
@@ -106,15 +102,14 @@ class SpltBrick : public Brick {
     int getHitPoints() const override ;
 
         SpltBrick(double x_, double y_, double length_, double width_,
-                char color_ = 'r', bool is_destroyed_ = false, int split_count_ = 0,
-                int children_created_ = 0, int current_color_i_ = 0);
+                  bool is_destroyed_ = false, int split_count_ = 0,
+                  int children_created_ = 0, int current_color_i_ = 0);
         ~SpltBrick();
 
     private:
 
         int split_count; //Nombre de nouvelle briques une fois que la brique est cassée
         int children_created; // Nombre de SpltBrick crées
-        //const char colors[7] = {'r', 'o', 'j', 'v', 'c', 'b', 'V'};
         int current_color_i;
 };
 

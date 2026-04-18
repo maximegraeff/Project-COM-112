@@ -1,6 +1,7 @@
 #include <filesystem>
 #include <iostream>
 #include <algorithm>
+#include <tuple>
 #include "constants.h"
 #include "game.h"
 #include "graphic_gui.h"
@@ -457,54 +458,37 @@ void My_window::update_balls() {
             double dx = (*ball)->getDeltaVector().first;
             double dy = (*ball)->getDeltaVector().second;
             double x_b  = (*ball)->getCentre_ball().first;
-            double y_b  = (*ball)->getCentre_ball().second;
+            double y_b  = (*ball)->getCentre_ball().second;                
             double r  = (*ball)->getCircle().getRadius();
-            bool ball_destroyed = false;
+            bool change = true;
 
-            // Rebond sur les murs gauche/droite
-            if (x_b + dx < r or x_b + dx > arena_size - r) dx = -dx;
+            while ((*ball)->bounce() and change) {
+                double dx_o = dx;
+                double dy_o = dy;
 
-            // Rebond sur le mur du haut
-            if (y_b + dy > arena_size - r) dy = -dy;
-
-            // Suppression de la ball si sortie par le bas
-            if (y_b + dy < 0) ball_destroyed = true;
-
-            // Rebond sur les briques
-            for (const auto& brick : game_data.bricks) {
-                if (brick) {
-                    double x_brick = brick->getRectangle().getCentre().first;
-                    double y_brick = brick->getRectangle().getCentre().second;
-                    double w = brick->getRectangle().getWidth();
-                    if (intersects(Circle(x_b + dx, y_b + dy, r),
-                                   brick->getRectangle())) {
-                        
-                        //brick->get_hit();
-                        update_infos();
-                        dx = ball_bricks_collision(x_b, y_b, r, dx, dy, x_brick,
-                                                   y_brick, w).first;
-                        dy = ball_bricks_collision(x_b, y_b, r, dx, dy, x_brick,
-                                                   y_brick, w).second;
-                    }  
+                // Rebond sur les bricks, le paddle et les autres balls
+                tie (dx, dy) = ball_collision(*ball, dx, dy);
+                
+                // Rebond sur les murs gauche/droite
+                if (x_b + dx < r or x_b + dx > arena_size - r) {
+                    if ((*ball)->bounce()) {
+                        dx = -dx;
+                        (*ball)->add_bounce();
+                    }
                 }
-            } 
-
-            if (intersects((*ball)->getCircle(), game_data.paddle->getCircle())) {
-                //dx = ball_ball_collision().first;
-                //dy = ball_ball_collision().second;
+                // Rebond sur le mur du haut
+                if (y_b + dy > arena_size - r) {
+                    if ((*ball)->bounce()) {
+                        dy = -dy;
+                        (*ball)->add_bounce();
+                    }
+                }
+                if (dx == dx_o and dy == dy_o) change = false;
+                else change = true;
             }
-            
-            // Limite de delta
-            if (abs(dx) > delta_norm_max) dx = delta_norm_max*dx/abs(dx);
-            if (abs(dy) > delta_norm_max) dy = delta_norm_max*dy/abs(dy);
-
-            if (dx != (*ball)->getDeltaVector().first or 
-                dy != (*ball)->getDeltaVector().second) {
-                if ((*ball)->get_bounces() >= nb_bounce_max) ball_destroyed = true;
-                else (*ball)->add_bounce();
-            }
-            // Destruction de la ball
-            if (ball_destroyed) {
+            (*ball)->reset_bounces();
+            // Destruction de la ball si sortie par le bas
+            if (y_b + dy < 0) {
                 ball = game_data.balls.erase(ball);
                 game_data.nb_ball--;
                 update_infos();
@@ -512,21 +496,129 @@ void My_window::update_balls() {
             // Mise à jour du delta et de la position de la ball
             else {
                 (*ball)->setDeltaVector(dx, dy);
-                (*ball)->update_position();
                 ++ball;
             }
         }
     }
+    for (const auto& ball : game_data.balls) {
+        ball->update_delta();
+        ball->update_position();
+    }
 }
 
-pair<double, double> My_window::ball_bricks_collision(double x_b, double y_b, double r,
+// Limite la norme du vecteur (dx, dy) à delta_norm_max
+pair<double, double> My_window::limit_delta(double dx, double dy) {
+    if (abs(dx) > delta_norm_max) dx = delta_norm_max*dx/abs(dx);
+    if (abs(dy) > delta_norm_max) dy = delta_norm_max*dy/abs(dy);
+    return {dx, dy};
+}
+
+pair<double, double> My_window::ball_collision(const unique_ptr<Ball>& ball, double dx,
+                                double dy) {
+    double x_b = ball->getCentre_ball().first;
+    double y_b = ball->getCentre_ball().second;
+    double r = ball->getCircle().getRadius();
+    double dx_o = dx;
+    double dy_o = dy;
+
+    for (const auto& brick : game_data.bricks) {
+        if (brick) {
+            double x_brick = brick->getRectangle().getCentre().first;
+            double y_brick = brick->getRectangle().getCentre().second;
+            double w = brick->getRectangle().getWidth();
+            if (intersects(Circle(x_b + dx, y_b + dy, r), brick->getRectangle())) {
+                if (ball->bounce()) {
+                    ball->add_bounce();
+                    return ball_bricks_collision(x_b, y_b, r, dx, dy, x_brick, y_brick,
+                                                 w);
+                }
+                return {dx_o, dy_o};
+            }  
+        }
+    }
+    for (const auto& ball_ : game_data.balls) {
+        if (ball_ and ball_ != ball) {
+            double x_b_c = ball_->getCentre_ball().first;
+            double y_b_c = ball_->getCentre_ball().second;
+            double r_c = ball_->getCircle().getRadius();
+            double dx_c = ball_->getDeltaVector().first;
+            double dy_c = ball_->getDeltaVector().second;
+            if (intersects(Circle(x_b + dx, y_b + dy, r), Circle(x_b_c + dx_c,
+                y_b_c + dy_c, r_c))) {
+                if (ball->bounce()) {
+                    ball->add_bounce();
+                    return ball_circle_collision(r, dx, dy, r_c, dx_c, dy_c);
+                }
+                return {dx_o, dy_o};
+            }
+        }
+    }
+    double x_p = game_data.paddle->getCenter_paddle().first;
+    double y_p = game_data.paddle->getCenter_paddle().second;
+    double r_p = game_data.paddle->getCircle().getRadius();
+    double dx_p = game_data.paddle->getLast_delta();
+    if (intersects(Circle(x_b + dx, y_b + dy, r), Circle(x_p + dx_p, y_p, r_p))) {
+        if (ball->bounce()) {
+            ball->add_bounce();
+            return ball_paddle_collision(x_b, y_b, r, dx, dy);
+        }
+        return {dx_o, dy_o};
+    }
+    return {dx_o, dy_o};
+}
+
+pair<double, double> My_window::ball_bricks_collision(double x_b, double y_b, double r, // c'est chelou ce truc de con
                                 double dx, double dy, double x_brick, double y_brick, 
                                 double w) {        
-    double w_rebond = (abs(x_b - x_brick) < w/2) ? x_b - x_brick : (x_b < x_brick) ? 
-                      -w/2 : w/2;
-    double l_rebond = (abs(y_b - y_brick) < w/2) ? y_b - y_brick : (y_b < y_brick) ?
-                      -w/2 : w/2;
+    //double w_rebond = (abs(x_b - x_brick) < w/2) ? x_b - x_brick : (x_b < x_brick) ? 
+    //                  -w/2 : w/2;
+    //double l_rebond = (abs(y_b - y_brick) < w/2) ? y_b - y_brick : (y_b < y_brick) ?
+    //                  -w/2 : w/2;
+    
+    //double dx_ = dx - 2*(x_b - x_brick + w_rebond)/r;
+    //double dy_ = dy - 2*(y_b - y_brick + l_rebond)/r;
 
-    return {dx - 2*(x_brick - x_b + w_rebond), dy - 2*(y_brick - y_b + l_rebond)};
+    //return limit_delta(dx_, dy_);
+
+    // Détermine si la collision est sur un côté horizontal ou vertical
+    double overlap_x = w/2 + r - abs(x_b - x_brick);
+    double overlap_y = w/2 + r - abs(y_b - y_brick);
+
+    if (overlap_x < overlap_y) {
+        // Collision sur un côté gauche ou droit -> inverser dx
+        dx = -dx;
+    } else if (overlap_y < overlap_x) {
+        // Collision sur le dessus ou dessous -> inverser dy
+        dy = -dy;
+    } else {
+        // Collision sur un coin -> inverser les deux
+        dx = -dx;
+        dy = -dy;
+    }
+
+    return limit_delta(dx, dy);
 }  
+
+pair<double, double> My_window::ball_paddle_collision(double x_b, double y_b, double r,
+                                double dx, double dy) {
+    double x_p = game_data.paddle->getCenter_paddle().first;
+    double y_p = game_data.paddle->getCenter_paddle().second;
+    double r_p = game_data.paddle->getCircle().getRadius();
+    double dx_p = game_data.paddle->getLast_delta();
+    
+    double dx_ = dx + 2*(dx_p - dx);
+    double dy_ = -dy;
+
+    return {dx_, dy_};
+}
+
+pair<double, double> My_window::ball_circle_collision(double r, double dx, double dy, 
+                                double r_c, double dx_c, double dy_c) {
+    double coeff = 2*pow(r_c,2)/(pow(r,2) + pow(r_c,2));
+
+    double dx_ = dx + coeff*(dx_c - dx);
+    double dy_ = dy + coeff*(dy_c - dy);
+
+    return limit_delta(dx_, dy_);
+}
  

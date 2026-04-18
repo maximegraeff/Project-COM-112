@@ -32,7 +32,6 @@ class Paddle : public Circle {
         void draw_paddle() const;
         void set_target_x(double x);
         double get_target_x() const;
-        //pair<double,double> getLastDeltaVector() const;
 
         Paddle(double x_, double y_, double r_, double width_, double l_dx_ = 0.0,
                double l_dy_ = 0.0);
@@ -43,7 +42,7 @@ class Paddle : public Circle {
         double paddle_target_x;
         double width;
         Circle paddle;  // seul l'arc supérieur est affiché
-        Point last_delta; // dernier vecteur déplcament
+        double last_delta; // dernier vecteur déplcament
 };
 
 

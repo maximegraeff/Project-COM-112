@@ -24,28 +24,29 @@ class Ball {
     public:
     
         Circle getCircle() const;
-        // double getDelta() const;
         pair<double,double> getCentre_ball() const;
         pair<double,double> getDeltaVector() const;
         bool is_in_arena() const;
         void draw_ball() const;
         void update_position();
         void setDeltaVector(double dx_, double dy_);
-        int get_bounces() const;
+        bool bounce();
         void add_bounce();
+        void reset_bounces();
+        void update_delta();
 
         Ball(double x_, double y_, double radius_, double dx_, double dy_, 
-             char color_ = 'n', bool is_destroyed_ = false);
+             bool is_destroyed_ = false);
         ~Ball();
        
     private:
         
         int bounces;
-        char color;
         double radius;
         bool is_destroyed;
         Circle ball;
         Point delta;    // vecteur déplacement
+        Point delta_temp;
 };
 
 #endif

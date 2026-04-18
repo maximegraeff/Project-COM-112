@@ -36,6 +36,14 @@ void read(string filename)
     // game_data = GameData{};
 
     ifstream file(filename);
+    
+    // Vérification que le fichier s'est bien ouvert
+    if (!file.is_open()) {
+        cout << "Error: Unable to open file " << filename << endl;
+        file_error();
+        return;
+    }
+    
     string line;
 
     while (getline(file >> ws, line) and game_data.file_good) {
