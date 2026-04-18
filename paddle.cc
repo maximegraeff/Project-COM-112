@@ -19,7 +19,7 @@
 Paddle::Paddle(double x_, double y_, double r_, double width_, 
                double l_dx_, double l_dy_)
       : Circle(x_, y_, r_), width(width_), paddle(x_, y_, r_),
-        last_delta(l_dx_, l_dy_), paddle_target_x(x_) {}
+        last_delta(l_dx_), paddle_target_x(x_) {}
 
 Paddle::~Paddle() {}
 
@@ -32,8 +32,7 @@ void Paddle::setCentrePaddle(double x_, double y_){
 }
 
 double Paddle::getLast_delta() const { // Dernier vecteur de déplacement
-    double x = last_delta.getCoordinate().first;
-    return x;
+    return last_delta;
 }
 
 std::pair<double,double> Paddle::getCenter_paddle() const { // Centre du Paddle
