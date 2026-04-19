@@ -271,8 +271,8 @@ bool My_window::loop()
 {
     if (loop_activated)
     {   
-        update_balls();
         update_paddle();
+        //update_balls();
         update_infos();
         drawing.queue_draw();
         return true;
@@ -350,7 +350,7 @@ void My_window::set_mouse_controller()
 void My_window::on_drawing_left_click(int n_press, double x, double y)
 {
     //cout << __func__ << endl; // TODO
-    if (game_data.lives > 0) {
+    /*if (game_data.lives > 0) {
         double x_p = game_data.paddle->getCenter_paddle().first;
         double y_p = game_data.paddle->getCenter_paddle().second;
         double r_p = game_data.paddle->getCircle().getRadius();
@@ -363,10 +363,10 @@ void My_window::on_drawing_left_click(int n_press, double x, double y)
             update_infos();
             drawing.queue_draw();
         }
-    }
+    }*/
 }
 
-bool My_window::new_ball_intersects(const Circle& new_ball) const {
+/*bool My_window::new_ball_intersects(const Circle& new_ball) const {
     for (const auto& brick : game_data.bricks) {
         if (brick and intersects(new_ball, brick->getRectangle())) {
             return true;
@@ -378,7 +378,7 @@ bool My_window::new_ball_intersects(const Circle& new_ball) const {
         }
     }
     return false;
-}
+}*/
 
 void My_window::on_drawing_move(double x_, double y_)
 {   
@@ -406,9 +406,7 @@ void My_window::update_paddle()
         x_t = max(w, min(arena_size - w, x_t));
 
         double dx = x_t - x;
-        if (abs(dx) > delta_norm_max) {
-            dx = delta_norm_max*dx/abs(dx);
-        }
+        dx = limit_delta(dx, 0).first;
         double temp_x = x + dx;
         // x le plus proche possible de x_t sans collision avec les briques
         double new_x = paddle_collision(x, temp_x, y, r, dx);
@@ -418,6 +416,13 @@ void My_window::update_paddle()
             drawing.queue_draw();
         }
     }
+}
+
+// Limite la norme du vecteur (dx, dy) à delta_norm_max
+pair<double, double> My_window::limit_delta(double dx, double dy) {
+    if (abs(dx) > delta_norm_max) dx = delta_norm_max*dx/abs(dx);
+    if (abs(dy) > delta_norm_max) dy = delta_norm_max*dy/abs(dy);
+    return {dx, dy};
 }
 
 double My_window::paddle_collision(double x, double temp_x, double y, double r, 
@@ -458,7 +463,7 @@ double My_window::paddle_collision(double x, double temp_x, double y, double r,
     }
 }
 
-void My_window::update_balls() {
+/*void My_window::update_balls() {
     if (game_data.balls.empty()) return;
     auto ball = game_data.balls.begin();
     while (ball != game_data.balls.end()) {
@@ -512,13 +517,6 @@ void My_window::update_balls() {
         ball->update_delta();
         ball->update_position();
     }
-}
-
-// Limite la norme du vecteur (dx, dy) à delta_norm_max
-pair<double, double> My_window::limit_delta(double dx, double dy) {
-    if (abs(dx) > delta_norm_max) dx = delta_norm_max*dx/abs(dx);
-    if (abs(dy) > delta_norm_max) dy = delta_norm_max*dy/abs(dy);
-    return {dx, dy};
 }
 
 pair<double, double> My_window::ball_collision(const unique_ptr<Ball>& ball, double dx,
@@ -628,5 +626,5 @@ pair<double, double> My_window::ball_circle_collision(double r, double dx, doubl
     double dy_ = dy + coeff*(dy_c - dy);
 
     return limit_delta(dx_, dy_);
-}
+}*/
  
