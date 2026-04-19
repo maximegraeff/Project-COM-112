@@ -13,6 +13,9 @@
 #include <cmath>
 #include <utility>
 
+constexpr double epsil_zero = 0.125;
+
+
 //--------------------------- Déclaration de la classe Point --------------------------
 
 class Point {
@@ -72,17 +75,16 @@ class Circle {
 //----------------------- Déclaration des fonctions intersect -------------------------
 
 // Intersection entre un cercle et un rectangle
-bool intersects(Circle c, Rectangle r);
+bool intersects(Circle c, Rectangle r, double e = epsil_zero);
 
 // Intersection entre deux cercles
-bool intersects(Circle c1, Circle c2);
+bool intersects(Circle c1, Circle c2, double e = epsil_zero);
 
 // Intersection entre deux rectangles
-bool intersects(Rectangle r1, Rectangle r2);
+bool intersects(Rectangle r1, Rectangle r2, double e = epsil_zero);
 
 // Controle si le rectangle est dans l'arène
-bool is_inside_arena(Rectangle r); 
-
+bool is_inside_arena(double x, double y, double w, double e = epsil_zero); 
 
 
 #endif
