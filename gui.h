@@ -48,12 +48,13 @@ private:
     
     void set_mouse_controller();
     void on_drawing_left_click(int n_press, double x, double y);
-    bool new_ball_intersects(const Circle& new_ball) const;
+    //bool new_ball_intersects(const Circle& new_ball) const;
     void on_drawing_move(double x, double y);
     void update_paddle();
-    double paddle_collision(double x, double temp_x, double y, double r, double dx);
-    void update_balls();
     pair<double, double> limit_delta(double dx, double dy);
+    double paddle_collision(double x, double temp_x, double y, double r, double dx);
+    
+    /*void update_balls();
     pair<double, double> ball_collision(const unique_ptr<Ball>& ball, double dx,
         double dy);
     pair<double, double> ball_bricks_collision(double x_b, double y_b, double r, 
@@ -61,7 +62,7 @@ private:
     pair<double, double> ball_paddle_collision(double x_b, double y_b, double r, 
         double dx, double dy);
     pair<double, double> ball_circle_collision(double r, double dx, double dy,
-        double r_c, double dx_, double dy_);
+        double r_c, double dx_, double dy_);*/
 };
 
 #endif

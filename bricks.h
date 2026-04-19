@@ -108,7 +108,7 @@ class SpltBrick : public Brick {
 
     private:
 
-        int split_count; //Nombre de nouvelle briques une fois que la brique est cassée
+        int split_count;
         int children_created; // Nombre de SpltBrick crées
         int current_color_i;
 };
