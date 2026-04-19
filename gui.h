@@ -53,16 +53,6 @@ private:
     void update_paddle();
     pair<double, double> limit_delta(double dx, double dy);
     double paddle_collision(double x, double temp_x, double y, double r, double dx);
-    
-    /*void update_balls();
-    pair<double, double> ball_collision(const unique_ptr<Ball>& ball, double dx,
-        double dy);
-    pair<double, double> ball_bricks_collision(double x_b, double y_b, double r, 
-        double dx, double dy, double x_brick, double y_brick, double w);
-    pair<double, double> ball_paddle_collision(double x_b, double y_b, double r, 
-        double dx, double dy);
-    pair<double, double> ball_circle_collision(double r, double dx, double dy,
-        double r_c, double dx_, double dy_);*/
 };
 
 #endif

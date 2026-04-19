@@ -28,6 +28,7 @@ using namespace std;
 // Structure de données globale pour stocker les données du jeu
 struct GameData {
         bool file_good = true;
+        bool last_file_good = true;
         int score = 0;
         int lives = 0;
         int nb_brick = 0;
