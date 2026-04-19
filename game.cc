@@ -54,6 +54,7 @@ void read(string filename)
     }
 
     // Données du fichier vérifiées et objets initialisés avec succès
+    game_data.last_file_good = game_data.file_good;
     if (game_data.file_good) cout << message::success() << endl;
     else reset_();
 }
