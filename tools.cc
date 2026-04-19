@@ -19,7 +19,6 @@ using namespace std;
 #define M_PI 3.14159265358979323846
 #endif
 
-constexpr double epsil_zero = 0.125;
 
 //--------------------------- Définition de la classe Point ---------------------------
 
@@ -27,9 +26,9 @@ std::pair<double,double> Point::getCoordinate() const { // Coordonées du point
     return {x, y};
 }
 
-Point::Point(double x_, double y_):x(x_), y(y_){}
+Point::Point(double x_, double y_):x(x_), y(y_) {}
 
-Point::~Point(){}
+Point::~Point() {}
 
 
 //------------------------- Définition de la classe Rectangle -------------------------
@@ -52,9 +51,9 @@ double Rectangle::surface() const {
 
 Rectangle::Rectangle(double x_, double y_, double length_, double width_)
         :centre(x_, y_), length(length_ >= 0 ? length_ : 0), 
-         width(width_ >= 0 ? width_ : 0){}
+         width(width_ >= 0 ? width_ : 0) {}
 
-Rectangle::~Rectangle(){}
+Rectangle::~Rectangle() {}
 
 
 //-------------------------- Définition de la classe Circle ---------------------------
@@ -71,21 +70,21 @@ double Circle::surface() const {
     return M_PI * pow(radius, 2);
 }
 
-void Circle::setCentre(double x_, double y_){
+void Circle::setCentre(double x_, double y_) {
     centre = Point(x_, y_);
 }
 
 Circle::Circle (double x_, double y_, double radius_)
-      :centre(x_, y_), radius(radius_ >= 0 ? radius_ : 0){}
+      :centre(x_, y_), radius(radius_ >= 0 ? radius_ : 0) {}
 
 
-Circle::~Circle(){}
+Circle::~Circle() {}
 
 
 //------------------------ Définition des fonctions intersect -------------------------
 
 // Intersection entre un cercle et un rectangle
-bool intersects(Circle c, Rectangle r){
+bool intersects(Circle c, Rectangle r, double e) {
 
     double x_c = c.getCentre().first;
     double y_c = c.getCentre().second;
@@ -103,13 +102,13 @@ bool intersects(Circle c, Rectangle r){
     double dy = y_c - closest_y;
     // Calcul de la distance entre le point precedent et le centre du cercle
 
-    if (sqrt(pow(dx, 2) + pow(dy, 2)) < sqrt(pow(r_c, 2)) - epsil_zero){
+    if (sqrt(pow(dx, 2) + pow(dy, 2)) - r_c < e){
         return true;
     } else return false;
 }
 
 // Intersection entre deux cercles
-bool intersects(Circle c1, Circle c2){
+bool intersects(Circle c1, Circle c2, double e) {
 
     double x1 = c1.getCentre().first;
     double y1 = c1.getCentre().second;
@@ -120,13 +119,13 @@ bool intersects(Circle c1, Circle c2){
 
     double dist_ctr = sqrt(pow(abs(x2 - x1), 2) + pow(abs(y2 - y1), 2));
 
-    if (dist_ctr < r1 + r2){ // Intersection si la distance entre les centres est 
+    if (dist_ctr - r1 - r2 < e){ // Intersection si la distance entre les centres est 
         return true;         // plus petite que la somme de leur rayons. 
-    } else { return false; }
+    } else return false;
 }
 
 // Intersection entre deux rectangles
-bool intersects(Rectangle r1, Rectangle r2){
+bool intersects(Rectangle r1, Rectangle r2, double e) {
 
     double x1 = r1.getCentre().first;
     double y1 = r1.getCentre().second;
@@ -142,22 +141,17 @@ bool intersects(Rectangle r1, Rectangle r2){
     double cx = (w1 + w2)/2;
     double cy = (l1 + l2)/2;
 
-    if ((dx < cx) && (dy < cy)){ //Intersection si les distances entre les deux centres 
+    if ((dx - cx < e) and (dy - cy < e)){ //Intersection si les distances entre les 
+                                          //deux centres 
         return true;             //sont inférieures aux moyennes de leurs côtés selon 
-    } else { return false; }     //x et y.
+    } else return false;      //x et y.
 }
 
-// Controle si le rectangle est dans l'arène
-bool is_inside_arena(Rectangle r){
-
-    double x = r.getCentre().first;
-    double y = r.getCentre().second;
-    double l = r.getLength();
-    double w = r.getWidth();
-
-    if (((x - w/2) >= epsil_zero) && ((x + w/2) <= arena_size) 
-        && ((y - l/2) >= epsil_zero) && ((y + l/2) <= arena_size)) {
+// Controle si l'objet est dans l'arène
+bool is_inside_arena(double x, double y, double w, double e) {
+    if (((x - w/2) >= e) and ((x + w/2) <= arena_size - e) 
+        and ((y - w/2) >= e) and ((y + w/2) <= arena_size - e)) {
         return true;
-    } else {return false;}
+    } else return false;
 }
 
