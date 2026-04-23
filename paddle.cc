@@ -18,7 +18,7 @@
 
 Paddle::Paddle(double x_, double y_, double r_, double width_, 
                double l_dx_, double l_dy_)
-      : Circle(x_, y_, r_), width(width_), paddle(x_, y_, r_),
+      : width(width_), paddle(x_, y_, r_),
         last_delta(l_dx_), paddle_target_x(x_) {}
 
 Paddle::~Paddle() {}

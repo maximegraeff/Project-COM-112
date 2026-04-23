@@ -20,7 +20,7 @@ using namespace std;
 //-------------------------- Déclaration de la classe Paddle --------------------------
 // Paddle consiruté d'un cercle dont le centre est hors de l'arène
 
-class Paddle : public Circle {
+class Paddle {
 
     public:
        
