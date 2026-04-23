@@ -45,8 +45,8 @@ My_window::My_window(string file_name)
     set_title("Brick Breaker");
     set_child(main_box);
     main_box.append(panel_box);
-    main_box.append(drawing_box);
-    drawing_box.append(drawing);
+    main_box.append(drawing);
+    // drawing_box.append(drawing);
     panel_box.append(command_box);
     panel_box.append(info_frame);
 
@@ -62,17 +62,17 @@ My_window::My_window(string file_name)
         update_infos();
     }
 
-    drawing_box.set_name("drawing-box");
+    // drawing_box.set_name("drawing-box");
 
-    auto css = Gtk::CssProvider::create();
-    css->load_from_data("#drawing-box { background-color: #888888; }");
-    Gtk::StyleContext::add_provider_for_display(
-        Gdk::Display::get_default(), css,
-        GTK_STYLE_PROVIDER_PRIORITY_USER
-    );
+    // auto css = Gtk::CssProvider::create();
+    // css->load_from_data("#drawing-box { background-color: #888888; }");
+    // Gtk::StyleContext::add_provider_for_display(
+    //     Gdk::Display::get_default(), css,
+    //     GTK_STYLE_PROVIDER_PRIORITY_USER
+    // );
 
-    drawing_box.set_hexpand_set(false);
-    drawing_box.set_vexpand_set(false);
+    // drawing_box.set_hexpand_set(false);
+    // drawing_box.set_vexpand_set(false);
 
 }
 void My_window::set_commands()
@@ -328,7 +328,7 @@ void My_window::update_infos()
 void My_window::on_draw(const Cairo::RefPtr<Cairo::Context> &cr, int width, int height)
 {
     graphic_set_context(cr);
-    double side(min(width, height));
+    double side(min(width, height)-10);
     cr->translate((width - side) / 2, (height + side) / 2);
     cr->scale(side / (arena_size), -side / (arena_size));
     draw_arena();
