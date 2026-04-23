@@ -29,6 +29,8 @@ enum Buttons
 
 constexpr unsigned drawing_size(500);
 
+//------------------------ Initialisation de l'interface ------------------------------
+
 My_window::My_window(string file_name)
     : main_box(Gtk::Orientation::HORIZONTAL),drawing_box(Gtk::Orientation::HORIZONTAL),
                                              panel_box(Gtk::Orientation::VERTICAL),
@@ -60,7 +62,6 @@ My_window::My_window(string file_name)
         update_infos();
     }
 
-    // Remplace le bloc CSS actuel par ceci :
     drawing_box.set_name("drawing-box");
 
     auto css = Gtk::CssProvider::create();
@@ -96,6 +97,42 @@ void My_window::set_commands()
     buttons[STEP].signal_clicked().connect(
         sigc::mem_fun(*this, &My_window::step_clicked));
 }
+
+void My_window::set_infos()
+{
+    info_frame.set_child(info_grid);
+    info_grid.set_column_homogeneous(true);
+    for (size_t i(0); i < info_text.size(); ++i)
+    {
+        info_grid.attach(info_text[i], 0, i, 1, 1);
+        info_grid.attach(info_value[i], 1, i, 1, 1);
+        info_text[i].set_halign(Gtk::Align::START);
+        info_value[i].set_halign(Gtk::Align::END);
+        info_text[i].set_margin(3);
+        info_value[i].set_margin(3);
+    }
+    update_infos();
+}
+
+void My_window::set_drawing()
+{
+    drawing.set_content_width(drawing_size);
+    drawing.set_content_height(drawing_size);
+    drawing.set_expand();
+    drawing.set_draw_func(sigc::mem_fun(*this, &My_window::on_draw));
+    drawing.set_margin(5);
+
+}
+
+void My_window::set_key_controller()
+{
+    auto contr = Gtk::EventControllerKey::create();
+    contr->signal_key_pressed().connect(sigc::mem_fun(*this, &My_window::key_pressed),
+                                        false);
+    add_controller(contr);
+}
+
+//------------------------- Fonctions de commande du jeu ------------------------------
 
 void My_window::exit_clicked()
 {
@@ -139,7 +176,7 @@ void My_window::start_clicked()
         buttons[START].set_label("start");
         buttons[STEP].set_sensitive(true);
     }
-    else // TODO: only if the game is not finished
+    else if (game_data.lives > 0 && game_data.nb_brick > 0 && game_data.nb_ball > 0)
     {
         loop_conn =
             Glib::signal_timeout().connect(sigc::mem_fun(*this, &My_window::loop), dt);
@@ -158,13 +195,7 @@ void My_window::step_clicked()
     loop_activated = !loop();
     cout << __func__ << endl;
 }
-void My_window::set_key_controller()
-{
-    auto contr = Gtk::EventControllerKey::create();
-    contr->signal_key_pressed().connect(sigc::mem_fun(*this, &My_window::key_pressed),
-                                        false);
-    add_controller(contr);
-}
+
 bool My_window::key_pressed(guint keyval, guint keycode, Gdk::ModifierType state)
 {
     switch (keyval)
@@ -183,6 +214,8 @@ bool My_window::key_pressed(guint keyval, guint keycode, Gdk::ModifierType state
     }
     return false;
 }
+
+//------------------------- Chargement du fichier du jeu  -----------------------------
 
 void My_window::set_dialog(Gtk::FileChooserDialog *dialog)
 {
@@ -268,6 +301,8 @@ void My_window::dialog_response(int response, Gtk::FileChooserDialog *dialog)
     }
 }
 
+//----------------------- Fonctions d'update de l'interface ---------------------------
+
 bool My_window::loop()
 {
     if (loop_activated)
@@ -281,22 +316,6 @@ bool My_window::loop()
     return false;
 }
 
-void My_window::set_infos()
-{
-    info_frame.set_child(info_grid);
-    info_grid.set_column_homogeneous(true);
-    for (size_t i(0); i < info_text.size(); ++i)
-    {
-        info_grid.attach(info_text[i], 0, i, 1, 1);
-        info_grid.attach(info_value[i], 1, i, 1, 1);
-        info_text[i].set_halign(Gtk::Align::START);
-        info_value[i].set_halign(Gtk::Align::END);
-        info_text[i].set_margin(3);
-        info_value[i].set_margin(3);
-    }
-    update_infos();
-}
-
 void My_window::update_infos()
 
 {
@@ -304,22 +323,6 @@ void My_window::update_infos()
     info_value[1].set_text(to_string(game_data.lives));
     info_value[2].set_text(to_string(game_data.nb_brick));
     info_value[3].set_text(to_string(game_data.nb_ball));
-}
-
-void My_window::set_drawing()
-{
-    drawing.set_content_width(drawing_size);
-    drawing.set_content_height(drawing_size);
-    drawing.set_expand();
-    drawing.set_draw_func(sigc::mem_fun(*this, &My_window::on_draw));
-    drawing.set_margin(5);
-
-    // drawing_box.set_halign(Gtk::Align::FILL);
-    // drawing_box.set_valign(Gtk::Align::FILL);
-    // drawing.set_halign(Gtk::Align::CENTER);
-    // drawing.set_valign(Gtk::Align::CENTER);
-
-
 }
 
 void My_window::on_draw(const Cairo::RefPtr<Cairo::Context> &cr, int width, int height)
