@@ -47,6 +47,7 @@ void draw_arc(const double x_, const double y_, const double r, const int c)
 }
 
 void draw_arena() {
+    draw_rectangles(arena_size / 2, arena_size / 2, arena_size+2, arena_size+2, 10);
     draw_rectangles(arena_size / 2, arena_size / 2, arena_size, arena_size, 9);
 }
 
