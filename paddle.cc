@@ -43,11 +43,11 @@ double Paddle::getWidth() const {
     return width;
 }
 
-void Paddle::draw_paddle() const {
+void Paddle::draw_paddle() const { // Fonction de dessin dans l'interface
     draw_arc(getCenter_paddle().first, getCenter_paddle().second, paddle.getRadius());
 }
 
-void Paddle::set_target_x(double x) {
+void Paddle::set_target_x(double x) { // Suivi du déplacement de la souris
     paddle_target_x = x;
 } 
 

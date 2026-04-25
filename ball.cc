@@ -44,6 +44,6 @@ bool Ball::is_in_arena() const { // S'assure que la balle est dans
     return (x >= 0) && (x <= arena_size) && (y >= 0) && (y <= arena_size);
 }
 
-void Ball::draw_ball() const {
+void Ball::draw_ball() const { // Fonction de dessin dans l'interface
     draw_circles(getCentre_ball().first, getCentre_ball().second, radius);
 }

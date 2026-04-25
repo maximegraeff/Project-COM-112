@@ -46,7 +46,6 @@ My_window::My_window(string file_name)
     set_child(main_box);
     main_box.append(panel_box);
     main_box.append(drawing);
-    // drawing_box.append(drawing);
     panel_box.append(command_box);
     panel_box.append(info_frame);
 
@@ -61,18 +60,6 @@ My_window::My_window(string file_name)
         read(last_read_file);
         update_infos();
     }
-
-    // drawing_box.set_name("drawing-box");
-
-    // auto css = Gtk::CssProvider::create();
-    // css->load_from_data("#drawing-box { background-color: #888888; }");
-    // Gtk::StyleContext::add_provider_for_display(
-    //     Gdk::Display::get_default(), css,
-    //     GTK_STYLE_PROVIDER_PRIORITY_USER
-    // );
-
-    // drawing_box.set_hexpand_set(false);
-    // drawing_box.set_vexpand_set(false);
 
 }
 void My_window::set_commands()

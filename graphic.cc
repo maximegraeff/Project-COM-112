@@ -18,6 +18,7 @@ void graphic_set_context(const Cairo::RefPtr<Cairo::Context> &cr)
     ptcr = &cr;
 }
 
+// Fonction de dessin d'un rectangle avec la librairie Cairo de GTKmm
 void draw_rectangles(const double x_, const double y_, const double length,
                      const double width, const int hp)
 {
@@ -27,6 +28,7 @@ void draw_rectangles(const double x_, const double y_, const double length,
     (*ptcr)->fill();
 }
 
+// Fonction de dessin d'un disque avec la librairie Cairo de GTKmm
 void draw_circles(const double x_, const double y_, const double r, const int c)
 {
     if (!ptcr or !*ptcr) return;  // protection si ptcr est nullptr
@@ -35,6 +37,7 @@ void draw_circles(const double x_, const double y_, const double r, const int c)
     (*ptcr)->fill();
 }
 
+// Fonction de dessin d'un cercle avec la librairie Cairo de GTKmm
 void draw_arc(const double x_, const double y_, const double r, const int c)
 {
     if (!ptcr or !*ptcr) return;  // protection si ptcr est nullptr
@@ -46,6 +49,8 @@ void draw_arc(const double x_, const double y_, const double r, const int c)
     (*ptcr)->stroke();
 }
 
+
+// Fonction de dessin de l'arène avec sa bordure grise
 void draw_arena() {
     draw_rectangles(arena_size / 2, arena_size / 2, arena_size+1, arena_size+1, 10);
     draw_rectangles(arena_size / 2, arena_size / 2, arena_size, arena_size, 9);

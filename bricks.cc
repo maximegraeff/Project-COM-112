@@ -61,7 +61,7 @@ int RwBrick::getType() const {
     return 0;
 }
 
-void RwBrick::draw_brick() const {
+void RwBrick::draw_brick() const { // Fonction de dessin dans l'interface
     draw_rectangles(brick.getCentre().first, brick.getCentre().second,
                     brick.getLength(), brick.getWidth(), current_color_i);
 }
@@ -91,7 +91,7 @@ int BallBrick::getType() const {
     return 1;
 }
 
-void BallBrick::draw_brick() const {
+void BallBrick::draw_brick() const { // Fonction de dessin dans l'interface
     draw_rectangles(brick.getCentre().first, brick.getCentre().second, 
                     brick.getLength(), brick.getWidth());
     draw_circles(brick.getCentre().first, brick.getCentre().second, new_ball_radius);
@@ -127,7 +127,7 @@ int SpltBrick::getType() const {
     return 2;
 }
 
-void SpltBrick::draw_brick() const {
+void SpltBrick::draw_brick() const { // Fonction de dessin dans l'interface
     draw_rectangles(brick.getCentre().first, brick.getCentre().second, 
                     brick.getLength(), brick.getWidth(), current_color_i); 
 
