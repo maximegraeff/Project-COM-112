@@ -347,7 +347,7 @@ void save_game(GameData& data, string& file_name){
             cout << "Error: Unable to open the backup file" << endl;
     }
     else{
-        // Score & lives
+        // Score et lives
         out << "# score\n" << data.score << "\n";
         out << "# lives\n" << data.lives << "\n";
 
@@ -361,7 +361,7 @@ void save_game(GameData& data, string& file_name){
                         << paddle_circle.getRadius() << "\n";
         }
 
-        // Bricks
+        // Briques
         out << "# bricks\n";
         out << data.bricks.size() << "\n";
         for (const auto& b : data.bricks) {
@@ -374,7 +374,7 @@ void save_game(GameData& data, string& file_name){
                 out << "\n";
         }
 
-        // Balls
+        // Balles
         out << "# balls\n";
         out << data.balls.size() << "\n";
         for (const auto& b : data.balls) {
