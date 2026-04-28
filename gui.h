@@ -50,9 +50,6 @@ private:
     void on_drawing_left_click(int n_press, double x, double y);
     //bool new_ball_intersects(const Circle& new_ball) const;
     void on_drawing_move(double x, double y);
-    void update_paddle();
-    pair<double, double> limit_delta(double dx, double dy);
-    double paddle_collision(double x, double temp_x, double y, double r, double dx);
 };
 
 #endif

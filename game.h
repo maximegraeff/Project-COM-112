@@ -17,6 +17,7 @@
 #include <vector>
 #include <memory>
 #include <cmath>
+#include <gtkmm/drawingarea.h>
 #include "message.h"
 #include "constants.h"
 #include "bricks.h"
@@ -24,6 +25,7 @@
 #include "paddle.h"
 
 using namespace std;
+using namespace Gtk;
 
 // Structure de données globale pour stocker les données du jeu
 struct GameData {
@@ -33,8 +35,6 @@ struct GameData {
         int lives = 0;
         int nb_brick = 0;
         int nb_ball = 0;
-        int brick_count = 0;
-        int ball_count = 0;
         unique_ptr<Paddle> paddle;
         vector<unique_ptr<Brick>> bricks;
         vector<unique_ptr<Ball>> balls;
@@ -56,7 +56,7 @@ void file_error();
 
 // Fonction redirigeant vers la fonction d'initialisation de l'objet correspondant 
 // à l'étape de lecture
-void use_data(string line, GameData& data);
+void use_data(string line);
 
 // Fonction de vérification et d'initialisation du score
 void score_init(int score);
@@ -68,16 +68,16 @@ void lives_init(int lives);
 void paddle_init(string line);
 
 // Fonction d'initialisation du nombre de bricks
-void nb_brick_init(int brick_nb, GameData& data);
+void nb_brick_init(int brick_nb);
 
 // Fonction de vérification des données et d'initialisation de la brick
-void brick_init(string line, GameData& data);
+void brick_init(string line);
 
 // Fonction d'initialisation du nombre de balls
-void nb_ball_init(int ball_nb, GameData& data);
+void nb_ball_init(int ball_nb);
 
 // Fonction de vérification des données et d'initialisation de la ball
-void ball_init(string line, GameData& data);
+void ball_init(string line);
 
 // Fonction de vérification des données de la brick
 void is_brick_good(double x, double y, double size, int type, int hit_points);
@@ -87,16 +87,24 @@ void is_ball_good(double x, double y, double radius, double delta_x, double delt
 
 // Fonction de vérification de l'absence de collision entre la brick et les autres 
 // objets
-void intersects_rectangle(Rectangle r, GameData& data);
+void intersects_rectangle(Rectangle r);
 
 // Fonction de vérification de l'absence de collision entre la ball et les autres 
 // objets
-void intersects_circle(Circle c, GameData& data);
+void intersects_circle(Circle c);
 
 // Fonction d'initialisation de la brick en fonction de son type
 void set_brick(double x, double y, double size, int type, int hit_points);
 
 // Fonction d'écriture et de sauvegarde du fichier
-void save_game(GameData& data, string& file_name);
+void save_game(string& file_name);
+
+void update_game(DrawingArea& drawing);
+
+void update_paddle(DrawingArea& drawing);
+
+pair<double, double> limit_delta(double dx, double dy);
+
+double paddle_collision(double x, double temp_x, double y, double r, double dx);
 
 #endif

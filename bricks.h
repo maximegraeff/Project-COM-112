@@ -27,6 +27,7 @@ class Brick {
     public:
     
         Rectangle getRectangle() const;
+        static int get_brick_count();
         virtual int getType() const = 0;
         virtual int getHitPoints() const = 0;
         virtual void draw_brick() const = 0;
@@ -36,7 +37,8 @@ class Brick {
         virtual ~Brick();
 
     protected:
-
+        
+        static int count;
         Rectangle brick; 
         int hp; // hit_point de la brick en question
         bool is_destroyed; 
@@ -85,7 +87,6 @@ class BallBrick : public Brick {
 
     private:
             
-        Ball ball_inside;
 };
 
 
@@ -107,7 +108,7 @@ class SpltBrick : public Brick {
         ~SpltBrick();
 
     private:
-
+        
         int split_count;
         int children_created; // Nombre de SpltBrick crées
         int current_color_i;

@@ -21,12 +21,18 @@
 Ball::Ball(double x_, double y_, double radius_, double dx_, double dy_, 
            bool is_destroyed_)
     : radius(radius_), is_destroyed(is_destroyed_),
-      ball(x_, y_, radius_), delta(dx_, dy_), bounces(0), delta_temp(dx_,dy_){}
+      ball(x_, y_, radius_), delta(dx_, dy_), bounces(0), delta_temp(dx_,dy_){count++;}
 
-Ball::~Ball(){}
+Ball::~Ball(){count--;}
+
+int Ball::count(0);
 
 Circle Ball::getCircle() const {
     return Circle(ball);
+}
+
+int Ball::get_ball_count() {
+    return count;
 }
 
 std::pair<double,double> Ball::getCentre_ball() const {

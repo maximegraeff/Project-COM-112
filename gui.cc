@@ -62,6 +62,7 @@ My_window::My_window(string file_name)
     }
 
 }
+
 void My_window::set_commands()
 {
     for (auto &button : buttons)
@@ -163,7 +164,8 @@ void My_window::start_clicked()
         buttons[START].set_label("start");
         buttons[STEP].set_sensitive(true);
     }
-    else if (game_data.lives > 0 && game_data.nb_brick > 0 && game_data.nb_ball > 0)
+    else if (game_data.lives > 0 && Brick::get_brick_count() > 0 
+             && Ball::get_ball_count() > 0)
     {
         loop_conn =
             Glib::signal_timeout().connect(sigc::mem_fun(*this, &My_window::loop), dt);
@@ -277,7 +279,7 @@ void My_window::dialog_response(int response, Gtk::FileChooserDialog *dialog)
             }
             if (!save_path.empty()){
                 cout << "save file " << save_path << endl;
-                save_game(game_data, save_path);
+                save_game(save_path);
                 drawing.queue_draw();
                 dialog->hide();
             }
@@ -294,7 +296,7 @@ bool My_window::loop()
 {
     if (loop_activated)
     {   
-        update_paddle();
+        update_game(drawing);
         update_infos();
         drawing.queue_draw();
         return true;
@@ -307,8 +309,8 @@ void My_window::update_infos()
 {
     info_value[0].set_text(to_string(game_data.score));
     info_value[1].set_text(to_string(game_data.lives));
-    info_value[2].set_text(to_string(game_data.nb_brick));
-    info_value[3].set_text(to_string(game_data.nb_ball));
+    info_value[2].set_text(to_string(Brick::get_brick_count()));
+    info_value[3].set_text(to_string(Ball::get_ball_count()));
 }
 
 void My_window::on_draw(const Cairo::RefPtr<Cairo::Context> &cr, int width, int height)
@@ -350,77 +352,5 @@ void My_window::on_drawing_move(double x_, double y_)
         double side = std::min(width, height);
         
         game_data.paddle->set_target_x((x_ - (width - side)/2) * arena_size/side);
-    }
-}
-
-void My_window::update_paddle()
-{   
-    if (game_data.paddle) {
-        int width = drawing.get_width();
-        int height = drawing.get_height();
-        double side = std::min(width, height);
-        double x_t = game_data.paddle->get_target_x();
-        double x = game_data.paddle->getCenter_paddle().first;
-        double y = game_data.paddle->getCenter_paddle().second;
-        double w = game_data.paddle->getWidth();
-        double r = game_data.paddle->getCircle().getRadius();
-    
-        x_t = max(w, min(arena_size - w, x_t));
-
-        double dx = x_t - x;
-        dx = limit_delta(dx, 0).first;
-        double temp_x = x + dx;
-        // x le plus proche possible de x_t sans collision avec les briques
-        double new_x = paddle_collision(x, temp_x, y, r, dx);
-
-        if (new_x != x) {
-            game_data.paddle->setCentrePaddle(new_x, y);
-            drawing.queue_draw();
-        }
-    }
-}
-
-// Limite la norme du vecteur (dx, dy) à delta_norm_max
-pair<double, double> My_window::limit_delta(double dx, double dy) {
-    if (abs(dx) > delta_norm_max) dx = delta_norm_max*dx/abs(dx);
-    if (abs(dy) > delta_norm_max) dy = delta_norm_max*dy/abs(dy);
-    return {dx, dy};
-}
-
-double My_window::paddle_collision(double x, double temp_x, double y, double r, 
-                                   double dx) {
-    
-    Circle new_paddle_circle(temp_x, y, r);
-    bool collision = false;
-    for (const auto& brick : game_data.bricks) {
-        if (brick and intersects(new_paddle_circle, brick->getRectangle())) {
-            collision = true;
-            break;
-        }
-    }
-
-    if (collision) {
-        double step = 0;
-        if (dx > 0) step = 0.1;
-        else step = -0.1;
-        double best_x = x;
-        double test_x = x + step;
-        while (abs(test_x - x) <= abs(dx)) {
-            Circle test_circle(test_x, y, r);
-            bool hit = false;
-            for (const auto& brick : game_data.bricks) {
-                if (brick and intersects(test_circle, brick->getRectangle())) {
-                    hit = true;
-                    break;
-                }
-            }
-            if (hit) break;
-            best_x = test_x;
-            test_x += step;
-        }
-        return best_x;
-    }
-    else {
-        return temp_x;
     }
 }
