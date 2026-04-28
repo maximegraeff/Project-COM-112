@@ -14,6 +14,7 @@
 #include <vector>
 #include <cmath>
 #include <memory>
+#include <gtkmm/drawingarea.h>
 #include "message.h"
 #include "constants.h"
 #include "game.h"
@@ -22,6 +23,7 @@
 #include "paddle.h"
 
 using namespace std;
+using namespace Gtk;
 
 static unsigned object(SCORE);
 
@@ -49,7 +51,7 @@ void read(string filename)
     while (getline(file >> ws, line) and game_data.file_good) {
 
         if(line[0]=='#') continue;
-        use_data(line, game_data);
+        use_data(line);
         
     }
 
@@ -67,8 +69,6 @@ void reset_()
     game_data.lives = 0;
     game_data.nb_brick = 0;
     game_data.nb_ball = 0;
-    game_data.brick_count = 0;
-    game_data.ball_count = 0;
     game_data.paddle.reset();
     game_data.bricks.clear();
     game_data.balls.clear();
@@ -81,7 +81,7 @@ void file_error()
 
 // Redirection vers la fonction d'initialisation de l'objet correspondant 
 // à l'étape de lecture
-void use_data(string line, GameData& game_data)
+void use_data(string line)
 {
     switch (object)
     {
@@ -91,13 +91,13 @@ void use_data(string line, GameData& game_data)
 
         case PADDLE: paddle_init(line); break;
 
-        case BRICK: nb_brick_init(stoi(line), game_data); break;
+        case BRICK: nb_brick_init(stoi(line)); break;
 
-        case CO_BRICK: brick_init(line, game_data); break;
+        case CO_BRICK: brick_init(line); break;
 
-        case BALL: nb_ball_init(stoi(line), game_data); break;
+        case BALL: nb_ball_init(stoi(line)); break;
 
-        case CO_BALL: ball_init(line, game_data); break;
+        case CO_BALL: ball_init(line); break;
 
         case END: break;
 
@@ -151,7 +151,7 @@ void paddle_init(string line)
 }
 
 // Initialisation du nombre de bricks
-void nb_brick_init(int brick_nb, GameData& game_data)
+void nb_brick_init(int brick_nb)
 {
     game_data.nb_brick = brick_nb;
 
@@ -162,7 +162,7 @@ void nb_brick_init(int brick_nb, GameData& game_data)
 }
 
 // Vérification des données et initialisation de la brick
-void brick_init(string line, GameData& game_data)
+void brick_init(string line)
 {   
     istringstream passor(line);
     double x, y, size;
@@ -177,19 +177,18 @@ void brick_init(string line, GameData& game_data)
     Rectangle brick(x, y, size, size);
 
     // Vérification des colisions
-    intersects_rectangle(brick, game_data);
+    intersects_rectangle(brick);
 
     // Initialisation de la brick
     set_brick(x, y, size, type, hit_points);
 
     // Vérification du nombre de bricks et passage à la lecture des données des balls 
     // s'il n'y a plus de brick à initialiser
-    game_data.brick_count++;
-    if (game_data.brick_count == game_data.nb_brick) object = BALL;
+    if (Brick::get_brick_count() == game_data.nb_brick) object = BALL;
 }
 
 // Initialisation du nombre de balls
-void nb_ball_init(int ball_nb, GameData& game_data)
+void nb_ball_init(int ball_nb)
 {
     game_data.nb_ball = ball_nb;
 
@@ -200,7 +199,7 @@ void nb_ball_init(int ball_nb, GameData& game_data)
 }
 
 // Vérification des données de la ball et initialisation de la ball
-void ball_init(string line, GameData& game_data)
+void ball_init(string line)
 {
     istringstream passor(line);
     double x, y, radius, delta_x, delta_y;
@@ -214,11 +213,10 @@ void ball_init(string line, GameData& game_data)
     Circle ball(x, y, radius);
 
     // Vérification des colisions
-    intersects_circle(ball, game_data);
+    intersects_circle(ball);
 
     // Initialisation de la ball
     game_data.balls.push_back(make_unique<Ball>(x, y, radius, delta_x, delta_y));
-    game_data.ball_count++;
 }
 
 //-------------------------- Fonctions de vérification --------------------------------
@@ -275,17 +273,17 @@ void is_ball_good(double x, double y, double radius, double delta_x, double delt
 
 // Vérification de l'absence de collision entre la brick et les autres objets 
 // déjà initialisés
-void intersects_rectangle(Rectangle r, GameData& game_data)
+void intersects_rectangle(Rectangle r)
 {   
     // Vérification de l'absence de collision avec le paddle
     if (game_data.paddle and intersects(game_data.paddle->getCircle(), r, 0)) {
-        cout << message::collision_paddle_brick(game_data.brick_count) << endl;
+        cout << message::collision_paddle_brick(Brick::get_brick_count()) << endl;
         file_error();
     }
     // Vérification de l'absence de collision avec les autres bricks 
-    for (int j = 0; j < game_data.brick_count; j++) {
+    for (size_t j = 0; j < game_data.bricks.size(); j++) {
         if (intersects(r, game_data.bricks[j]->getRectangle(), 0)) {   
-            cout << message::collision_bricks(game_data.brick_count, j) << endl;
+            cout << message::collision_bricks(Brick::get_brick_count(), j) << endl;
             file_error();
         }
     }
@@ -293,24 +291,24 @@ void intersects_rectangle(Rectangle r, GameData& game_data)
 
 // Vérification de l'absence de collision entre la ball et les autres objets 
 // déjà initialisés
-void intersects_circle(Circle c, GameData& game_data)
+void intersects_circle(Circle c)
 {   
     // Vérification de l'absence de collision avec le paddle
     if (game_data.paddle and intersects(c, game_data.paddle->getCircle(), 0)) {
-        cout << message::collision_paddle_ball(game_data.ball_count) << endl;
+        cout << message::collision_paddle_ball(Ball::get_ball_count()) << endl;
         file_error();
     }
     // Vérification de l'absence de collision avec les bricks 
-    for (int j = 0; j < game_data.brick_count; j++) {
+    for (size_t j = 0; j < game_data.bricks.size(); j++) {
         if (intersects(c, game_data.bricks[j]->getRectangle(), 0)) {   
-            cout << message::collision_ball_brick(game_data.ball_count, j) << endl;
+            cout << message::collision_ball_brick(Ball::get_ball_count(), j) << endl;
             file_error();
         }
     }
     // Vérification de l'absence de collision avec les autres balls
-    for (int i = 0; i < game_data.ball_count; i++) {
+    for (size_t i = 0; i < game_data.balls.size(); i++) {
         if (intersects(c, game_data.balls[i]->getCircle(), 0)) {   
-            cout << message::collision_balls(game_data.ball_count, i) << endl;
+            cout << message::collision_balls(Ball::get_ball_count(), i) << endl;
             file_error();
         }
     }
@@ -339,7 +337,7 @@ void set_brick(double x, double y, double size, int type, int hit_points) {
 
 // Ecriture d'un fichier pour la sauvegarde du jeu
 
-void save_game(GameData& data, string& file_name){
+void save_game(string& file_name){
 
     ofstream out(file_name);
 
@@ -348,14 +346,14 @@ void save_game(GameData& data, string& file_name){
     }
     else{
         // Score et lives
-        out << "# score\n" << data.score << "\n";
-        out << "# lives\n" << data.lives << "\n";
+        out << "# score\n" << game_data.score << "\n";
+        out << "# lives\n" << game_data.lives << "\n";
 
         // Paddle
         out << "# paddle\n";
-        if (data.paddle)
+        if (game_data.paddle)
         {
-            const Circle paddle_circle = data.paddle->getCircle();
+            const Circle paddle_circle = game_data.paddle->getCircle();
             const auto paddle_center = paddle_circle.getCentre();
             out << paddle_center.first << " " << paddle_center.second << " "
                         << paddle_circle.getRadius() << "\n";
@@ -363,8 +361,8 @@ void save_game(GameData& data, string& file_name){
 
         // Briques
         out << "# bricks\n";
-        out << data.bricks.size() << "\n";
-        for (const auto& b : data.bricks) {
+        out << Brick::get_brick_count() << "\n";
+        for (const auto& b : game_data.bricks) {
             const Rectangle brick_rect = b->getRectangle();
             const auto brick_center = brick_rect.getCentre();
             out << b->getType() << " " << brick_center.first << " "
@@ -376,8 +374,8 @@ void save_game(GameData& data, string& file_name){
 
         // Balles
         out << "# balls\n";
-        out << data.balls.size() << "\n";
-        for (const auto& b : data.balls) {
+        out << Ball::get_ball_count() << "\n";
+        for (const auto& b : game_data.balls) {
             const Circle ball_circle = b->getCircle();
             const auto ball_center = ball_circle.getCentre();
             const auto delta = b->getDeltaVector();
@@ -385,5 +383,77 @@ void save_game(GameData& data, string& file_name){
                         << ball_circle.getRadius() << " " << delta.first << " "
                         << delta.second << "\n";
         } 
+    }
+}
+
+void update_game(DrawingArea& drawing) {
+    update_paddle(drawing);
+}
+
+void update_paddle(DrawingArea& drawing) {   
+    if (game_data.paddle) {
+        double x_t = game_data.paddle->get_target_x();
+        double x = game_data.paddle->getCenter_paddle().first;
+        double y = game_data.paddle->getCenter_paddle().second;
+        double w = game_data.paddle->getWidth();
+        double r = game_data.paddle->getCircle().getRadius();
+    
+        x_t = max(w, min(arena_size - w, x_t));
+
+        double dx = x_t - x;
+        dx = limit_delta(dx, 0).first;
+        double temp_x = x + dx;
+        // x le plus proche possible de x_t sans collision avec les briques
+        double new_x = paddle_collision(x, temp_x, y, r, dx);
+
+        if (new_x != x) {
+            game_data.paddle->setCentrePaddle(new_x, y);
+            drawing.queue_draw();
+        }
+    }
+}
+
+// Limite la norme du vecteur (dx, dy) à delta_norm_max
+pair<double, double> limit_delta(double dx, double dy) {
+    if (abs(dx) > delta_norm_max) dx = delta_norm_max*dx/abs(dx);
+    if (abs(dy) > delta_norm_max) dy = delta_norm_max*dy/abs(dy);
+    return {dx, dy};
+}
+
+double paddle_collision(double x, double temp_x, double y, double r, 
+                                   double dx) {
+    
+    Circle new_paddle_circle(temp_x, y, r);
+    bool collision = false;
+    for (const auto& brick : game_data.bricks) {
+        if (brick and intersects(new_paddle_circle, brick->getRectangle())) {
+            collision = true;
+            break;
+        }
+    }
+
+    if (collision) {
+        double step = 0;
+        if (dx > 0) step = 0.1;
+        else step = -0.1;
+        double best_x = x;
+        double test_x = x + step;
+        while (abs(test_x - x) <= abs(dx)) {
+            Circle test_circle(test_x, y, r);
+            bool hit = false;
+            for (const auto& brick : game_data.bricks) {
+                if (brick and intersects(test_circle, brick->getRectangle())) {
+                    hit = true;
+                    break;
+                }
+            }
+            if (hit) break;
+            best_x = test_x;
+            test_x += step;
+        }
+        return best_x;
+    }
+    else {
+        return temp_x;
     }
 }

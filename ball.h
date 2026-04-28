@@ -24,6 +24,7 @@ class Ball {
     public:
     
         Circle getCircle() const;
+        static int get_ball_count();
         pair<double,double> getCentre_ball() const;
         pair<double,double> getDeltaVector() const;
         bool is_in_arena() const;
@@ -35,6 +36,7 @@ class Ball {
        
     private:
         
+        static int count;
         int bounces;
         double radius;
         bool is_destroyed;

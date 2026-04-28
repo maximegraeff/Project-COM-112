@@ -22,12 +22,18 @@
 Brick::Brick(double x_, double y_, double length_, double width_,
              int hp_, bool is_destroyed_)
     : brick(x_, y_, length_, width_), hp(hp_),
-      is_destroyed(is_destroyed_) {}
+      is_destroyed(is_destroyed_) {count++;}
 
-Brick::~Brick(){}
+Brick::~Brick(){count--;}
+
+int Brick::count(0);
 
 Rectangle Brick::getRectangle() const {
     return Rectangle(brick);
+}
+
+int Brick::get_brick_count() {
+    return count;
 }
 
 int Brick::getType() const {
@@ -45,7 +51,7 @@ int Brick::getHitPoints() const {
 
 RwBrick::RwBrick(double x_, double y_, double length_, double width_, int hp_,
                  bool is_destroyed_, int current_color_i_)
-        : Brick(0,0,0,0, hp_, is_destroyed_), 
+        : Brick(x_, y_ , length_, width_, hp_, is_destroyed_), 
         current_color_i(current_color_i_){
              
     if ((width_ >= brick_size_min) && (length_ >= brick_size_min)){
@@ -77,8 +83,7 @@ int RwBrick::getHitPoints() const {
 BallBrick::BallBrick(double x_, double y_, double length_, double width_, 
                   bool is_destroyed_, double b_radius_, double dx_, double dy_, 
                   bool is_b_destroyed_)
-         : Brick(0, 0, 0, 0, is_destroyed_), ball_inside(x_, x_, b_radius_, 
-                 dx_, dy_, is_b_destroyed_){
+         : Brick(x_, y_, length_, width_, is_destroyed_) {
     if ((width_ >= brick_size_min) && (length_ >= brick_size_min)){
         brick = Rectangle(x_, y_, length_, width_); 
     }
@@ -110,7 +115,7 @@ int BallBrick::getHitPoints() const {
 SpltBrick::SpltBrick(double x_, double y_, double length_, double width_,
                 bool is_destroyed_, int split_count_, 
                 int children_created_, int current_color_i_)
-          : Brick(0,0,0,0, is_destroyed_), split_count(split_count_), 
+          : Brick(x_, y_, length_, width_, is_destroyed_), split_count(split_count_), 
             children_created(children_created_), current_color_i(current_color_i_){
 
         if ((width_ >= brick_size_min) && (length_ >= brick_size_min)){
