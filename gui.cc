@@ -295,7 +295,6 @@ bool My_window::loop()
     if (loop_activated)
     {   
         update_paddle();
-        //update_balls();
         update_infos();
         drawing.queue_draw();
         return true;
