@@ -86,39 +86,6 @@ void My_window::set_commands()
         sigc::mem_fun(*this, &My_window::step_clicked));
 }
 
-void My_window::set_infos()
-{
-    info_frame.set_child(info_grid);
-    info_grid.set_column_homogeneous(true);
-    for (size_t i(0); i < info_text.size(); ++i)
-    {
-        info_grid.attach(info_text[i], 0, i, 1, 1);
-        info_grid.attach(info_value[i], 1, i, 1, 1);
-        info_text[i].set_halign(Gtk::Align::START);
-        info_value[i].set_halign(Gtk::Align::END);
-        info_text[i].set_margin(3);
-        info_value[i].set_margin(3);
-    }
-    update_infos();
-}
-
-void My_window::set_drawing()
-{
-    drawing.set_content_width(drawing_size);
-    drawing.set_content_height(drawing_size);
-    drawing.set_expand();
-    drawing.set_draw_func(sigc::mem_fun(*this, &My_window::on_draw));
-    drawing.set_margin(5);
-
-}
-
-void My_window::set_key_controller()
-{
-    auto contr = Gtk::EventControllerKey::create();
-    contr->signal_key_pressed().connect(sigc::mem_fun(*this, &My_window::key_pressed),
-                                        false);
-    add_controller(contr);
-}
 
 //------------------------- Fonctions de commande du jeu ------------------------------
 
@@ -153,6 +120,8 @@ void My_window::restart_clicked()
 void My_window::start_clicked()
 {
     cout << __func__ << endl;
+    cout << Brick::get_brick_count() << " "<<  Ball::get_ball_count() << endl;
+    cout << loop_activated << endl;
     if (loop_activated)
     {
         loop_conn.disconnect();
@@ -163,9 +132,11 @@ void My_window::start_clicked()
         buttons[RESTART].set_sensitive(true);
         buttons[START].set_label("start");
         buttons[STEP].set_sensitive(true);
+        cout << "if" << endl;
     }
-    else if (game_data.lives > 0 && Brick::get_brick_count() > 0 
-             && Ball::get_ball_count() > 0)
+    else if ((game_data.lives > 0 or Ball::get_ball_count() > 0) 
+            && Brick::get_brick_count() > 0 ) // La section 6.4 pas encore implémentée
+            // IL n'y a pas de création de balle si ball_count == 0 et lives > 0
     {
         loop_conn =
             Glib::signal_timeout().connect(sigc::mem_fun(*this, &My_window::loop), dt);
@@ -176,6 +147,7 @@ void My_window::start_clicked()
         buttons[RESTART].set_sensitive(false);
         buttons[START].set_label("stop");
         buttons[STEP].set_sensitive(false);
+        cout << " elif " << endl;
     }
 }
 void My_window::step_clicked()
@@ -183,6 +155,16 @@ void My_window::step_clicked()
     loop_activated = true;
     loop_activated = !loop();
     cout << __func__ << endl;
+}
+
+
+
+void My_window::set_key_controller()
+{
+    auto contr = Gtk::EventControllerKey::create();
+    contr->signal_key_pressed().connect(sigc::mem_fun(*this, &My_window::key_pressed),
+                                        false);
+    add_controller(contr);
 }
 
 bool My_window::key_pressed(guint keyval, guint keycode, Gdk::ModifierType state)
@@ -304,6 +286,22 @@ bool My_window::loop()
     return false;
 }
 
+void My_window::set_infos()
+{
+    info_frame.set_child(info_grid);
+    info_grid.set_column_homogeneous(true);
+    for (size_t i(0); i < info_text.size(); ++i)
+    {
+        info_grid.attach(info_text[i], 0, i, 1, 1);
+        info_grid.attach(info_value[i], 1, i, 1, 1);
+        info_text[i].set_halign(Gtk::Align::START);
+        info_value[i].set_halign(Gtk::Align::END);
+        info_text[i].set_margin(3);
+        info_value[i].set_margin(3);
+    }
+    update_infos();
+}
+
 void My_window::update_infos()
 
 {
@@ -311,6 +309,16 @@ void My_window::update_infos()
     info_value[1].set_text(to_string(game_data.lives));
     info_value[2].set_text(to_string(Brick::get_brick_count()));
     info_value[3].set_text(to_string(Ball::get_ball_count()));
+}
+
+void My_window::set_drawing()
+{
+    drawing.set_content_width(drawing_size);
+    drawing.set_content_height(drawing_size);
+    drawing.set_expand();
+    drawing.set_draw_func(sigc::mem_fun(*this, &My_window::on_draw));
+    drawing.set_margin(5);
+
 }
 
 void My_window::on_draw(const Cairo::RefPtr<Cairo::Context> &cr, int width, int height)
@@ -342,6 +350,14 @@ void My_window::set_mouse_controller()
 void My_window::on_drawing_left_click(int n_press, double x, double y)
 {
     cout << __func__ << endl;
+
+    if (Ball::get_ball_count() == 0 && game_data.lives > 0)
+    {
+        game_data.lives -= 1;
+        loop_activated = true;
+        drawing.queue_draw();
+        update_infos();
+    }
 }
 
 void My_window::on_drawing_move(double x_, double y_)
