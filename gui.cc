@@ -63,6 +63,7 @@ My_window::My_window(string file_name)
 
 }
 
+// Création des boutons de contrôle du jeu
 void My_window::set_commands()
 {
     for (auto &button : buttons)
@@ -86,13 +87,69 @@ void My_window::set_commands()
         sigc::mem_fun(*this, &My_window::step_clicked));
 }
 
+// Fonction de détection des clicks de la souris
+void My_window::set_key_controller()
+{
+    auto contr = Gtk::EventControllerKey::create();
+    contr->signal_key_pressed().connect(sigc::mem_fun(*this, &My_window::key_pressed),
+                                        false);
+    add_controller(contr);
+}
+
+// Initialisation de l'affichage des infos
+void My_window::set_infos()
+{
+    info_frame.set_child(info_grid);
+    info_grid.set_column_homogeneous(true);
+    for (size_t i(0); i < info_text.size(); ++i)
+    {
+        info_grid.attach(info_text[i], 0, i, 1, 1);
+        info_grid.attach(info_value[i], 1, i, 1, 1);
+        info_text[i].set_halign(Gtk::Align::START);
+        info_value[i].set_halign(Gtk::Align::END);
+        info_text[i].set_margin(3);
+        info_value[i].set_margin(3);
+    }
+    update_infos();
+}
+
+
+// Initialisation de la zone d'affichage des instances du jeu
+void My_window::set_drawing()
+{
+    drawing.set_content_width(drawing_size);
+    drawing.set_content_height(drawing_size);
+    drawing.set_expand();
+    drawing.set_draw_func(sigc::mem_fun(*this, &My_window::on_draw));
+    drawing.set_margin(5);
+
+}
+
+// Fonction de détecttion du mouvement de la souris
+void My_window::set_mouse_controller()
+{
+    auto left_click = Gtk::GestureClick::create();
+    auto move = Gtk::EventControllerMotion::create();
+
+    left_click->set_button(GDK_BUTTON_PRIMARY);
+
+    left_click->signal_pressed().connect(
+        sigc::mem_fun(*this, &My_window::on_drawing_left_click));
+    move->signal_motion().connect(sigc::mem_fun(*this, &My_window::on_drawing_move));
+
+    drawing.add_controller(left_click);
+    drawing.add_controller(move);
+}
 
 //------------------------- Fonctions de commande du jeu ------------------------------
 
+// Bouton exit
 void My_window::exit_clicked()
 {
     hide();
 }
+
+// Bouton open pour ouvrir un fichier et le charger dans le jeu
 void My_window::open_clicked()
 {
     cout.flush();
@@ -101,12 +158,16 @@ void My_window::open_clicked()
     dialog->set_transient_for(*this); 
     set_dialog(dialog);
 }
+
+// Bouton save pour sauvegarder un fichier de l'état courant du jeu
 void My_window::save_clicked()
 {
     auto dialog = new Gtk::FileChooserDialog("Choose a text file",
                                              Gtk::FileChooserDialog::Action::SAVE);
     set_dialog(dialog);
 }
+
+// Bouton restart qui redémarre le jeu depuis le dernier fichier valide
 void My_window::restart_clicked()
 {
     cout << __func__ << endl;
@@ -117,6 +178,7 @@ void My_window::restart_clicked()
         drawing.queue_draw();
     }
 }
+// Bouton start qui démarre le jeu et deviens "stop" quand le jeu est en cours
 void My_window::start_clicked()
 {
     cout << __func__ << endl;
@@ -146,6 +208,8 @@ void My_window::start_clicked()
         buttons[STEP].set_sensitive(false);
     }
 }
+
+// Bouton step execute une boucle d'update
 void My_window::step_clicked()
 {
     loop_activated = true;
@@ -153,16 +217,7 @@ void My_window::step_clicked()
     cout << __func__ << endl;
 }
 
-
-
-void My_window::set_key_controller()
-{
-    auto contr = Gtk::EventControllerKey::create();
-    contr->signal_key_pressed().connect(sigc::mem_fun(*this, &My_window::key_pressed),
-                                        false);
-    add_controller(contr);
-}
-
+// Raccourcis clavier
 bool My_window::key_pressed(guint keyval, guint keycode, Gdk::ModifierType state)
 {
     switch (keyval)
@@ -184,6 +239,7 @@ bool My_window::key_pressed(guint keyval, guint keycode, Gdk::ModifierType state
 
 //------------------------- Chargement du fichier du jeu  -----------------------------
 
+// Ouverture de la fenêtre de dialogue fichier pour charger un fichier de jeu
 void My_window::set_dialog(Gtk::FileChooserDialog *dialog)
 {
     dialog->set_modal(true);
@@ -219,57 +275,51 @@ void My_window::set_dialog(Gtk::FileChooserDialog *dialog)
     dialog->set_hide_on_close(false);
     dialog->show();
 }
+
+// Récupération de la réponse de la fenêtre de dialogue ou enregistrement de l'état
+// courant du jeu dans un fichier
 void My_window::dialog_response(int response, Gtk::FileChooserDialog *dialog)
 {
     filesystem::path file_name = "";
-    if (dialog->get_file())
-    {
+    if (dialog->get_file()) {
         file_name = dialog->get_file()->get_path();
-        if (file_name.extension() != ".txt")
-        {
+        if (file_name.extension() != ".txt") {
             file_name = "";
         }
     }
-    switch (response)
-    {
+    switch (response) {
     case CANCEL:
         dialog->hide();
         break;
     case OPEN_FILE:
-        if (file_name != "")
-        {
+        if (file_name != "") {
             cout << "open file " << file_name << endl;
             read(file_name.string());
             if (game_data.last_file_good) last_read_file = file_name.string();
             update_infos();
             drawing.queue_draw();
-            dialog->hide();
-        }
+            dialog->hide(); }
         break;
-    case SAVE_FILE:
-        {
+    case SAVE_FILE: {
             string save_path = "";
             if (dialog->get_file()){
                 save_path = dialog->get_file()->get_path();
-                if (filesystem::path(save_path).extension() != ".txt"){
-                    save_path += ".txt";
-                }
-            }
+                if (filesystem::path(save_path).extension() != ".txt") {
+                    save_path += ".txt"; } }
             if (!save_path.empty()){
                 cout << "save file " << save_path << endl;
                 save_game(save_path);
                 drawing.queue_draw();
-                dialog->hide();
-            }
+                dialog->hide(); }
             break;
         }
-    default:
-        break;
+    default: break;
     }
 }
 
 //----------------------- Fonctions d'update de l'interface ---------------------------
 
+// Boucle d'update du jeu
 bool My_window::loop()
 {
     if (loop_activated)
@@ -282,24 +332,8 @@ bool My_window::loop()
     return false;
 }
 
-void My_window::set_infos()
-{
-    info_frame.set_child(info_grid);
-    info_grid.set_column_homogeneous(true);
-    for (size_t i(0); i < info_text.size(); ++i)
-    {
-        info_grid.attach(info_text[i], 0, i, 1, 1);
-        info_grid.attach(info_value[i], 1, i, 1, 1);
-        info_text[i].set_halign(Gtk::Align::START);
-        info_value[i].set_halign(Gtk::Align::END);
-        info_text[i].set_margin(3);
-        info_value[i].set_margin(3);
-    }
-    update_infos();
-}
-
+// Update des données du jeu dans GameData
 void My_window::update_infos()
-
 {
     info_value[0].set_text(to_string(game_data.score));
     info_value[1].set_text(to_string(game_data.lives));
@@ -307,16 +341,7 @@ void My_window::update_infos()
     info_value[3].set_text(to_string(Ball::get_ball_count()));
 }
 
-void My_window::set_drawing()
-{
-    drawing.set_content_width(drawing_size);
-    drawing.set_content_height(drawing_size);
-    drawing.set_expand();
-    drawing.set_draw_func(sigc::mem_fun(*this, &My_window::on_draw));
-    drawing.set_margin(5);
-
-}
-
+// Fonctin d'actualisation de l'interface du jeu
 void My_window::on_draw(const Cairo::RefPtr<Cairo::Context> &cr, int width, int height)
 {
     graphic_set_context(cr);
@@ -329,33 +354,13 @@ void My_window::on_draw(const Cairo::RefPtr<Cairo::Context> &cr, int width, int 
     if (game_data.paddle) game_data.paddle->draw_paddle();
 }
 
-void My_window::set_mouse_controller()
-{
-    auto left_click = Gtk::GestureClick::create();
-    auto move = Gtk::EventControllerMotion::create();
 
-    left_click->set_button(GDK_BUTTON_PRIMARY);
-
-    left_click->signal_pressed().connect(
-        sigc::mem_fun(*this, &My_window::on_drawing_left_click));
-    move->signal_motion().connect(sigc::mem_fun(*this, &My_window::on_drawing_move));
-
-    drawing.add_controller(left_click);
-    drawing.add_controller(move);
-}
 void My_window::on_drawing_left_click(int n_press, double x, double y)
 {
     cout << __func__ << endl;
-
-    if (Ball::get_ball_count() == 0 && game_data.lives > 0)
-    {
-        game_data.lives -= 1;
-        loop_activated = true;
-        drawing.queue_draw();
-        update_infos();
-    }
 }
 
+//  Définition de la destination du paddle 
 void My_window::on_drawing_move(double x_, double y_)
 {   
     if (game_data.paddle) {
