@@ -120,8 +120,6 @@ void My_window::restart_clicked()
 void My_window::start_clicked()
 {
     cout << __func__ << endl;
-    cout << Brick::get_brick_count() << " "<<  Ball::get_ball_count() << endl;
-    cout << loop_activated << endl;
     if (loop_activated)
     {
         loop_conn.disconnect();
@@ -132,7 +130,6 @@ void My_window::start_clicked()
         buttons[RESTART].set_sensitive(true);
         buttons[START].set_label("start");
         buttons[STEP].set_sensitive(true);
-        cout << "if" << endl;
     }
     else if ((game_data.lives > 0 or Ball::get_ball_count() > 0) 
             && Brick::get_brick_count() > 0 ) // La section 6.4 pas encore implémentée
@@ -147,7 +144,6 @@ void My_window::start_clicked()
         buttons[RESTART].set_sensitive(false);
         buttons[START].set_label("stop");
         buttons[STEP].set_sensitive(false);
-        cout << " elif " << endl;
     }
 }
 void My_window::step_clicked()
