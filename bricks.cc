@@ -45,6 +45,7 @@ int Brick::getHitPoints() const {
 }
 
 
+
 //-------------------------- Définition de la classe RwBrick --------------------------
 // Sous-classe RwBrick(Rainbow Brick) héritée de Brick. Spécificité : Change de couleur
 // à chaque coup dans un ordre prédéfini dans la liste colors.
@@ -76,6 +77,14 @@ int RwBrick::getHitPoints() const {
     return current_color_i;
 }
 
+int RwBrick::get_destroyed() {
+    if (current_color_i <= 1) return 0;
+    else {
+        current_color_i--;
+        return 1;
+    }
+}
+
 //------------------------- Définition de la classe BallBrick -------------------------
 // Sous-classe BallBrick(Ball Brick) héritée de Brick. Spécificité : Possède une balle 
 // en son centre qui est libérée à la mort de la BallBrick.
@@ -104,6 +113,10 @@ void BallBrick::draw_brick() const { // Fonction de dessin dans l'interface
 
 int BallBrick::getHitPoints() const {
     return 1;
+}
+
+int BallBrick::get_destroyed() {
+    return 2;
 }
 
 
@@ -156,4 +169,12 @@ void SpltBrick::draw_brick() const { // Fonction de dessin dans l'interface
 
 int SpltBrick::getHitPoints() const {
     return current_color_i;
+}
+
+int SpltBrick::get_destroyed() {
+    if (current_color_i <= 1) return 0;
+    else {
+        current_color_i--;
+        return 3;
+    }
 }

@@ -116,6 +116,8 @@ void update_balls(DrawingArea& drawing);
 pair<double, double> ball_collision(const unique_ptr<Ball>& ball, double dx, 
                                     double dy);
 
+void update_brick(const unique_ptr<Brick>& brick, double dx, double dy);
+
 pair<double, double> ball_bricks_collision(double x_b, double y_b, double r, double dx,
                                            double dy, double x_brick, double y_brick, 
                                            double w);
