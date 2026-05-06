@@ -298,7 +298,6 @@ bool My_window::loop()
     {   
         update_game(drawing);
         update_infos();
-        drawing.queue_draw();
         return true;
     }
     return false;
@@ -342,6 +341,8 @@ void My_window::set_mouse_controller()
 void My_window::on_drawing_left_click(int n_press, double x, double y)
 {
     cout << __func__ << endl;
+    create_new_ball(drawing);
+    update_infos();
 }
 
 void My_window::on_drawing_move(double x_, double y_)

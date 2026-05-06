@@ -26,6 +26,7 @@ class Paddle {
        
         Circle getCircle() const;
         void setCentrePaddle(double x_, double y_);
+        void set_last_delta(double dx);
         double getLast_delta() const;
         pair<double,double> getCenter_paddle() const;
         double getWidth() const;

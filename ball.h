@@ -29,6 +29,12 @@ class Ball {
         pair<double,double> getDeltaVector() const;
         bool is_in_arena() const;
         void draw_ball() const;
+        void update_position();
+        void setDeltaVector(double dx_, double dy_);
+        bool bounce();
+        void add_bounce();
+        void reset_bounces();
+        void update_delta();
 
         Ball(double x_, double y_, double radius_, double dx_, double dy_, 
              bool is_destroyed_ = false);

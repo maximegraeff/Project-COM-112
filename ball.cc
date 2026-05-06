@@ -53,3 +53,32 @@ bool Ball::is_in_arena() const { // S'assure que la balle est dans
 void Ball::draw_ball() const { // Fonction de dessin dans l'interface
     draw_circles(getCentre_ball().first, getCentre_ball().second, radius);
 }
+
+void Ball::update_position() {
+    double x = getCentre_ball().first;
+    double y = getCentre_ball().second;
+    ball.setCentre(x + getDeltaVector().first, y + getDeltaVector().second);
+}
+
+void Ball::setDeltaVector(double dx_, double dy_) {
+    delta_temp = Point(dx_, dy_);
+}
+
+bool Ball::bounce() {
+    if (bounces < nb_bounce_max) {
+        return true;
+    }
+    return false;
+}
+
+void Ball::add_bounce() {
+    bounces = bounces + 1;
+}
+
+void Ball::reset_bounces() {
+    bounces = 0;
+}
+
+void Ball::update_delta() {
+    delta = delta_temp;
+}

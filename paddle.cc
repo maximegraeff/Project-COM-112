@@ -31,6 +31,10 @@ void Paddle::setCentrePaddle(double x_, double y_){
     paddle.setCentre(x_, y_);
 }
 
+void Paddle::set_last_delta(double dx) {
+    last_delta = dx;
+}
+
 double Paddle::getLast_delta() const { // Dernier vecteur de déplacement
     return last_delta;
 }

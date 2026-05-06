@@ -107,4 +107,23 @@ pair<double, double> limit_delta(double dx, double dy);
 
 double paddle_collision(double x, double temp_x, double y, double r, double dx);
 
+void create_new_ball(DrawingArea& drawing);
+
+bool new_ball_intersects(const Circle& new_ball);
+
+void update_balls(DrawingArea& drawing);
+
+pair<double, double> ball_collision(const unique_ptr<Ball>& ball, double dx, 
+                                    double dy);
+
+pair<double, double> ball_bricks_collision(double x_b, double y_b, double r, double dx,
+                                           double dy, double x_brick, double y_brick, 
+                                           double w);
+
+pair<double, double> ball_paddle_collision(double dx, double dy);
+
+pair<double, double> ball_circle_collision(double r, double dx, double dy, double r_c,
+                                           double dx_c, double dy_c);
+
+
 #endif
