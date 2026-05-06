@@ -31,6 +31,7 @@ class Brick {
         virtual int getType() const = 0;
         virtual int getHitPoints() const = 0;
         virtual void draw_brick() const = 0;
+        virtual int get_destroyed() = 0;
 
         Brick(double x_, double y_, double length_, double width_, int hp_ = 0,  
               bool is_destroyed_ = false);
@@ -56,6 +57,7 @@ class RwBrick : public Brick {
         int getType() const override;
         void draw_brick() const override;
         int getHitPoints() const override;
+        int get_destroyed() override;
 
         RwBrick(double x_, double y_, double length_, double width_, int hp_,
                 bool is_destroyed_ = false, 
@@ -79,6 +81,7 @@ class BallBrick : public Brick {
         int getType() const override;
         void draw_brick() const override;
         int getHitPoints() const override;
+        int get_destroyed() override;
 
         BallBrick(double x_, double y_, double length_, double width_,  
                   bool is_destroyed_ = false, double b_radius_ = 1,
@@ -101,6 +104,7 @@ class SpltBrick : public Brick {
     int getType() const override;
     void draw_brick() const override;
     int getHitPoints() const override ;
+    int get_destroyed() override;
 
         SpltBrick(double x_, double y_, double length_, double width_,
                   bool is_destroyed_ = false, int split_count_ = 0,

@@ -566,6 +566,7 @@ pair<double, double> ball_collision(const unique_ptr<Ball>& ball, double dx,
             double y_brick = brick->getRectangle().getCentre().second;
             double w = brick->getRectangle().getWidth();
             if (intersects(Circle(x_b + dx, y_b + dy, r), brick->getRectangle())) {
+                update_brick(brick, dx, dy);
                 if (ball->bounce()) {
                     ball->add_bounce();
                     return ball_bricks_collision(x_b, y_b, r, dx, dy, x_brick, y_brick,
@@ -604,6 +605,34 @@ pair<double, double> ball_collision(const unique_ptr<Ball>& ball, double dx,
         return {dx_o, dy_o};
     }
     return {dx_o, dy_o};
+}
+
+void update_brick(const unique_ptr<Brick>& brick, double dx, double dy) {
+    double x_ = brick->getRectangle().getCentre().first;
+    double y_ = brick->getRectangle().getCentre().second;
+
+    switch (brick->get_destroyed())
+    {
+    case 0: 
+        game_data.bricks.erase(find(game_data.bricks.begin(), game_data.bricks.end(),
+                                    brick));
+        break;
+    
+    case 1:
+        
+        break;
+
+    case 2:
+        break;
+    
+    case 3:
+        //new_spltbricks(x_, y_, dx, dy);
+        break;
+    
+    default:
+        break;
+    }
+    
 }
 
 pair<double, double> ball_bricks_collision(double x_b, double y_b, double r, // c'est chelou ce truc de con
@@ -650,7 +679,7 @@ pair<double, double> ball_paddle_collision(double dx, double dy) {
 pair<double, double> ball_circle_collision(double r, double dx, double dy, double r_c, 
                                            double dx_c, double dy_c) {
     double coeff = 2*pow(r_c,2)/(pow(r,2) + pow(r_c,2));
-    
+
     double dx_ = dx + coeff*(dx_c - dx);
     double dy_ = dy + coeff*(dy_c - dy);
 
