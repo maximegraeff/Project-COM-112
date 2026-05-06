@@ -326,7 +326,6 @@ bool My_window::loop()
     {   
         update_game(drawing);
         update_infos();
-        drawing.queue_draw();
         return true;
     }
     return false;
@@ -358,6 +357,8 @@ void My_window::on_draw(const Cairo::RefPtr<Cairo::Context> &cr, int width, int 
 void My_window::on_drawing_left_click(int n_press, double x, double y)
 {
     cout << __func__ << endl;
+    create_new_ball(drawing);
+    update_infos();
 }
 
 //  Définition de la destination du paddle 

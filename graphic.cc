@@ -33,8 +33,11 @@ void draw_circles(const double x_, const double y_, const double r, const int c)
 {
     if (!ptcr or !*ptcr) return;  // protection si ptcr est nullptr
     get_color(c);
+    (*ptcr)->rectangle(0, 0, arena_size, arena_size);
+    (*ptcr)->clip();
     (*ptcr)->arc(x_, y_, r, 0, 2 * M_PI);
     (*ptcr)->fill();
+    (*ptcr)->stroke();
 }
 
 // Fonction de dessin d'un cercle avec la librairie Cairo de GTKmm
