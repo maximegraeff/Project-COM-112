@@ -164,8 +164,8 @@ void My_window::start_clicked()
         buttons[START].set_label("start");
         buttons[STEP].set_sensitive(true);
     }
-    else if (game_data.lives > 0 && Brick::get_brick_count() > 0 
-             && Ball::get_ball_count() > 0)
+    else if ((game_data.lives > 0 or game_data.balls.size() > 0)
+             && game_data.bricks.size() > 0)
     {
         loop_conn =
             Glib::signal_timeout().connect(sigc::mem_fun(*this, &My_window::loop), dt);
@@ -297,6 +297,9 @@ bool My_window::loop()
     if (loop_activated)
     {   
         update_game(drawing);
+        if (game_ended()) {
+            start_clicked();
+        }
         update_infos();
         return true;
     }

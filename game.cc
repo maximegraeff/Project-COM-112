@@ -65,6 +65,7 @@ void reset_()
 {
     object = SCORE;
     game_data.file_good = true;
+    game_data.game_ended = false;
     game_data.score = 0;
     game_data.lives = 0;
     game_data.nb_brick = 0;
@@ -72,6 +73,8 @@ void reset_()
     game_data.paddle.reset();
     game_data.bricks.clear();
     game_data.balls.clear();
+    game_data.new_balls.clear();
+    game_data.new_bricks.clear();
 }
 
 void file_error()
@@ -545,11 +548,23 @@ void update_balls(DrawingArea& drawing) {
             }
         }
     }
+    new_conponents();
     for (const auto& ball : game_data.balls) {
         ball->update_delta();
         ball->update_position();
     }
     drawing.queue_draw();
+}
+
+void new_conponents() {
+    for (auto& new_ball : game_data.new_balls) {
+        game_data.balls.push_back(move(new_ball));
+    }
+    game_data.new_balls.clear();
+    for (auto& new_brick : game_data.new_bricks) {
+        game_data.bricks.push_back(move(new_brick));
+    }
+    game_data.new_bricks.clear();
 }
 
 pair<double, double> ball_collision(const unique_ptr<Ball>& ball, double dx,
@@ -610,29 +625,47 @@ pair<double, double> ball_collision(const unique_ptr<Ball>& ball, double dx,
 void update_brick(const unique_ptr<Brick>& brick, double dx, double dy) {
     double x_ = brick->getRectangle().getCentre().first;
     double y_ = brick->getRectangle().getCentre().second;
+    double w_ = brick->getRectangle().getWidth();
 
     switch (brick->get_destroyed())
     {
     case 0: 
         game_data.bricks.erase(find(game_data.bricks.begin(), game_data.bricks.end(),
                                     brick));
+        game_data.score += score_per_hit;
         break;
     
     case 1:
-        
+        game_data.score += score_per_hit;
         break;
 
     case 2:
+        game_data.bricks.erase(find(game_data.bricks.begin(), game_data.bricks.end(),
+                                    brick));
+        game_data.new_balls.push_back(make_unique<Ball>(x_, y_, new_ball_radius, dx, dy));
+        game_data.score += score_per_hit;
         break;
     
     case 3:
-        //new_spltbricks(x_, y_, dx, dy);
+        new_spltbricks(x_, y_, w_);
+        game_data.bricks.erase(find(game_data.bricks.begin(), game_data.bricks.end(),
+                                    brick));
+        game_data.score += score_per_hit;
         break;
     
     default:
         break;
     }
     
+}
+
+void new_spltbricks(double x, double y, double w) {
+    double w_n = (w - split_brick_gap) / 2;
+    double d = (w + split_brick_gap) / 4;
+    game_data.new_bricks.push_back(make_unique<SpltBrick>(x - d, y - d, w_n, w_n));
+    game_data.new_bricks.push_back(make_unique<SpltBrick>(x + d, y - d, w_n, w_n));
+    game_data.new_bricks.push_back(make_unique<SpltBrick>(x - d, y + d, w_n, w_n));
+    game_data.new_bricks.push_back(make_unique<SpltBrick>(x + d, y + d, w_n, w_n));
 }
 
 pair<double, double> ball_bricks_collision(double x_b, double y_b, double r, // c'est chelou ce truc de con
@@ -685,4 +718,17 @@ pair<double, double> ball_circle_collision(double r, double dx, double dy, doubl
 
     return limit_delta(dx_, dy_);
 }
- 
+
+bool game_ended() {
+    if (game_data.bricks.empty() && !game_data.game_ended) {
+        game_data.score += score_per_life*game_data.lives;
+        cout << message::won() << endl;
+        game_data.game_ended = true;
+    }
+    else if (game_data.lives == 0 and game_data.balls.empty() 
+             && !game_data.game_ended) {
+        cout << message::lost() << endl;
+        game_data.game_ended = true;
+    }
+    return game_data.game_ended;
+}
