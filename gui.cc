@@ -196,6 +196,7 @@ void My_window::start_clicked()
     else if ((game_data.lives > 0 or Ball::get_ball_count() > 0) 
             && Brick::get_brick_count() > 0 ) // La section 6.4 pas encore implémentée
             // IL n'y a pas de création de balle si ball_count == 0 et lives > 0
+
     {
         loop_conn =
             Glib::signal_timeout().connect(sigc::mem_fun(*this, &My_window::loop), dt);
@@ -325,6 +326,9 @@ bool My_window::loop()
     if (loop_activated)
     {   
         update_game(drawing);
+        if (game_ended()) {
+            start_clicked();
+        }
         update_infos();
         return true;
     }

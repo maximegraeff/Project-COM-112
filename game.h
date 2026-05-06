@@ -31,6 +31,7 @@ using namespace Gtk;
 struct GameData {
         bool file_good = true;
         bool last_file_good = true;
+        bool game_ended = false;
         int score = 0;
         int lives = 0;
         int nb_brick = 0;
@@ -38,6 +39,8 @@ struct GameData {
         unique_ptr<Paddle> paddle;
         vector<unique_ptr<Brick>> bricks;
         vector<unique_ptr<Ball>> balls;
+        vector<unique_ptr<Ball>> new_balls;
+        vector<unique_ptr<Brick>> new_bricks;
 };
 
 // Enumération des objets à initialiser
@@ -113,10 +116,14 @@ bool new_ball_intersects(const Circle& new_ball);
 
 void update_balls(DrawingArea& drawing);
 
+void new_conponents();
+
 pair<double, double> ball_collision(const unique_ptr<Ball>& ball, double dx, 
                                     double dy);
 
 void update_brick(const unique_ptr<Brick>& brick, double dx, double dy);
+
+void new_spltbricks(double x, double y, double w);
 
 pair<double, double> ball_bricks_collision(double x_b, double y_b, double r, double dx,
                                            double dy, double x_brick, double y_brick, 
@@ -127,5 +134,6 @@ pair<double, double> ball_paddle_collision(double dx, double dy);
 pair<double, double> ball_circle_collision(double r, double dx, double dy, double r_c,
                                            double dx_c, double dy_c);
 
+bool game_ended();
 
 #endif
