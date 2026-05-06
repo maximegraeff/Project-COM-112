@@ -548,11 +548,11 @@ void update_balls(DrawingArea& drawing) {
             }
         }
     }
-    new_conponents();
     for (const auto& ball : game_data.balls) {
         ball->update_delta();
         ball->update_position();
     }
+    new_conponents();
     drawing.queue_draw();
 }
 
