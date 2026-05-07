@@ -116,7 +116,7 @@ bool new_ball_intersects(const Circle& new_ball);
 
 void update_balls(DrawingArea& drawing);
 
-void new_conponents();
+void new_components();
 
 pair<double, double> ball_collision(const unique_ptr<Ball>& ball, double dx, 
                                     double dy);

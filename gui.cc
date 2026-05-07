@@ -323,7 +323,7 @@ void My_window::dialog_response(int response, Gtk::FileChooserDialog *dialog)
 // Boucle d'update du jeu
 bool My_window::loop()
 {
-    if (loop_activated)
+    if (loop_activated and !game_ended())
     {   
         update_game(drawing);
         if (game_ended()) {
