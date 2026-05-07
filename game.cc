@@ -552,11 +552,11 @@ void update_balls(DrawingArea& drawing) {
         ball->update_delta();
         ball->update_position();
     }
-    new_conponents();
+    new_components();
     drawing.queue_draw();
 }
 
-void new_conponents() {
+void new_components() {
     for (auto& new_ball : game_data.new_balls) {
         game_data.balls.push_back(move(new_ball));
     }
