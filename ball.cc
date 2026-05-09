@@ -21,7 +21,7 @@
 Ball::Ball(double x_, double y_, double radius_, double dx_, double dy_, 
            bool is_destroyed_)
     : radius(radius_), is_destroyed(is_destroyed_),
-      ball(x_, y_, radius_), delta(dx_, dy_), bounces(0), delta_temp(dx_,dy_){count++;}
+      ball(x_, y_, radius_), delta(dx_, dy_), bounces(0), delta_temp(dx_,dy_), copy_delta(dx_, dy_){count++;}
 
 Ball::~Ball(){count--;}
 
@@ -58,6 +58,7 @@ void Ball::update_position() {
     double x = getCentre_ball().first;
     double y = getCentre_ball().second;
     ball.setCentre(x + getDeltaVector().first, y + getDeltaVector().second);
+    copy_delta = delta;
 }
 
 void Ball::setDeltaVector(double dx_, double dy_) {
@@ -81,4 +82,18 @@ void Ball::reset_bounces() {
 
 void Ball::update_delta() {
     delta = delta_temp;
+}
+
+void Ball::set_center(double x_, double y_) {
+    ball.setCentre(x_, y_);
+}
+
+Circle Ball::next_circle() const {
+    return Circle(getCentre_ball().first + copy_delta.getCoordinate().first, 
+                  getCentre_ball().second + copy_delta.getCoordinate().second, radius);
+}
+
+Circle Ball::final_circle() const {
+    return Circle(getCentre_ball().first + getDeltaVector().first, 
+                  getCentre_ball().second + getDeltaVector().second, radius);
 }

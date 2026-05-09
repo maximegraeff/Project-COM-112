@@ -35,13 +35,17 @@ class Ball {
         void add_bounce();
         void reset_bounces();
         void update_delta();
+        void set_center(double x_, double y_);
+        Circle next_circle() const;
+        Circle final_circle() const;
 
         Ball(double x_, double y_, double radius_, double dx_, double dy_, 
              bool is_destroyed_ = false);
         ~Ball();
        
     private:
-        
+
+        bool move = true;
         static int count;
         int bounces;
         double radius;
@@ -49,6 +53,7 @@ class Ball {
         Circle ball;
         Point delta;    // vecteur déplacement
         Point delta_temp;
+        Point copy_delta;
 };
 
 #endif

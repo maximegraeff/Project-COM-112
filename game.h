@@ -104,6 +104,16 @@ void save_game(string& file_name);
 
 void update_game(DrawingArea& drawing);
 
+void first_balls_tests(DrawingArea& drawing);
+
+void second_balls_tests(DrawingArea& drawing);
+
+void collision(const unique_ptr<Ball>& ball, double x, double y);
+
+bool bounce_balls(const unique_ptr<Ball>& ball);
+
+void ball_arena_collision(const unique_ptr<Ball>& ball);
+
 void update_paddle(DrawingArea& drawing);
 
 pair<double, double> limit_delta(double dx, double dy);
@@ -114,25 +124,23 @@ void create_new_ball(DrawingArea& drawing);
 
 bool new_ball_intersects(const Circle& new_ball);
 
-void update_balls(DrawingArea& drawing);
+//void update_balls(DrawingArea& drawing);
+
+//pair<double, double> pre_tests(const unique_ptr<Ball>& ball);
 
 void new_components();
 
-pair<double, double> ball_collision(const unique_ptr<Ball>& ball, double dx, 
-                                    double dy);
+//pair<double, double> ball_collision(const unique_ptr<Ball>& ball, double dx, double dy);
 
 void update_brick(const unique_ptr<Brick>& brick, double dx, double dy);
 
 void new_spltbricks(double x, double y, double w);
 
-pair<double, double> ball_bricks_collision(double x_b, double y_b, double r, double dx,
-                                           double dy, double x_brick, double y_brick, 
-                                           double w);
+void ball_bricks_collision(const unique_ptr<Ball>& ball, const unique_ptr<Brick>& brick);
 
-pair<double, double> ball_paddle_collision(double dx, double dy);
+void ball_paddle_collision(const unique_ptr<Ball>& ball);
 
-pair<double, double> ball_circle_collision(double r, double dx, double dy, double r_c,
-                                           double dx_c, double dy_c);
+void ball_circle_collision(const unique_ptr<Ball>& ball, const unique_ptr<Ball>& ball_);
 
 bool game_ended();
 
