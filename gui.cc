@@ -170,7 +170,6 @@ void My_window::save_clicked()
 // Bouton restart qui redémarre le jeu depuis le dernier fichier valide
 void My_window::restart_clicked()
 {
-    cout << __func__ << endl;
     if (!last_read_file.empty())
     {
         read(last_read_file);
@@ -181,7 +180,6 @@ void My_window::restart_clicked()
 // Bouton start qui démarre le jeu et deviens "stop" quand le jeu est en cours
 void My_window::start_clicked()
 {
-    cout << __func__ << endl;
     if (loop_activated)
     {
         loop_conn.disconnect();
@@ -215,7 +213,6 @@ void My_window::step_clicked()
 {
     loop_activated = true;
     loop_activated = !loop();
-    cout << __func__ << endl;
 }
 
 // Raccourcis clavier
@@ -230,7 +227,7 @@ bool My_window::key_pressed(guint keyval, guint keycode, Gdk::ModifierType state
         start_clicked();
         return true;
     case 'r':
-        restart_clicked();
+        if (!loop_activated) restart_clicked();
         return true;
     default:
         break;
@@ -360,9 +357,10 @@ void My_window::on_draw(const Cairo::RefPtr<Cairo::Context> &cr, int width, int 
 
 void My_window::on_drawing_left_click(int n_press, double x, double y)
 {
-    cout << __func__ << endl;
-    create_new_ball(drawing);
-    update_infos();
+    if (loop_activated) {
+        create_new_ball(drawing);
+        update_infos();
+    }
 }
 
 //  Définition de la destination du paddle 

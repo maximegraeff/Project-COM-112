@@ -390,8 +390,119 @@ void save_game(string& file_name){
 }
 
 void update_game(DrawingArea& drawing) {
+    first_balls_tests(drawing);
     update_paddle(drawing);
-    update_balls(drawing);
+    second_balls_tests(drawing);
+}
+
+void first_balls_tests(DrawingArea& drawing) {
+    if (game_data.balls.empty()) return;
+    auto ball = game_data.balls.begin();
+    while (ball != game_data.balls.end()) {
+        if (*ball) {
+            double x = (*ball)->getCentre_ball().first;
+            double y = (*ball)->getCentre_ball().second;
+
+            // destruction de la balle si elle passe sous l'arène
+            if ((*ball)->final_circle().getCentre().second < 0) {
+                ball = game_data.balls.erase(ball);
+                break;
+            }
+            collision(*ball, x, y);
+        }
+        ++ball;
+    }
+    new_components();
+    drawing.queue_draw();
+}
+
+void second_balls_tests(DrawingArea& drawing) {
+    if (game_data.balls.empty()) return;
+    auto ball = game_data.balls.begin();
+    while (ball != game_data.balls.end()) {
+        if (*ball) {
+            double x = (*ball)->getCentre_ball().first;
+            double y = (*ball)->getCentre_ball().second;
+
+            if (intersects((*ball)->final_circle(), game_data.paddle->getCircle())) {
+                ball_paddle_collision(*ball);
+                (*ball)->update_delta();
+            }
+            collision(*ball, x, y);
+        }
+        ++ball;
+    }
+    for (const auto& ball : game_data.balls) {
+        ball->update_position();
+        ball->reset_bounces();
+    }
+    new_components();
+    drawing.queue_draw();
+}
+
+void collision(const unique_ptr<Ball>& ball, double x, double y){
+    while(bounce_balls(ball) && ball->bounce()) {
+        ball->update_delta();
+    }
+
+}
+
+bool bounce_balls(const unique_ptr<Ball>& ball) {
+
+    for (const auto& ball_ : game_data.balls) {
+        if (ball_ != ball and intersects(ball->final_circle(), ball_->next_circle())) {
+            if (ball->bounce()) {
+                ball_circle_collision(ball, ball_);
+                cout << "test" << endl;
+                ball->add_bounce();
+            }
+            return true;
+        }
+    }
+    for (const auto& brick : game_data.bricks) {
+        if (brick and intersects(ball->final_circle(), brick->getRectangle())) {
+            if (ball->bounce()) {
+                ball_bricks_collision(ball, brick);
+                ball->add_bounce();
+            }
+        return true;
+        }
+    }
+    if (game_data.paddle and intersects(ball->final_circle(), game_data.paddle->getCircle())) {
+        if (ball->bounce()) {
+            ball_paddle_collision(ball);
+            ball->add_bounce();
+        }
+        return true;
+    }
+    if (ball->final_circle().getCentre().first - ball->getCircle().getRadius() < 0 or 
+        ball->final_circle().getCentre().first + ball->getCircle().getRadius() > arena_size or
+        ball->final_circle().getCentre().second + ball->getCircle().getRadius() > arena_size) {
+        if (ball->bounce()) {
+            ball_arena_collision(ball);
+            ball->add_bounce();
+        }
+        return true;
+    }
+
+    return false;
+}
+
+void ball_arena_collision(const unique_ptr<Ball>& ball) {
+    double dx = ball->getDeltaVector().first;
+    double dy = ball->getDeltaVector().second;
+    double x = ball->final_circle().getCentre().first;
+    double y = ball->final_circle().getCentre().second;
+    double r = ball->getCircle().getRadius();
+
+    if (x - r < 0 or x + r > arena_size) {
+        dx = -dx;
+    }
+    if (y + dy + r > arena_size) {
+         dy = -dy;
+    }
+
+    ball->setDeltaVector(dx, dy);
 }
 
 void update_paddle(DrawingArea& drawing) {   
@@ -492,7 +603,7 @@ bool new_ball_intersects(const Circle& new_ball) {
     return false;
 }
 
-void update_balls(DrawingArea& drawing) {
+/*void update_balls(DrawingArea& drawing) {
     if (game_data.balls.empty()) return;
     auto ball = game_data.balls.begin();
     while (ball != game_data.balls.end()) {
@@ -504,19 +615,14 @@ void update_balls(DrawingArea& drawing) {
             double r  = (*ball)->getCircle().getRadius();
             bool change = true;
 
-            // Rebond sur le paddle avant le dépacement de la ball
-            if (intersects(Circle(x_b, y_b, r),
-                game_data.paddle->getCircle())) {
-                tie (dx, dy) = ball_paddle_collision(dx, dy);
-                (*ball)->add_bounce();
-            }
+            tie (dx, dy) = pre_tests(*ball);
 
             while ((*ball)->bounce() and change) {
                 double dx_o = dx;
                 double dy_o = dy;
 
                 // Rebond sur les bricks, le paddle et les autres balls
-                tie (dx, dy) = ball_collision(*ball, dx, dy);
+                tie (dx, dy) = ball_collision(*ball);
                 
                 // Rebond sur les murs gauche/droite
                 if (x_b + dx < r or x_b + dx > arena_size - r) {
@@ -554,7 +660,32 @@ void update_balls(DrawingArea& drawing) {
     }
     new_components();
     drawing.queue_draw();
-}
+}*/
+
+/*pair<double, double> pre_tests(const unique_ptr<Ball>& ball) {
+
+    double dx = ball->getDeltaVector().first;
+    double dy = ball->getDeltaVector().second;
+    double x_b  = ball->getCentre_ball().first;
+    double y_b  = ball->getCentre_ball().second;                
+    double r  = ball->getCircle().getRadius();
+    // Rebond sur le paddle avant le dépacement de la ball    
+    if (intersects(Circle(x_b, y_b, r), game_data.paddle->getCircle())) {
+        return ball_paddle_collision(dx, dy);
+    }
+    for (const auto& ball_ : game_data.balls) {
+        double dx_ = ball_->getDeltaVector().first;
+        double dy_ = ball_->getDeltaVector().second;
+        double r_ = ball_->getCircle().getRadius();
+        if (ball_ and ball_ != ball) {
+            if (intersects(ball->getCircle(), ball_->getCircle())) {
+                ball->add_bounce();
+                return ball_circle_collision(r, dx, dy,r_, dx_, dy_);
+            }
+        }
+    }
+    return {dx, dy};
+}*/
 
 void new_components() {
     for (auto& new_ball : game_data.new_balls) {
@@ -567,13 +698,22 @@ void new_components() {
     game_data.new_bricks.clear();
 }
 
-pair<double, double> ball_collision(const unique_ptr<Ball>& ball, double dx,
-                                double dy) {
+/*pair<double, double> ball_collision(const unique_ptr<Ball>& ball) {
+    double dx = ball->getDeltaVector().first;
+    double dy = ball->getDeltaVector().second;
     double x_b = ball->getCentre_ball().first;
     double y_b = ball->getCentre_ball().second;
     double r = ball->getCircle().getRadius();
     double dx_o = dx;
     double dy_o = dy;
+
+    if (intersects(Circle(x_b + dx, y_b + dy, r), game_data.paddle->getCircle())) {
+        if (ball->bounce()) {
+            ball->add_bounce();
+            return ball_paddle_collision(dx, dy);
+        }
+        return {dx_o, dy_o};
+    }
 
     for (const auto& brick : game_data.bricks) {
         if (brick) {
@@ -608,19 +748,9 @@ pair<double, double> ball_collision(const unique_ptr<Ball>& ball, double dx,
             }
         }
     }
-    double x_p = game_data.paddle->getCenter_paddle().first;
-    double y_p = game_data.paddle->getCenter_paddle().second;
-    double r_p = game_data.paddle->getCircle().getRadius();
-    double dx_p = game_data.paddle->getLast_delta();
-    if (intersects(Circle(x_b + dx, y_b + dy, r), Circle(x_p + dx_p, y_p, r_p))) {
-        if (ball->bounce()) {
-            ball->add_bounce();
-            return ball_paddle_collision(dx, dy);
-        }
-        return {dx_o, dy_o};
-    }
+    
     return {dx_o, dy_o};
-}
+}*/
 
 void update_brick(const unique_ptr<Brick>& brick, double dx, double dy) {
     double x_ = brick->getRectangle().getCentre().first;
@@ -668,9 +798,7 @@ void new_spltbricks(double x, double y, double w) {
     game_data.new_bricks.push_back(make_unique<SpltBrick>(x + d, y + d, w_n, w_n));
 }
 
-pair<double, double> ball_bricks_collision(double x_b, double y_b, double r, // c'est chelou ce truc de con
-                                double dx, double dy, double x_brick, double y_brick, 
-                                double w) {        
+void ball_bricks_collision(const unique_ptr<Ball>& ball, const unique_ptr<Brick>& brick) {        
     //double w_rebond = (abs(x_b - x_brick) < w/2) ? x_b - x_brick : (x_b < x_brick) ? 
     //                  -w/2 : w/2;
     //double l_rebond = (abs(y_b - y_brick) < w/2) ? y_b - y_brick : (y_b < y_brick) ?
@@ -680,6 +808,16 @@ pair<double, double> ball_bricks_collision(double x_b, double y_b, double r, // 
     //double dy_ = dy - 2*(y_b - y_brick + l_rebond)/r;
 
     //return limit_delta(dx_, dy_);
+
+    double x_b = ball->getCentre_ball().first;
+    double y_b = ball->getCentre_ball().second;
+    double r = ball->getCircle().getRadius();
+    double x_brick = brick->getRectangle().getCentre().first;
+    double y_brick = brick->getRectangle().getCentre().second;
+    double w = brick->getRectangle().getWidth();
+    double dx = ball->getDeltaVector().first;
+    double dy = ball->getDeltaVector().second;
+    update_brick(brick, dx, dy);
 
     // Détermine si la collision est sur un côté horizontal ou vertical
     double overlap_x = w/2 + r - abs(x_b - x_brick);
@@ -697,37 +835,47 @@ pair<double, double> ball_bricks_collision(double x_b, double y_b, double r, // 
         dy = -dy;
     }
 
-    return limit_delta(dx, dy);
+    ball->setDeltaVector(limit_delta(dx, dy).first, limit_delta(dx, dy).second);
 }  
 
-pair<double, double> ball_paddle_collision(double dx, double dy) {
+void ball_paddle_collision(const unique_ptr<Ball>& ball) {
+    double dx = ball->getDeltaVector().first;
+    double dy = ball->getDeltaVector().second;
     double dx_p = game_data.paddle->getLast_delta();
 
     double dx_ = 2*dx_p - dx;
     double dy_ = -dy;
 
-    return limit_delta(dx_, dy_);
+    ball->setDeltaVector(limit_delta(dx_, dy_).first, limit_delta(dx_, dy_).second);
 }
 
-pair<double, double> ball_circle_collision(double r, double dx, double dy, double r_c, 
-                                           double dx_c, double dy_c) {
+void ball_circle_collision(const unique_ptr<Ball>& ball, const unique_ptr<Ball>& ball_) {
+    double r = ball->getCircle().getRadius();
+    double dx = ball->getDeltaVector().first;
+    double dy = ball->getDeltaVector().second;
+    double r_c = ball_->getCircle().getRadius();
+    double dx_c = ball_->getDeltaVector().first;
+    double dy_c = ball_->getDeltaVector().second;
+
     double coeff = 2*pow(r_c,2)/(pow(r,2) + pow(r_c,2));
 
     double dx_ = dx + coeff*(dx_c - dx);
     double dy_ = dy + coeff*(dy_c - dy);
 
-    return limit_delta(dx_, dy_);
+    tie (dx_, dy_) = limit_delta(dx_, dy_);
+
+    ball->setDeltaVector(dx_, dy_);
 }
 
 bool game_ended() {
-    if (game_data.bricks.empty() && !game_data.game_ended) {
-        game_data.score += score_per_life*game_data.lives;
-        cout << message::won() << endl;
-        game_data.game_ended = true;
-    }
-    else if (game_data.lives == 0 and game_data.balls.empty() 
+    if (game_data.lives == 0 and game_data.balls.empty() 
              && !game_data.game_ended) {
         cout << message::lost() << endl;
+        game_data.game_ended = true;
+    }
+    else if (game_data.bricks.empty() && !game_data.game_ended) {
+        game_data.score += score_per_life*game_data.lives;
+        cout << message::won() << endl;
         game_data.game_ended = true;
     }
     return game_data.game_ended;
