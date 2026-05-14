@@ -409,6 +409,7 @@ void first_balls_tests(DrawingArea& drawing) {
                 break;
             }
             collision(*ball, x, y);
+            cout << "test 1" << endl;
         }
         ++ball;
     }
@@ -429,6 +430,7 @@ void second_balls_tests(DrawingArea& drawing) {
                 (*ball)->update_delta();
             }
             collision(*ball, x, y);
+            cout << "test 2" << endl;
         }
         ++ball;
     }
@@ -859,9 +861,9 @@ void ball_circle_collision(const unique_ptr<Ball>& ball, const unique_ptr<Ball>&
     double r = ball->getCircle().getRadius();
     double dx = ball->getDeltaVector().first;
     double dy = ball->getDeltaVector().second;
-    double r_c = ball_->getCircle().getRadius();
-    double dx_c = ball_->getDeltaVector().first;
-    double dy_c = ball_->getDeltaVector().second;
+    double r_c = ball_->next_circle().getRadius();
+    double dx_c = ball_->get_copy_deltaVector().first;
+    double dy_c = ball_->get_copy_deltaVector().second;
 
     double coeff = 2*pow(r_c,2)/(pow(r,2) + pow(r_c,2));
 

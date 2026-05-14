@@ -27,6 +27,7 @@ class Ball {
         static int get_ball_count();
         pair<double,double> getCentre_ball() const;
         pair<double,double> getDeltaVector() const;
+        pair<double,double> get_copy_deltaVector() const;
         bool is_in_arena() const;
         void draw_ball() const;
         void update_position();

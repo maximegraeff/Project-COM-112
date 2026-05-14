@@ -43,6 +43,10 @@ std::pair<double,double> Ball::getDeltaVector() const {
     return delta.getCoordinate(); // vecteur vitesse de la balle dans l'arène
 }
 
+std::pair<double,double> Ball::get_copy_deltaVector() const {
+    return copy_delta.getCoordinate(); // vecteur vitesse de la balle dans l'arène
+}
+
 
 bool Ball::is_in_arena() const { // S'assure que la balle est dans 
     double x = getCentre_ball().first;
