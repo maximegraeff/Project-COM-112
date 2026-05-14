@@ -829,11 +829,8 @@ void ball_bricks_collision(const unique_ptr<Ball>& ball, const unique_ptr<Brick>
     if (norm > 0) {
         double nx = d_nom_x / norm;
         double ny = d_nom_y / norm;
-
-        // Projection de v sur n
+        
         double dot = dx*nx + dy*ny;
-
-        // Réflexion
         dx = dx - 2*dot*nx;
         dy = dy - 2*dot*ny;
     }
