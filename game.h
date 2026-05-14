@@ -138,6 +138,8 @@ void new_spltbricks(double x, double y, double w);
 
 void ball_bricks_collision(const unique_ptr<Ball>& ball, const unique_ptr<Brick>& brick);
 
+double check_inclusion(double h, double diff);
+
 void ball_paddle_collision(const unique_ptr<Ball>& ball);
 
 void ball_circle_collision(const unique_ptr<Ball>& ball, const unique_ptr<Ball>& ball_);

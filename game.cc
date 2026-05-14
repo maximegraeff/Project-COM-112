@@ -799,44 +799,53 @@ void new_spltbricks(double x, double y, double w) {
 }
 
 void ball_bricks_collision(const unique_ptr<Ball>& ball, const unique_ptr<Brick>& brick) {        
-    //double w_rebond = (abs(x_b - x_brick) < w/2) ? x_b - x_brick : (x_b < x_brick) ? 
-    //                  -w/2 : w/2;
-    //double l_rebond = (abs(y_b - y_brick) < w/2) ? y_b - y_brick : (y_b < y_brick) ?
-    //                  -w/2 : w/2;
-    
-    //double dx_ = dx - 2*(x_b - x_brick + w_rebond)/r;
-    //double dy_ = dy - 2*(y_b - y_brick + l_rebond)/r;
-
-    //return limit_delta(dx_, dy_);
-
+    // Coordonnées centre balle
     double x_b = ball->getCentre_ball().first;
     double y_b = ball->getCentre_ball().second;
+    // Rayon balle
     double r = ball->getCircle().getRadius();
+    // Coordonnées centre rectangle
     double x_brick = brick->getRectangle().getCentre().first;
     double y_brick = brick->getRectangle().getCentre().second;
+    // Largeur rectangle
     double w = brick->getRectangle().getWidth();
+    double half_w = w/2;
+    // Coordonnées vecteur deplacement balle
     double dx = ball->getDeltaVector().first;
     double dy = ball->getDeltaVector().second;
     update_brick(brick, dx, dy);
 
-    // Détermine si la collision est sur un côté horizontal ou vertical
-    double overlap_x = w/2 + r - abs(x_b - x_brick);
-    double overlap_y = w/2 + r - abs(y_b - y_brick);
+    double diff_x = x_brick - x_b;
+    double diff_y = y_brick - y_b;
 
-    if (overlap_x < overlap_y) {
-        // Collision sur un côté gauche ou droit -> inverser dx
-        dx = -dx;
-    } else if (overlap_y < overlap_x) {
-        // Collision sur le dessus ou dessous -> inverser dy
-        dy = -dy;
-    } else {
-        // Collision sur un coin -> inverser les deux
-        dx = -dx;
-        dy = -dy;
+    double diff_born_x = check_inclusion(diff_x, half_w);
+    double diff_born_y = check_inclusion(diff_y, half_w);
+
+    double d_nom_x = diff_x - diff_born_x;
+    double d_nom_y = diff_y - diff_born_y;
+
+    double norm = sqrt(d_nom_x*d_nom_x + d_nom_y*d_nom_y);
+
+    if (norm > 0) {
+        double nx = d_nom_x / norm;
+        double ny = d_nom_y / norm;
+
+        // Projection de v sur n
+        double dot = dx*nx + dy*ny;
+
+        // Réflexion
+        dx = dx - 2*dot*nx;
+        dy = dy - 2*dot*ny;
     }
-
     ball->setDeltaVector(limit_delta(dx, dy).first, limit_delta(dx, dy).second);
 }  
+
+double check_inclusion(double h, double diff){
+    
+    if (diff < -h) return -h; 
+    if (diff > h) return h;
+    else return diff;
+}
 
 void ball_paddle_collision(const unique_ptr<Ball>& ball) {
     double dx = ball->getDeltaVector().first;
