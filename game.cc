@@ -451,16 +451,60 @@ void collision(const unique_ptr<Ball>& ball, double x, double y){
 
 bool bounce_balls(const unique_ptr<Ball>& ball) {
 
-    for (const auto& ball_ : game_data.balls) {
-        if (ball_ != ball and intersects(ball->final_circle(), ball_->next_circle())) {
-            if (ball->bounce()) {
-                ball_circle_collision(ball, ball_);
-                cout << "test" << endl;
-                ball->add_bounce();
+    // for (const auto& ball_ : game_data.balls) {
+    //     if (ball_ != ball and intersects(ball->final_circle(), ball_->next_circle())) {
+    //         if (ball->bounce()) {
+    //             ball_circle_collision(ball, ball_);
+    //             cout << "test" << endl;
+    //             ball->add_bounce();
+    //         }
+    //         return true;
+    //     }
+    // }
+
+    for (int i = 0; i < game_data.balls.size(); i++){
+        for (int j = i+1; j < game_data.balls.size(); j++) {
+
+            auto& ball_i = game_data.balls[i];
+            auto& ball_j = game_data.balls[j];
+
+            double dx_i = ball_i->getDeltaVector().first;
+            double dy_i = ball_i->getDeltaVector().second;
+            double x_i = ball_i->getCentre_ball().first;
+            double y_i = ball_i->getCentre_ball().second;
+            double r_i = ball_i->getCircle().getRadius();
+
+            double dx_j = ball_j->getDeltaVector().first;
+            double dy_j = ball_j->getDeltaVector().second;
+            double x_j = ball_j->getCentre_ball().first;
+            double y_j = ball_j->getCentre_ball().second;
+            double r_j = ball_j->getCircle().getRadius();
+
+            double dist = sqrt(pow(x_i - x_j, 2) + pow(y_i - y_j, 2));
+
+            //Distance normale entre les deux centres (checker la proximité des balles)
+            double delta_norm_x = (x_j - x_i) / dist;
+            double delta_norm_y = (y_j - y_i) / dist;
+
+            // Vistesse relative selon la normale(chekcer si elles s'éloignent ou se 
+            // rapprochent l'une de lautre)
+            double v_relativ = (dx_i - dx_j)*delta_norm_x + (dy_i - dy_j)*delta_norm_y;
+
+            if (dist < r_i + r_j && v_relativ > 0){
+                if (ball == ball_i && ball_i->bounce()){
+                    ball_circle_collision(ball_i, ball_j);
+                    ball_i->add_bounce();
+                    return true;
+                }
+                if (ball == ball_j && ball_j->bounce()){
+                    ball_circle_collision(ball_j, ball_i);
+                    ball_j->add_bounce();
+                    return true;
+                }
             }
-            return true;
         }
     }
+
     for (const auto& brick : game_data.bricks) {
         if (brick and intersects(ball->final_circle(), brick->getRectangle())) {
             if (ball->bounce()) {
@@ -858,21 +902,52 @@ void ball_paddle_collision(const unique_ptr<Ball>& ball) {
 }
 
 void ball_circle_collision(const unique_ptr<Ball>& ball, const unique_ptr<Ball>& ball_) {
-    double r = ball->getCircle().getRadius();
-    double dx = ball->getDeltaVector().first;
-    double dy = ball->getDeltaVector().second;
-    double r_c = ball_->next_circle().getRadius();
-    double dx_c = ball_->get_copy_deltaVector().first;
-    double dy_c = ball_->get_copy_deltaVector().second;
+    // double r = ball->getCircle().getRadius();
+    // double dx = ball->getDeltaVector().first;
+    // double dy = ball->getDeltaVector().second;
+    // double r_c = ball_->next_circle().getRadius();
+    // double dx_c = ball_->get_copy_deltaVector().first;
+    // double dy_c = ball_->get_copy_deltaVector().second;
 
-    double coeff = 2*pow(r_c,2)/(pow(r,2) + pow(r_c,2));
+    // double coeff = 2*pow(r_c,2)/(pow(r,2) + pow(r_c,2));
 
-    double dx_ = dx + coeff*(dx_c - dx);
-    double dy_ = dy + coeff*(dy_c - dy);
+    // double dx_ = dx + coeff*(dx_c - dx);
+    // double dy_ = dy + coeff*(dy_c - dy);
 
-    tie (dx_, dy_) = limit_delta(dx_, dy_);
+    // tie (dx_, dy_) = limit_delta(dx_, dy_);
 
-    ball->setDeltaVector(dx_, dy_);
+    // ball->setDeltaVector(dx_, dy_);
+
+    double r_i = ball->getCircle().getRadius();
+    double dx_i = ball->getDeltaVector().first;
+    double dy_i = ball->getDeltaVector().second;
+    double x_i = ball->getCentre_ball().first;
+    double y_i = ball->getCentre_ball().second;
+
+    double r_j = ball_->next_circle().getRadius();
+    double dx_j = ball_->get_copy_deltaVector().first;
+    double dy_j = ball_->get_copy_deltaVector().second;
+    double x_j = ball_->getCentre_ball().first;
+    double y_j = ball_->getCentre_ball().second;
+
+    //Distance normale entre les deux centres (checker la proximité des balles)
+    double x_norm = (x_j - x_i) / sqrt(pow(x_i - x_j, 2) + pow(y_i - y_j, 2));
+    double y_norm = (y_j - y_i) / sqrt(pow(x_i - x_j, 2) + pow(y_i - y_j, 2));
+
+    //Projection des vitesses sur la normale
+    double v_norm_i = dx_i*x_norm + dx_i*y_norm; // v de ball_i selon n
+    double v_norm_j = dx_j*x_norm + dy_j*y_norm; // v de ball_j selon n
+    
+
+    double impulsion = (-v_norm_i + v_norm_j)*(2*pow(r_j,2) / (pow(r_i,2) + pow(r_j,2)));
+
+    // Implémentation du nouveau delta
+    double dx_new = dx_i + impulsion*x_norm;
+    double dy_new = dy_i + impulsion*x_norm;
+
+    auto[dx_lim, dy_lim] = limit_delta(dx_new, dy_new);
+
+    ball->setDeltaVector(dx_lim, dy_lim);
 }
 
 bool game_ended() {
