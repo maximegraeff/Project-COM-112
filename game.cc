@@ -409,7 +409,7 @@ void first_balls_tests(DrawingArea& drawing) {
                 break;
             }
             collision(*ball, x, y);
-            cout << "test 1" << endl;
+            // cout << "test 1" << endl;
         }
         ++ball;
     }
@@ -430,7 +430,7 @@ void second_balls_tests(DrawingArea& drawing) {
                 (*ball)->update_delta();
             }
             collision(*ball, x, y);
-            cout << "test 2" << endl;
+            // cout << "test 2" << endl;
         }
         ++ball;
     }
@@ -446,7 +446,6 @@ void collision(const unique_ptr<Ball>& ball, double x, double y){
     while(bounce_balls(ball) && ball->bounce()) {
         ball->update_delta();
     }
-
 }
 
 bool bounce_balls(const unique_ptr<Ball>& ball) {
@@ -494,11 +493,13 @@ bool bounce_balls(const unique_ptr<Ball>& ball) {
                 if (ball == ball_i && ball_i->bounce()){
                     ball_circle_collision(ball_i, ball_j);
                     ball_i->add_bounce();
+                    // cout << "test_bounce" << endl;
                     return true;
                 }
                 if (ball == ball_j && ball_j->bounce()){
                     ball_circle_collision(ball_j, ball_i);
                     ball_j->add_bounce();
+                    // cout << "test_bounce" << endl;
                     return true;
                 }
             }
