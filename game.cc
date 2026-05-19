@@ -476,12 +476,9 @@ void update_game(DrawingArea& drawing) {
 // }
 
 void collision(const unique_ptr<Ball>& ball) {
-    // int i = 0;
-    while(ball->bounce() && bounce_balls(ball)) {
-        // ball->update_delta();
-        // cout << i++ << endl;
+    while(bounce_balls(ball)) {
+        if (!ball->bounce()) break;
     }
-    // cout << "....." << endl;
 }
 
 bool bounce_balls(const unique_ptr<Ball>& ball) {
