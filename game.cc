@@ -389,6 +389,10 @@ void save_game(string& file_name){
     }
 }
 
+
+
+
+
 void update_game(DrawingArea& drawing) {
     // Passe 1 : rebonds briques/bords/balles
     for (auto ball = game_data.balls.begin(); ball != game_data.balls.end(); ) {
@@ -396,7 +400,7 @@ void update_game(DrawingArea& drawing) {
             ball = game_data.balls.erase(ball);
             continue;  // pas de break, on continue avec les autres
         }
-        collision(*ball, 0, 0);
+        collision(*ball);
         ++ball;
     }
 
@@ -407,7 +411,7 @@ void update_game(DrawingArea& drawing) {
     for (auto& ball : game_data.balls) {
         if (intersects(ball->final_circle(), game_data.paddle->getCircle())) {
             ball_paddle_collision(ball);  // pas de add_bounce()
-            collision(ball, 0, 0);
+            collision(ball);
         }
         ball->update_position();
         ball->reset_bounces();
@@ -415,6 +419,7 @@ void update_game(DrawingArea& drawing) {
 
     new_components();
     drawing.queue_draw();
+    // cout << "_____" << endl;
 }
 
 // void update_game(DrawingArea& drawing) {
@@ -470,14 +475,33 @@ void update_game(DrawingArea& drawing) {
 //     drawing.queue_draw();
 // }
 
-void collision(const unique_ptr<Ball>& ball, double x, double y){
-    while(bounce_balls(ball) && ball->bounce()) {
+void collision(const unique_ptr<Ball>& ball) {
+    // int i = 0;
+    while(ball->bounce() && bounce_balls(ball)) {
         // ball->update_delta();
+        // cout << i++ << endl;
     }
+    // cout << "....." << endl;
 }
 
 bool bounce_balls(const unique_ptr<Ball>& ball) {
 
+<<<<<<< HEAD
+    if (ball->final_circle().getCentre().first - ball->getCircle().getRadius() < 0 or 
+        ball->final_circle().getCentre().first + ball->getCircle().getRadius() > arena_size or
+        ball->final_circle().getCentre().second + ball->getCircle().getRadius() > arena_size) {
+        if (ball->bounce()) {
+            ball_arena_collision(ball);
+            ball->add_bounce();
+        }
+        return true;
+    }
+
+    for (const auto& ball_ : game_data.balls) {
+        if (ball_ != ball and intersects(ball->final_circle(), ball_->final_circle())) {
+            ball_circle_collision(ball, ball_);
+            return true;
+=======
     // for (const auto& ball_ : game_data.balls) {
     //     if (ball_ != ball and intersects(ball->final_circle(), ball_->next_circle())) {
     //         if (ball->bounce()) {
@@ -497,6 +521,7 @@ bool bounce_balls(const unique_ptr<Ball>& ball) {
         if (ball->bounce()) {
             ball_circle_collision(ball, ball_);
             ball->add_bounce();
+>>>>>>> main
         }
         // Ne pas toucher ball_ ici, elle sera traitée dans sa propre itération
         return true;
@@ -579,16 +604,6 @@ bool bounce_balls(const unique_ptr<Ball>& ball) {
         }
         return true;
     }
-    if (ball->final_circle().getCentre().first - ball->getCircle().getRadius() < 0 or 
-        ball->final_circle().getCentre().first + ball->getCircle().getRadius() > arena_size or
-        ball->final_circle().getCentre().second + ball->getCircle().getRadius() > arena_size) {
-        if (ball->bounce()) {
-            ball_arena_collision(ball);
-            ball->add_bounce();
-        }
-        return true;
-    }
-
     return false;
 }
 
@@ -998,14 +1013,14 @@ void ball_circle_collision(const unique_ptr<Ball>& ball, const unique_ptr<Ball>&
     double r_i = ball->getCircle().getRadius();
     double dx_i = ball->getDeltaVector().first;
     double dy_i = ball->getDeltaVector().second;
-    double x_i = ball->getCentre_ball().first + dx_i;
-    double y_i = ball->getCentre_ball().second + dy_i;
+    double x_i = ball->getCentre_ball().first;
+    double y_i = ball->getCentre_ball().second;
 
-    double r_j = ball_->next_circle().getRadius();
-    double dx_j = ball_->get_copy_deltaVector().first;
-    double dy_j = ball_->get_copy_deltaVector().second;
-    double x_j = ball_->getCentre_ball().first + dx_j;
-    double y_j = ball_->getCentre_ball().second + dy_j;
+    double r_j = ball_->getCircle().getRadius();
+    double dx_j = ball_->getDeltaVector().first;
+    double dy_j = ball_->getDeltaVector().second;
+    double x_j = ball_->getCentre_ball().first;
+    double y_j = ball_->getCentre_ball().second;
 
     //Distance normale entre les deux centres (checker la proximité des balles)
     double x_norm = (x_j - x_i) / sqrt(pow(x_i - x_j, 2) + pow(y_i - y_j, 2));
@@ -1016,15 +1031,29 @@ void ball_circle_collision(const unique_ptr<Ball>& ball, const unique_ptr<Ball>&
     double v_norm_j = dx_j*x_norm + dy_j*y_norm; // v de ball_j selon n
     
 
-    double impulsion = (-v_norm_i + v_norm_j)*(2*pow(r_j,2) / (pow(r_i,2) + pow(r_j,2)));
+    double impulsion_i = (-v_norm_i + v_norm_j)*(2*pow(r_j,2) / (pow(r_i,2) + pow(r_j,2)));
+    double impulsion_j = (-v_norm_j + v_norm_i)*(2*pow(r_i,2) / (pow(r_i,2) + pow(r_j,2)));
+
 
     // Implémentation du nouveau delta
-    double dx_new = dx_i + impulsion*x_norm;
-    double dy_new = dy_i + impulsion*y_norm;
+    double dx_new_i = dx_i + impulsion_i*x_norm;
+    double dy_new_i = dy_i + impulsion_i*y_norm;
+    
+    double dx_new_j = dx_j + impulsion_j*x_norm;
+    double dy_new_j = dy_j + impulsion_j*y_norm;
 
-    auto[dx_lim, dy_lim] = limit_delta(dx_new, dy_new);
+    auto[dx_lim_i, dy_lim_i] = limit_delta(dx_new_i, dy_new_i);
+    auto[dx_lim_j, dy_lim_j] = limit_delta(dx_new_j, dy_new_j);
 
-    ball->setDeltaVector(dx_lim, dy_lim);
+    if (ball->bounce()) {
+        ball->setDeltaVector(dx_lim_i, dy_lim_i);
+        ball->add_bounce();
+    }
+
+    if (ball_->bounce()) {
+        ball_->setDeltaVector(dx_lim_j, dy_lim_j);
+        ball_->add_bounce();
+    }
 }
 
 bool game_ended() {
