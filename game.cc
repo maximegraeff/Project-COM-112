@@ -483,7 +483,6 @@ void collision(const unique_ptr<Ball>& ball) {
 
 bool bounce_balls(const unique_ptr<Ball>& ball) {
 
-<<<<<<< HEAD
     if (ball->final_circle().getCentre().first - ball->getCircle().getRadius() < 0 or 
         ball->final_circle().getCentre().first + ball->getCircle().getRadius() > arena_size or
         ball->final_circle().getCentre().second + ball->getCircle().getRadius() > arena_size) {
@@ -498,32 +497,8 @@ bool bounce_balls(const unique_ptr<Ball>& ball) {
         if (ball_ != ball and intersects(ball->final_circle(), ball_->final_circle())) {
             ball_circle_collision(ball, ball_);
             return true;
-=======
-    // for (const auto& ball_ : game_data.balls) {
-    //     if (ball_ != ball and intersects(ball->final_circle(), ball_->next_circle())) {
-    //         if (ball->bounce()) {
-    //             ball_circle_collision(ball, ball_);
-    //             ball->add_bounce();
-    //         }
-    //         if (ball_->bounce()) {
-    //             ball_circle_collision(ball_, ball);
-    //             ball_->add_bounce();
-    //         }
-    //         return true;
-    //     }
-    // }
-
-    for (const auto& ball_ : game_data.balls) {
-    if (ball_ != ball and intersects(ball->final_circle(), ball_->next_circle())) {
-        if (ball->bounce()) {
-            ball_circle_collision(ball, ball_);
-            ball->add_bounce();
->>>>>>> main
         }
-        // Ne pas toucher ball_ ici, elle sera traitée dans sa propre itération
-        return true;
     }
-}
 
     // for (int i = 0; i < game_data.balls.size(); i++){
     //     for (int j = i+1; j < game_data.balls.size(); j++) {
@@ -597,7 +572,7 @@ bool bounce_balls(const unique_ptr<Ball>& ball) {
     if (game_data.paddle and intersects(ball->final_circle(), game_data.paddle->getCircle())) {
         if (ball->bounce()) {
             ball_paddle_collision(ball);
-            // ball->add_bounce();
+            ball->add_bounce();
         }
         return true;
     }
