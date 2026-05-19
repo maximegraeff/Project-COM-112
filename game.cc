@@ -478,19 +478,30 @@ void collision(const unique_ptr<Ball>& ball, double x, double y){
 
 bool bounce_balls(const unique_ptr<Ball>& ball) {
 
+    // for (const auto& ball_ : game_data.balls) {
+    //     if (ball_ != ball and intersects(ball->final_circle(), ball_->next_circle())) {
+    //         if (ball->bounce()) {
+    //             ball_circle_collision(ball, ball_);
+    //             ball->add_bounce();
+    //         }
+    //         if (ball_->bounce()) {
+    //             ball_circle_collision(ball_, ball);
+    //             ball_->add_bounce();
+    //         }
+    //         return true;
+    //     }
+    // }
+
     for (const auto& ball_ : game_data.balls) {
-        if (ball_ != ball and intersects(ball->final_circle(), ball_->final_circle())) {
-            if (ball->bounce()) {
-                ball_circle_collision(ball, ball_);
-                ball->add_bounce();
-            }
-            if (ball_->bounce()) {
-                ball_circle_collision(ball_, ball);
-                ball_->add_bounce();
-            }
-            return true;
+    if (ball_ != ball and intersects(ball->final_circle(), ball_->next_circle())) {
+        if (ball->bounce()) {
+            ball_circle_collision(ball, ball_);
+            ball->add_bounce();
         }
+        // Ne pas toucher ball_ ici, elle sera traitée dans sa propre itération
+        return true;
     }
+}
 
     // for (int i = 0; i < game_data.balls.size(); i++){
     //     for (int j = i+1; j < game_data.balls.size(); j++) {
