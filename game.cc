@@ -479,7 +479,7 @@ void collision(const unique_ptr<Ball>& ball, double x, double y){
 bool bounce_balls(const unique_ptr<Ball>& ball) {
 
     for (const auto& ball_ : game_data.balls) {
-        if (ball_ != ball and intersects(ball->final_circle(), ball_->next_circle())) {
+        if (ball_ != ball and intersects(ball->final_circle(), ball_->final_circle())) {
             if (ball->bounce()) {
                 ball_circle_collision(ball, ball_);
                 ball->add_bounce();
