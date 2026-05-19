@@ -490,6 +490,21 @@ bool bounce_balls(const unique_ptr<Ball>& ball) {
             double v_relativ = (dx_i - dx_j)*delta_norm_x + (dy_i - dy_j)*delta_norm_y;
 
             if (dist < r_i + r_j && v_relativ > 0){
+                // double overlap = (r_i + r_j - dist) / 2.0;
+    
+                // double dx_i_old = ball_i->getDeltaVector().first;
+                // double dy_i_old = ball_i->getDeltaVector().second;
+                // ball_i->setDeltaVector(-overlap * delta_norm_x, -overlap * delta_norm_y);
+                // ball_i->update_position();
+                // ball_i->setDeltaVector(dx_i_old, dy_i_old);
+                
+                // double dx_j_old = ball_j->getDeltaVector().first;
+                // double dy_j_old = ball_j->getDeltaVector().second;
+                // ball_j->setDeltaVector(overlap * delta_norm_x, overlap * delta_norm_y);
+                // ball_j->update_position();
+                // ball_j->setDeltaVector(dx_j_old, dy_j_old);
+
+
                 if (ball == ball_i && ball_i->bounce()){
                     ball_circle_collision(ball_i, ball_j);
                     ball_i->add_bounce();
@@ -896,10 +911,29 @@ void ball_paddle_collision(const unique_ptr<Ball>& ball) {
     double dy = ball->getDeltaVector().second;
     double dx_p = game_data.paddle->getLast_delta();
 
-    double dx_ = 2*dx_p - dx;
-    double dy_ = -dy;
+    // Position balle et paddle
+    double x_i = ball->getCentre_ball().first;
+    double y_i = ball->getCentre_ball().second;
+    double x_p = game_data.paddle->getCenter_paddle().first;
+    double y_p = game_data.paddle->getCenter_paddle().second;
 
-    ball->setDeltaVector(limit_delta(dx_, dy_).first, limit_delta(dx_, dy_).second);
+    // Normale balle → centre raquette
+    double dist = sqrt(pow(x_p - x_i, 2) + pow(y_p - y_i, 2));
+    double nx = (x_p - x_i) / dist;
+    double ny = (y_p - y_i) / dist;
+
+    // Projection des vitesses sur la normale
+    double vn_ball   = dx*nx + dy*ny;
+    double vn_paddle = dx_p*nx; // dy_paddle = 0
+
+    // Rayon raquette → infini donc coeff = 2
+    double impulsion = (-vn_ball + vn_paddle) * 2.0;
+
+    double dx_new = dx + impulsion * nx;
+    double dy_new = dy + impulsion * ny;
+
+    auto [dx_lim, dy_lim] = limit_delta(dx_new, dy_new);
+    ball->setDeltaVector(dx_lim, dy_lim);
 }
 
 void ball_circle_collision(const unique_ptr<Ball>& ball, const unique_ptr<Ball>& ball_) {
@@ -936,7 +970,7 @@ void ball_circle_collision(const unique_ptr<Ball>& ball, const unique_ptr<Ball>&
     double y_norm = (y_j - y_i) / sqrt(pow(x_i - x_j, 2) + pow(y_i - y_j, 2));
 
     //Projection des vitesses sur la normale
-    double v_norm_i = dx_i*x_norm + dx_i*y_norm; // v de ball_i selon n
+    double v_norm_i = dx_i*x_norm + dy_i*y_norm; // v de ball_i selon n
     double v_norm_j = dx_j*x_norm + dy_j*y_norm; // v de ball_j selon n
     
 
@@ -944,7 +978,7 @@ void ball_circle_collision(const unique_ptr<Ball>& ball, const unique_ptr<Ball>&
 
     // Implémentation du nouveau delta
     double dx_new = dx_i + impulsion*x_norm;
-    double dy_new = dy_i + impulsion*x_norm;
+    double dy_new = dy_i + impulsion*y_norm;
 
     auto[dx_lim, dy_lim] = limit_delta(dx_new, dy_new);
 
