@@ -390,57 +390,85 @@ void save_game(string& file_name){
 }
 
 void update_game(DrawingArea& drawing) {
-    first_balls_tests(drawing);
+    // Passe 1 : rebonds briques/bords/balles
+    for (auto ball = game_data.balls.begin(); ball != game_data.balls.end(); ) {
+        if ((*ball)->final_circle().getCentre().second < 0) {
+            ball = game_data.balls.erase(ball);
+            continue;  // pas de break, on continue avec les autres
+        }
+        collision(*ball, 0, 0);
+        ++ball;
+    }
+
+    // Déplacement raquette
     update_paddle(drawing);
-    second_balls_tests(drawing);
-}
 
-void first_balls_tests(DrawingArea& drawing) {
-    if (game_data.balls.empty()) return;
-    auto ball = game_data.balls.begin();
-    while (ball != game_data.balls.end()) {
-        if (*ball) {
-            double x = (*ball)->getCentre_ball().first;
-            double y = (*ball)->getCentre_ball().second;
-
-            // destruction de la balle si elle passe sous l'arène
-            if ((*ball)->final_circle().getCentre().second < 0) {
-                ball = game_data.balls.erase(ball);
-                break;
-            }
-            collision(*ball, x, y);
-            // cout << "test 1" << endl;
+    // Passe 2 : rebond raquette (sans compter) puis rebonds suivants
+    for (auto& ball : game_data.balls) {
+        if (intersects(ball->final_circle(), game_data.paddle->getCircle())) {
+            ball_paddle_collision(ball);  // pas de add_bounce()
+            collision(ball, 0, 0);
         }
-        ++ball;
-    }
-    new_components();
-    drawing.queue_draw();
-}
-
-void second_balls_tests(DrawingArea& drawing) {
-    if (game_data.balls.empty()) return;
-    auto ball = game_data.balls.begin();
-    while (ball != game_data.balls.end()) {
-        if (*ball) {
-            double x = (*ball)->getCentre_ball().first;
-            double y = (*ball)->getCentre_ball().second;
-
-            if (intersects((*ball)->final_circle(), game_data.paddle->getCircle())) {
-                ball_paddle_collision(*ball);
-                (*ball)->update_delta();
-            }
-            collision(*ball, x, y);
-            // cout << "test 2" << endl;
-        }
-        ++ball;
-    }
-    for (const auto& ball : game_data.balls) {
         ball->update_position();
         ball->reset_bounces();
     }
+
     new_components();
     drawing.queue_draw();
 }
+
+// void update_game(DrawingArea& drawing) {
+//     first_balls_tests(drawing);
+//     update_paddle(drawing);
+//     second_balls_tests(drawing);
+// }
+
+// void first_balls_tests(DrawingArea& drawing) {
+//     if (game_data.balls.empty()) return;
+//     auto ball = game_data.balls.begin();
+//     while (ball != game_data.balls.end()) {
+//         if (*ball) {
+//             double x = (*ball)->getCentre_ball().first;
+//             double y = (*ball)->getCentre_ball().second;
+
+//             // destruction de la balle si elle passe sous l'arène
+//             if ((*ball)->final_circle().getCentre().second < 0) {
+//                 ball = game_data.balls.erase(ball);
+//                 break;
+//             }
+//             collision(*ball, x, y);
+//             // cout << "test 1" << endl;
+//         }
+//         ++ball;
+//     }
+//     new_components();
+//     drawing.queue_draw();
+// }
+
+// void second_balls_tests(DrawingArea& drawing) {
+//     if (game_data.balls.empty()) return;
+//     auto ball = game_data.balls.begin();
+//     while (ball != game_data.balls.end()) {
+//         if (*ball) {
+//             double x = (*ball)->getCentre_ball().first;
+//             double y = (*ball)->getCentre_ball().second;
+
+//             if (intersects((*ball)->final_circle(), game_data.paddle->getCircle())) {
+//                 ball_paddle_collision(*ball);
+//                 (*ball)->update_delta();
+//             }
+//             collision(*ball, x, y);
+//             // cout << "test 2" << endl;
+//         }
+//         ++ball;
+//     }
+//     for (const auto& ball : game_data.balls) {
+//         ball->update_position();
+//         ball->reset_bounces();
+//     }
+//     new_components();
+//     drawing.queue_draw();
+// }
 
 void collision(const unique_ptr<Ball>& ball, double x, double y){
     while(bounce_balls(ball) && ball->bounce()) {
@@ -533,7 +561,7 @@ bool bounce_balls(const unique_ptr<Ball>& ball) {
     if (game_data.paddle and intersects(ball->final_circle(), game_data.paddle->getCircle())) {
         if (ball->bounce()) {
             ball_paddle_collision(ball);
-            ball->add_bounce();
+            // ball->add_bounce();
         }
         return true;
     }
