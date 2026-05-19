@@ -1022,10 +1022,12 @@ void ball_circle_collision(const unique_ptr<Ball>& ball, const unique_ptr<Ball>&
 
     if (ball->bounce()) {
         ball->setDeltaVector(dx_lim_i, dy_lim_i);
+        ball->add_bounce();
     }
 
     if (ball_->bounce()) {
         ball_->setDeltaVector(dx_lim_j, dy_lim_j);
+        ball_->add_bounce();
     }
 }
 
