@@ -492,19 +492,12 @@ bool bounce_balls(const unique_ptr<Ball>& ball) {
         }
         return true;
     }
-
+  
     for (const auto& ball_ : game_data.balls) {
         if (ball_ != ball and intersects(ball->final_circle(), ball_->final_circle())) {
             ball_circle_collision(ball, ball_);
             return true;
-        }
-        return true;
-    }
 
-    for (const auto& ball_ : game_data.balls) {
-        if (ball_ != ball and intersects(ball->final_circle(), ball_->final_circle())) {
-            ball_circle_collision(ball, ball_);
-            return true;
         }
     }
 
@@ -580,7 +573,7 @@ bool bounce_balls(const unique_ptr<Ball>& ball) {
     if (game_data.paddle and intersects(ball->final_circle(), game_data.paddle->getCircle())) {
         if (ball->bounce()) {
             ball_paddle_collision(ball);
-            // ball->add_bounce();
+            ball->add_bounce();
         }
         return true;
     }

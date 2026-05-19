@@ -46,7 +46,7 @@ void draw_arc(const double x_, const double y_, const double r, const int c)
     if (!ptcr or !*ptcr) return;  // protection si ptcr est nullptr
     get_color(c);
     (*ptcr)->set_line_width(1.0);
-    (*ptcr)->rectangle(x_ - r, - y_, 2 * r, y_);
+    (*ptcr)->rectangle(0, 0, arena_size, arena_size);
     (*ptcr)->clip();
     (*ptcr)->arc(x_, y_, r - (*ptcr)->get_line_width()/2, 0, M_PI);
     (*ptcr)->stroke();
