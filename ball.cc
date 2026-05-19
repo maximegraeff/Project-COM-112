@@ -66,7 +66,7 @@ void Ball::update_position() {
 }
 
 void Ball::setDeltaVector(double dx_, double dy_) {
-    delta_temp = Point(dx_, dy_);
+    delta = Point(dx_, dy_);
 }
 
 bool Ball::bounce() {
