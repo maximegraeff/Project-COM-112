@@ -104,11 +104,11 @@ void save_game(string& file_name);
 
 void update_game(DrawingArea& drawing);
 
-void first_balls_tests(DrawingArea& drawing);
+// void first_balls_tests(DrawingArea& drawing);
 
-void second_balls_tests(DrawingArea& drawing);
+// void second_balls_tests(DrawingArea& drawing);
 
-void collision(const unique_ptr<Ball>& ball, double x, double y);
+void collision(const unique_ptr<Ball>& ball);
 
 bool bounce_balls(const unique_ptr<Ball>& ball);
 
