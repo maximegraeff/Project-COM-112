@@ -46,6 +46,7 @@ class Ball {
        
     private:
 
+        int max_bounces = 8;
         bool move = true;
         static int count;
         int bounces;

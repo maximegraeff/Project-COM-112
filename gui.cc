@@ -172,6 +172,7 @@ void My_window::restart_clicked()
 {
     if (!last_read_file.empty())
     {
+        loop_activated = false;
         read(last_read_file);
         update_infos();
         drawing.queue_draw();
@@ -227,7 +228,7 @@ bool My_window::key_pressed(guint keyval, guint keycode, Gdk::ModifierType state
         start_clicked();
         return true;
     case 'r':
-        if (!loop_activated) restart_clicked();
+        if (!loop_activated or game_data.game_ended) restart_clicked();
         return true;
     default:
         break;
