@@ -649,7 +649,7 @@ void ball_arena_collision(const unique_ptr<Ball>& ball) {
     double y = ball->final_circle().getCentre().second;
     double r = ball->getCircle().getRadius();
 
-    if (x - r < 0 or x + r > arena_size) {
+    if (x - r + dx < 0 or x + r + dx > arena_size) {
         dx = -dx;
     }
     if (y + dy + r > arena_size) {
