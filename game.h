@@ -102,38 +102,56 @@ void set_brick(double x, double y, double size, int type, int hit_points);
 // Fonction d'écriture et de sauvegarde du fichier
 void save_game(string& file_name);
 
+// Fonction de mise à jour complète du jeu
 void update_game(DrawingArea& drawing);
 
-void collision(const unique_ptr<Ball>& ball);
-
-bool bounce_balls(const unique_ptr<Ball>& ball);
-
-void ball_arena_collision(const unique_ptr<Ball>& ball);
-
+// Update de la position du paddle en fonction de la position de le souris
 void update_paddle(DrawingArea& drawing);
 
+// Limite le nombre de rebond à 5
+void collision(const unique_ptr<Ball>& ball);
+
+// Réoriente les fonction spécifiques de collision en fonction du type d'objet concerné 
+// par le rebond de la balle
+bool bounce_balls(const unique_ptr<Ball>& ball);
+
+// Limite la norme du vecteur (dx, dy) à delta_norm_max
 pair<double, double> limit_delta(double dx, double dy);
 
-double paddle_collision(double x, double temp_x, double y, double r, double dx);
-
+// Creation de balle au dessus du paddle
 void create_new_ball(DrawingArea& drawing);
 
+// Check de la possibilité de creation de cette balle
 bool new_ball_intersects(const Circle& new_ball);
 
+// Ajout d'un nouveau composant dans les données du jeu
 void new_components();
 
+// Implémentation des différentes réactions à la destruction d'une brique
 void update_brick(const unique_ptr<Brick>& brick, double dx, double dy);
 
+// Création des descendants de la SplitBrick
 void new_spltbricks(double x, double y, double w);
 
+// Collision du paddle avec les brick et l'arène
+double paddle_collision(double x, double temp_x, double y, double r, double dx);
+
+// Collision des balls avec les limites de l'arène
+void ball_arena_collision(const unique_ptr<Ball>& ball);
+
+// Collision des balls avec les bricks (rebond réaliste)
 void ball_bricks_collision(const unique_ptr<Ball>& ball, const unique_ptr<Brick>& brick);
 
+// Fonction de clamping
 double check_inclusion(double h, double diff);
 
+// Collisions des balls avec le paddle (paddle = ball de rayon infini)
 void ball_paddle_collision(const unique_ptr<Ball>& ball);
 
+// Collisions des balls entre elles (Rebond réaliste / Choc élatisque)
 void ball_circle_collision(const unique_ptr<Ball>& ball, const unique_ptr<Ball>& ball_);
 
+// Résultat du jeu
 bool game_ended();
 
 #endif

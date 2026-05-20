@@ -19,12 +19,10 @@
 // Super-classe Brick constitutée d'une rectangle. Les autres Brick sont dérivées de 
 // cette classe.
 
-Brick::Brick(double x_, double y_, double length_, double width_,
-             int hp_, bool is_destroyed_)
-    : brick(x_, y_, length_, width_), hp(hp_),
-      is_destroyed(is_destroyed_) {count++;}
+Brick::Brick(double x_, double y_, double length_, double width_, int hp_)
+    : brick(x_, y_, length_, width_), hp(hp_) {count++;}
 
-Brick::~Brick(){count--;}
+Brick::~Brick() {count--;}
 
 int Brick::count(0);
 
@@ -50,17 +48,10 @@ int Brick::getHitPoints() const {
 // Sous-classe RwBrick(Rainbow Brick) héritée de Brick. Spécificité : Change de couleur
 // à chaque coup dans un ordre prédéfini dans la liste colors.
 
-RwBrick::RwBrick(double x_, double y_, double length_, double width_, int hp_,
-                 bool is_destroyed_, int current_color_i_)
-        : Brick(x_, y_ , length_, width_, hp_, is_destroyed_), 
-        current_color_i(current_color_i_){
-             
-    if ((width_ >= brick_size_min) && (length_ >= brick_size_min)){
-        brick = Rectangle(x_, y_, length_, width_);
-    }
-
-    current_color_i = hp_;
-}
+RwBrick::RwBrick(double x_, double y_, double length_, double width_, int hp_)
+        : Brick(x_, y_ , length_, width_, hp_) {
+            hp = hp_;
+        }
 
 RwBrick::~RwBrick(){}
 
@@ -70,17 +61,17 @@ int RwBrick::getType() const {
 
 void RwBrick::draw_brick() const { // Fonction de dessin dans l'interface
     draw_rectangles(brick.getCentre().first, brick.getCentre().second,
-                    brick.getLength(), brick.getWidth(), current_color_i);
+                    brick.getLength(), brick.getWidth(), hp);
 }
 
 int RwBrick::getHitPoints() const {
-    return current_color_i;
+    return hp;
 }
 
 int RwBrick::get_destroyed() {
-    if (current_color_i <= 1) return 0;
+    if (hp <= 1) return 0;
     else {
-        current_color_i--;
+        hp--;
         return 1;
     }
 }
@@ -89,15 +80,8 @@ int RwBrick::get_destroyed() {
 // Sous-classe BallBrick(Ball Brick) héritée de Brick. Spécificité : Possède une balle 
 // en son centre qui est libérée à la mort de la BallBrick.
 
-BallBrick::BallBrick(double x_, double y_, double length_, double width_, 
-                  bool is_destroyed_, double b_radius_, double dx_, double dy_, 
-                  bool is_b_destroyed_)
-         : Brick(x_, y_, length_, width_, is_destroyed_) {
-    if ((width_ >= brick_size_min) && (length_ >= brick_size_min)){
-        brick = Rectangle(x_, y_, length_, width_); 
-    }
-
-}
+BallBrick::BallBrick(double x_, double y_, double length_, double width_)
+         : Brick(x_, y_, length_, width_) {}
 
 BallBrick::~BallBrick() {}
 
@@ -112,7 +96,7 @@ void BallBrick::draw_brick() const { // Fonction de dessin dans l'interface
 }
 
 int BallBrick::getHitPoints() const {
-    return 1;
+    return hp;
 }
 
 int BallBrick::get_destroyed() {
@@ -125,17 +109,10 @@ int BallBrick::get_destroyed() {
 // Sous-classe SpltBrick(Split Brick) héritée de Brick. Spécificité : Se divise en 4 à 
 // chaque coup et change de couleurs en conséquence.
 
-SpltBrick::SpltBrick(double x_, double y_, double length_, double width_,
-                bool is_destroyed_, int split_count_, 
-                int children_created_, int current_color_i_)
-          : Brick(x_, y_, length_, width_, is_destroyed_), split_count(split_count_), 
-            children_created(children_created_), current_color_i(current_color_i_){
+SpltBrick::SpltBrick(double x_, double y_, double length_, double width_)
+          : Brick(x_, y_, length_, width_){
 
-        if ((width_ >= brick_size_min) && (length_ >= brick_size_min)){
-            brick = Rectangle(x_, y_, length_, width_); 
-        }
-
-        current_color_i = floor(log2((length_ + split_brick_gap)/
+        hp = floor(log2((length_ + split_brick_gap)/
                                 (brick_size_min + split_brick_gap)) + 1);
 }
 
@@ -147,9 +124,9 @@ int SpltBrick::getType() const {
 
 void SpltBrick::draw_brick() const { // Fonction de dessin dans l'interface
     draw_rectangles(brick.getCentre().first, brick.getCentre().second, 
-                    brick.getLength(), brick.getWidth(), current_color_i); 
+                    brick.getLength(), brick.getWidth(), hp); 
 
-    int s = current_color_i - 1;
+    int s = hp - 1;
     while (s > 0) {
         int d = pow(2,s-1) - 1;
         for (int j = pow(2, s-1) ; j > 0; --j) {
@@ -168,13 +145,13 @@ void SpltBrick::draw_brick() const { // Fonction de dessin dans l'interface
 }
 
 int SpltBrick::getHitPoints() const {
-    return current_color_i;
+    return hp;
 }
 
 int SpltBrick::get_destroyed() {
-    if (current_color_i <= 1) return 0;
+    if (hp <= 1) return 0;
     else {
-        current_color_i--;
+        hp--;
         return 3;
     }
 }
