@@ -390,10 +390,10 @@ void save_game(string& file_name){
 
 //--------------------------- Fonction d'update du jeu --------------------------------
 
-// Fonction de misa à jour complète du jeu
+// Fonction de mise à jour complète du jeu
 void update_game(DrawingArea& drawing) {
     for (auto ball = game_data.balls.begin(); ball != game_data.balls.end(); ) {
-        if ((*ball)->final_circle().getCentre().second < 0) {
+        if ((*ball)->next_circle().getCentre().second < 0) {
             ball = game_data.balls.erase(ball);
             continue;
         }
@@ -404,7 +404,7 @@ void update_game(DrawingArea& drawing) {
     update_paddle(drawing);
 
     for (auto& ball : game_data.balls) {
-        if (intersects(ball->final_circle(), game_data.paddle->getCircle())) {
+        if (intersects(ball->next_circle(), game_data.paddle->getCircle())) {
             ball_paddle_collision(ball);  
             collision(ball);
         }
@@ -452,9 +452,9 @@ void collision(const unique_ptr<Ball>& ball) {
 // par le rebond de la balle
 bool bounce_balls(const unique_ptr<Ball>& ball) {
 
-    if (ball->final_circle().getCentre().first - ball->getCircle().getRadius() < 0 or 
-        ball->final_circle().getCentre().first + ball->getCircle().getRadius() > 
-        arena_size or ball->final_circle().getCentre().second + 
+    if (ball->next_circle().getCentre().first - ball->getCircle().getRadius() < 0 or 
+        ball->next_circle().getCentre().first + ball->getCircle().getRadius() > 
+        arena_size or ball->next_circle().getCentre().second + 
         ball->getCircle().getRadius() > arena_size) {
 
         if (ball->bounce()) {
@@ -465,21 +465,21 @@ bool bounce_balls(const unique_ptr<Ball>& ball) {
     }
 
     for (const auto& ball_ : game_data.balls) {
-        if (ball_ != ball and intersects(ball->final_circle(), ball_->final_circle())){
+        if (ball_ != ball and intersects(ball->next_circle(), ball_->next_circle())){
             ball_circle_collision(ball, ball_);
             return true;
         }
     }
 
     for (const auto& ball_ : game_data.balls) {
-        if (ball_ != ball and intersects(ball->final_circle(), ball_->final_circle())){
+        if (ball_ != ball and intersects(ball->next_circle(), ball_->next_circle())){
             ball_circle_collision(ball, ball_);
             return true;
         }
     }
 
     for (const auto& brick : game_data.bricks) {
-        if (brick and intersects(ball->final_circle(), brick->getRectangle())) {
+        if (brick and intersects(ball->next_circle(), brick->getRectangle())) {
             if (ball->bounce()) {
                 ball_bricks_collision(ball, brick);
                 ball->add_bounce();
@@ -487,7 +487,7 @@ bool bounce_balls(const unique_ptr<Ball>& ball) {
         return true;
         }
     }
-    if (game_data.paddle and intersects(ball->final_circle(), 
+    if (game_data.paddle and intersects(ball->next_circle(), 
         game_data.paddle->getCircle())) {
         if (ball->bounce()) {
             ball_paddle_collision(ball);
@@ -645,8 +645,8 @@ double paddle_collision(double x, double temp_x, double y, double r,
 void ball_arena_collision(const unique_ptr<Ball>& ball) {
     double dx = ball->getDeltaVector().first;
     double dy = ball->getDeltaVector().second;
-    double x = ball->final_circle().getCentre().first;
-    double y = ball->final_circle().getCentre().second;
+    double x = ball->next_circle().getCentre().first;
+    double y = ball->next_circle().getCentre().second;
     double r = ball->getCircle().getRadius();
 
     if (x - r + dx < 0 or x + r + dx > arena_size) {
@@ -700,7 +700,7 @@ void ball_bricks_collision(const unique_ptr<Ball>& ball, const unique_ptr<Brick>
     ball->setDeltaVector(limit_delta(dx, dy).first, limit_delta(dx, dy).second);
 }  
 
-
+// Fonction de clamping
 double check_inclusion(double h, double diff){
     
     if (diff < -h) return -h; 

@@ -33,8 +33,7 @@ class Brick {
         virtual void draw_brick() const = 0;
         virtual int get_destroyed() = 0;
 
-        Brick(double x_, double y_, double length_, double width_, int hp_ = 0,  
-              bool is_destroyed_ = false);
+        Brick(double x_, double y_, double length_, double width_, int hp_ = 1);
         virtual ~Brick();
 
     protected:
@@ -59,14 +58,12 @@ class RwBrick : public Brick {
         int getHitPoints() const override;
         int get_destroyed() override;
 
-        RwBrick(double x_, double y_, double length_, double width_, int hp_,
-                bool is_destroyed_ = false, 
-                int current_color_i_ = 0);
+        RwBrick(double x_, double y_, double length_, double width_, int hp_);
         ~RwBrick();
 
     private:
 
-        int current_color_i;
+        int hp;
 };
 
 
@@ -83,13 +80,12 @@ class BallBrick : public Brick {
         int getHitPoints() const override;
         int get_destroyed() override;
 
-        BallBrick(double x_, double y_, double length_, double width_,  
-                  bool is_destroyed_ = false, double b_radius_ = 1,
-                  double dx_ = 0, double dy_ = 0, bool is_b_destroyed_ = false);
+        BallBrick(double x_, double y_, double length_, double width_);
         ~BallBrick();
 
     private:
-            
+
+        int hp = 1;
 };
 
 
@@ -106,16 +102,12 @@ class SpltBrick : public Brick {
     int getHitPoints() const override ;
     int get_destroyed() override;
 
-        SpltBrick(double x_, double y_, double length_, double width_,
-                  bool is_destroyed_ = false, int split_count_ = 0,
-                  int children_created_ = 0, int current_color_i_ = 0);
+        SpltBrick(double x_, double y_, double length_, double width_);
         ~SpltBrick();
 
     private:
         
-        int split_count;
-        int children_created; // Nombre de SpltBrick crées
-        int current_color_i;
+        int hp;
 };
 
 

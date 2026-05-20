@@ -18,87 +18,77 @@
 //--------------------------- Définition de la classe Ball ----------------------------
 // Ball constituée d'un cercle et d'un vecteur de classe Point
 
-Ball::Ball(double x_, double y_, double radius_, double dx_, double dy_, 
-           bool is_destroyed_)
-    : radius(radius_), is_destroyed(is_destroyed_),
-      ball(x_, y_, radius_), delta(dx_, dy_), bounces(0), delta_temp(dx_,dy_), copy_delta(dx_, dy_){count++;}
+Ball::Ball(double x_, double y_, double radius_, double dx_, double dy_)
+    : radius(radius_), ball(x_, y_, radius_), delta(dx_, dy_), bounces(0){count++;}
 
 Ball::~Ball(){count--;}
 
 int Ball::count(0);
 
+//--------------------------------- Fonctions get -------------------------------------
+// Fonction renvoyant le cercle de la ball
 Circle Ball::getCircle() const {
     return Circle(ball);
 }
 
+// Fonction renvoyant le cercle de la ball à l'étape suivante
+Circle Ball::next_circle() const {
+    return Circle(getCentre_ball().first + getDeltaVector().first, 
+                  getCentre_ball().second + getDeltaVector().second, radius);
+}
+
+// Fonction renvoyant le compte des balls du jeu
 int Ball::get_ball_count() {
     return count;
 }
 
+// Fonction renvoyant le centre de la ball
 std::pair<double,double> Ball::getCentre_ball() const {
     return ball.getCentre();
 }
 
+// Fonction renvoyant le vecteur de déplacement de la ball
 std::pair<double,double> Ball::getDeltaVector() const {
     return delta.getCoordinate(); // vecteur vitesse de la balle dans l'arène
 }
 
-std::pair<double,double> Ball::get_copy_deltaVector() const {
-    return copy_delta.getCoordinate(); // vecteur vitesse de la balle dans l'arène
+//---------------------------- Fonctions de modifications -----------------------------
+
+// Fonction définissant le vecteur de déplacement de la ball
+void Ball::setDeltaVector(double dx_, double dy_) {
+    delta = Point(dx_, dy_);
 }
 
-
-bool Ball::is_in_arena() const { // S'assure que la balle est dans 
-    double x = getCentre_ball().first;
-    double y = getCentre_ball().second;
-    return (x >= 0) && (x <= arena_size) && (y >= 0) && (y <= arena_size);
-}
-
-void Ball::draw_ball() const { // Fonction de dessin dans l'interface
-    draw_circles(getCentre_ball().first, getCentre_ball().second, radius, max_bounces);
-}
-
+// Fonction de mise à jour de la position de la ball
 void Ball::update_position() {
     double x = getCentre_ball().first;
     double y = getCentre_ball().second;
     ball.setCentre(x + getDeltaVector().first, y + getDeltaVector().second);
 }
 
-void Ball::setDeltaVector(double dx_, double dy_) {
-    delta = Point(dx_, dy_);
-}
+//-------------------------- Fonctions liés aux rebonds -------------------------------
 
+// Fonction de vérification du nombre de rebonds de la ball
 bool Ball::bounce() {
-    max_bounces = 8;
     if (bounces < nb_bounce_max) {
         return true;
     }
-    max_bounces = 1;
     return false;
 }
 
+// Fonction d'incrémentation du nombre de rebonds de la ball
 void Ball::add_bounce() {
     bounces = bounces + 1;
 }
 
+// Fonction de réinitialisation du nombre de rebonds de la ball
 void Ball::reset_bounces() {
     bounces = 0;
 }
 
-void Ball::update_delta() {
-    delta = delta_temp;
-}
+//-------------------------- Fonction de dessin des balls -----------------------------
 
-void Ball::set_center(double x_, double y_) {
-    ball.setCentre(x_, y_);
-}
-
-Circle Ball::next_circle() const {
-    return Circle(getCentre_ball().first + copy_delta.getCoordinate().first, 
-                  getCentre_ball().second + copy_delta.getCoordinate().second, radius);
-}
-
-Circle Ball::final_circle() const {
-    return Circle(getCentre_ball().first + getDeltaVector().first, 
-                  getCentre_ball().second + getDeltaVector().second, radius);
+// Fonction de dessin de la ball
+void Ball::draw_ball() const { // Fonction de dessin dans l'interface
+    draw_circles(getCentre_ball().first, getCentre_ball().second, radius);
 }
