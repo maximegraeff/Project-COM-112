@@ -69,7 +69,7 @@ void Ball::setDeltaVector(double dx_, double dy_) {
 }
 
 bool Ball::bounce() {
-    max_bounces = 8;
+    max_bounces = 5;
     if (bounces < nb_bounce_max) {
         return true;
     }

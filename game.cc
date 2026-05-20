@@ -35,7 +35,6 @@ void read(string filename)
     // réinitialisation des données du jeu avant la lecture du fichier
     reset_(); 
     object = SCORE;
-    // game_data = GameData{};
 
     ifstream file(filename);
     
@@ -339,7 +338,6 @@ void set_brick(double x, double y, double size, int type, int hit_points) {
 //---------------------------- Fonction de sauvegrade ---------------------------------
 
 // Ecriture d'un fichier pour la sauvegarde du jeu
-
 void save_game(string& file_name){
 
     ofstream out(file_name);
@@ -390,27 +388,24 @@ void save_game(string& file_name){
 }
 
 
+//--------------------------- Fonction d'update du jeu --------------------------------
 
-
-
+// Fonction de misa à jour complète du jeu
 void update_game(DrawingArea& drawing) {
-    // Passe 1 : rebonds briques/bords/balles
     for (auto ball = game_data.balls.begin(); ball != game_data.balls.end(); ) {
         if ((*ball)->final_circle().getCentre().second < 0) {
             ball = game_data.balls.erase(ball);
-            continue;  // pas de break, on continue avec les autres
+            continue;
         }
         collision(*ball);
         ++ball;
     }
 
-    // Déplacement raquette
     update_paddle(drawing);
 
-    // Passe 2 : rebond raquette (sans compter) puis rebonds suivants
     for (auto& ball : game_data.balls) {
         if (intersects(ball->final_circle(), game_data.paddle->getCircle())) {
-            ball_paddle_collision(ball);  // pas de add_bounce()
+            ball_paddle_collision(ball);  
             collision(ball);
         }
         ball->update_position();
@@ -419,6 +414,7 @@ void update_game(DrawingArea& drawing) {
 
     new_components();
     drawing.queue_draw();
+<<<<<<< HEAD
     // cout << "_____" << endl;
 }
 
@@ -596,7 +592,11 @@ void ball_arena_collision(const unique_ptr<Ball>& ball) {
 
     ball->setDeltaVector(dx, dy);
 }
+=======
+}  
+>>>>>>> 4070e9e (Cleaning)
 
+// Update de la position du paddle en fonction de la position de le souris
 void update_paddle(DrawingArea& drawing) {   
     if (game_data.paddle) {
         double x_t = game_data.paddle->get_target_x();
@@ -620,6 +620,64 @@ void update_paddle(DrawingArea& drawing) {
     }
 }
 
+// Limite le nombre de rebond à 5
+void collision(const unique_ptr<Ball>& ball) {
+    while(bounce_balls(ball)) {
+        if (!ball->bounce()) break;
+    }
+}
+
+
+// Réoriente les fonction spécifiques de collision en fonction du type d'objet concerné 
+// par le rebond de la balle
+bool bounce_balls(const unique_ptr<Ball>& ball) {
+
+    if (ball->final_circle().getCentre().first - ball->getCircle().getRadius() < 0 or 
+        ball->final_circle().getCentre().first + ball->getCircle().getRadius() > 
+        arena_size or ball->final_circle().getCentre().second + 
+        ball->getCircle().getRadius() > arena_size) {
+
+        if (ball->bounce()) {
+            ball_arena_collision(ball);
+            ball->add_bounce();
+        }
+        return true;
+    }
+
+    for (const auto& ball_ : game_data.balls) {
+        if (ball_ != ball and intersects(ball->final_circle(), ball_->final_circle())){
+            ball_circle_collision(ball, ball_);
+            return true;
+        }
+    }
+
+    for (const auto& ball_ : game_data.balls) {
+        if (ball_ != ball and intersects(ball->final_circle(), ball_->final_circle())){
+            ball_circle_collision(ball, ball_);
+            return true;
+        }
+    }
+
+    for (const auto& brick : game_data.bricks) {
+        if (brick and intersects(ball->final_circle(), brick->getRectangle())) {
+            if (ball->bounce()) {
+                ball_bricks_collision(ball, brick);
+                ball->add_bounce();
+            }
+        return true;
+        }
+    }
+    if (game_data.paddle and intersects(ball->final_circle(), 
+        game_data.paddle->getCircle())) {
+        if (ball->bounce()) {
+            ball_paddle_collision(ball);
+        }
+        return true;
+    }
+    return false;
+}
+
+
 // Limite la norme du vecteur (dx, dy) à delta_norm_max
 pair<double, double> limit_delta(double dx, double dy) {
     if (abs(dx) > delta_norm_max) dx = delta_norm_max*dx/abs(dx);
@@ -627,6 +685,104 @@ pair<double, double> limit_delta(double dx, double dy) {
     return {dx, dy};
 }
 
+
+//-------------------------- Fonction de creation/dessin ------------------------------
+
+// Creation de balle au dessus du paddle
+void create_new_ball(DrawingArea& drawing) {
+    if (game_data.lives > 0) {
+        double x_p = game_data.paddle->getCenter_paddle().first;
+        double y_p = game_data.paddle->getCenter_paddle().second;
+        double r_p = game_data.paddle->getCircle().getRadius();
+        Circle new_ball(x_p, y_p + r_p + new_ball_radius, new_ball_radius);
+        if (!new_ball_intersects(new_ball)){
+            game_data.balls.push_back(make_unique<Ball>(x_p, y_p + r_p + 
+                          new_ball_radius, new_ball_radius, 0.0, new_ball_delta_norm));
+            game_data.lives--;
+            drawing.queue_draw();
+        }
+    }
+}
+
+// Check de la possibilité de creation de cette balle
+bool new_ball_intersects(const Circle& new_ball) {
+    for (const auto& brick : game_data.bricks) {
+        if (brick and intersects(new_ball, brick->getRectangle())) {
+            return true;
+        }
+    }
+    for (const auto& ball : game_data.balls) {
+        if (ball and intersects(new_ball, ball->getCircle())) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// Ajout d'un nouveau composant dans les données du jeu
+void new_components() {
+    for (auto& new_ball : game_data.new_balls) {
+        game_data.balls.push_back(move(new_ball));
+    }
+    game_data.new_balls.clear();
+    for (auto& new_brick : game_data.new_bricks) {
+        game_data.bricks.push_back(move(new_brick));
+    }
+    game_data.new_bricks.clear();
+}
+
+// Implémentation des différentes réactions à la destruction d'une brique
+void update_brick(const unique_ptr<Brick>& brick, double dx, double dy) {
+    double x_ = brick->getRectangle().getCentre().first;
+    double y_ = brick->getRectangle().getCentre().second;
+    double w_ = brick->getRectangle().getWidth();
+
+    switch (brick->get_destroyed())
+    {
+    case 0: 
+        game_data.bricks.erase(find(game_data.bricks.begin(), game_data.bricks.end(),
+                                    brick));
+        game_data.score += score_per_hit;
+        break;
+    
+    case 1:
+        game_data.score += score_per_hit;
+        break;
+
+    case 2:
+        game_data.bricks.erase(find(game_data.bricks.begin(), game_data.bricks.end(),
+                                    brick));
+        game_data.new_balls.push_back(make_unique<Ball>(x_, y_, new_ball_radius, dx, dy));
+        game_data.score += score_per_hit;
+        break;
+    
+    case 3:
+        new_spltbricks(x_, y_, w_);
+        game_data.bricks.erase(find(game_data.bricks.begin(), game_data.bricks.end(),
+                                    brick));
+        game_data.score += score_per_hit;
+        break;
+    
+    default:
+        break;
+    }
+    
+}
+
+// Création des descendants de la SplitBrick
+void new_spltbricks(double x, double y, double w) {
+    double w_n = (w - split_brick_gap) / 2;
+    double d = (w + split_brick_gap) / 4;
+    game_data.new_bricks.push_back(make_unique<SpltBrick>(x - d, y - d, w_n, w_n));
+    game_data.new_bricks.push_back(make_unique<SpltBrick>(x + d, y - d, w_n, w_n));
+    game_data.new_bricks.push_back(make_unique<SpltBrick>(x - d, y + d, w_n, w_n));
+    game_data.new_bricks.push_back(make_unique<SpltBrick>(x + d, y + d, w_n, w_n));
+}
+
+
+//---------------------------- Fonction de collisions ---------------------------------
+
+// Collision du paddle avec les brick et l'arène
 double paddle_collision(double x, double temp_x, double y, double r, 
                                    double dx) {
     
@@ -665,232 +821,27 @@ double paddle_collision(double x, double temp_x, double y, double r,
     }
 }
 
-void create_new_ball(DrawingArea& drawing) {
-    if (game_data.lives > 0) {
-        double x_p = game_data.paddle->getCenter_paddle().first;
-        double y_p = game_data.paddle->getCenter_paddle().second;
-        double r_p = game_data.paddle->getCircle().getRadius();
-        Circle new_ball(x_p, y_p + r_p + new_ball_radius, new_ball_radius);
-        if (!new_ball_intersects(new_ball)){
-            game_data.balls.push_back(make_unique<Ball>(x_p, y_p + r_p + 
-                          new_ball_radius, new_ball_radius, 0.0, new_ball_delta_norm));
-            game_data.lives--;
-            //update_infos();
-            drawing.queue_draw();
-        }
-    }
-}
-
-bool new_ball_intersects(const Circle& new_ball) {
-    for (const auto& brick : game_data.bricks) {
-        if (brick and intersects(new_ball, brick->getRectangle())) {
-            return true;
-        }
-    }
-    for (const auto& ball : game_data.balls) {
-        if (ball and intersects(new_ball, ball->getCircle())) {
-            return true;
-        }
-    }
-    return false;
-}
-
-/*void update_balls(DrawingArea& drawing) {
-    if (game_data.balls.empty()) return;
-    auto ball = game_data.balls.begin();
-    while (ball != game_data.balls.end()) {
-        if (*ball) {
-            double dx = (*ball)->getDeltaVector().first;
-            double dy = (*ball)->getDeltaVector().second;
-            double x_b  = (*ball)->getCentre_ball().first;
-            double y_b  = (*ball)->getCentre_ball().second;                
-            double r  = (*ball)->getCircle().getRadius();
-            bool change = true;
-
-            tie (dx, dy) = pre_tests(*ball);
-
-            while ((*ball)->bounce() and change) {
-                double dx_o = dx;
-                double dy_o = dy;
-
-                // Rebond sur les bricks, le paddle et les autres balls
-                tie (dx, dy) = ball_collision(*ball);
-                
-                // Rebond sur les murs gauche/droite
-                if (x_b + dx < r or x_b + dx > arena_size - r) {
-                    if ((*ball)->bounce()) {
-                        dx = -dx;
-                        (*ball)->add_bounce();
-                    }
-                }
-                // Rebond sur le mur du haut
-                if (y_b + dy > arena_size - r) {
-                    if ((*ball)->bounce()) {
-                        dy = -dy;
-                        (*ball)->add_bounce();
-                    }
-                }
-                if (dx == dx_o and dy == dy_o) change = false;
-                else change = true;
-            }
-            (*ball)->reset_bounces();
-            // Destruction de la ball si sortie par le bas
-            if (y_b + dy < 0) {
-                ball = game_data.balls.erase(ball);
-                //update_infos();
-            }
-            // Mise à jour du delta et de la position de la ball
-            else {
-                (*ball)->setDeltaVector(dx, dy);
-                ++ball;
-            }
-        }
-    }
-    for (const auto& ball : game_data.balls) {
-        ball->update_delta();
-        ball->update_position();
-    }
-    new_components();
-    drawing.queue_draw();
-}*/
-
-/*pair<double, double> pre_tests(const unique_ptr<Ball>& ball) {
-
+// Collision des balls avec les limites de l'arène
+void ball_arena_collision(const unique_ptr<Ball>& ball) {
     double dx = ball->getDeltaVector().first;
     double dy = ball->getDeltaVector().second;
-    double x_b  = ball->getCentre_ball().first;
-    double y_b  = ball->getCentre_ball().second;                
-    double r  = ball->getCircle().getRadius();
-    // Rebond sur le paddle avant le dépacement de la ball    
-    if (intersects(Circle(x_b, y_b, r), game_data.paddle->getCircle())) {
-        return ball_paddle_collision(dx, dy);
-    }
-    for (const auto& ball_ : game_data.balls) {
-        double dx_ = ball_->getDeltaVector().first;
-        double dy_ = ball_->getDeltaVector().second;
-        double r_ = ball_->getCircle().getRadius();
-        if (ball_ and ball_ != ball) {
-            if (intersects(ball->getCircle(), ball_->getCircle())) {
-                ball->add_bounce();
-                return ball_circle_collision(r, dx, dy,r_, dx_, dy_);
-            }
-        }
-    }
-    return {dx, dy};
-}*/
-
-void new_components() {
-    for (auto& new_ball : game_data.new_balls) {
-        game_data.balls.push_back(move(new_ball));
-    }
-    game_data.new_balls.clear();
-    for (auto& new_brick : game_data.new_bricks) {
-        game_data.bricks.push_back(move(new_brick));
-    }
-    game_data.new_bricks.clear();
-}
-
-/*pair<double, double> ball_collision(const unique_ptr<Ball>& ball) {
-    double dx = ball->getDeltaVector().first;
-    double dy = ball->getDeltaVector().second;
-    double x_b = ball->getCentre_ball().first;
-    double y_b = ball->getCentre_ball().second;
+    double x = ball->final_circle().getCentre().first;
+    double y = ball->final_circle().getCentre().second;
     double r = ball->getCircle().getRadius();
-    double dx_o = dx;
-    double dy_o = dy;
 
-    if (intersects(Circle(x_b + dx, y_b + dy, r), game_data.paddle->getCircle())) {
-        if (ball->bounce()) {
-            ball->add_bounce();
-            return ball_paddle_collision(dx, dy);
-        }
-        return {dx_o, dy_o};
+    if (x - r < 0 or x + r > arena_size) {
+        dx = -dx;
+    }
+    if (y + dy + r > arena_size) {
+         dy = -dy;
     }
 
-    for (const auto& brick : game_data.bricks) {
-        if (brick) {
-            double x_brick = brick->getRectangle().getCentre().first;
-            double y_brick = brick->getRectangle().getCentre().second;
-            double w = brick->getRectangle().getWidth();
-            if (intersects(Circle(x_b + dx, y_b + dy, r), brick->getRectangle())) {
-                update_brick(brick, dx, dy);
-                if (ball->bounce()) {
-                    ball->add_bounce();
-                    return ball_bricks_collision(x_b, y_b, r, dx, dy, x_brick, y_brick,
-                                                 w);
-                }
-                return {dx_o, dy_o};
-            }  
-        }
-    }
-    for (const auto& ball_ : game_data.balls) {
-        if (ball_ and ball_ != ball) {
-            double x_b_c = ball_->getCentre_ball().first;
-            double y_b_c = ball_->getCentre_ball().second;
-            double r_c = ball_->getCircle().getRadius();
-            double dx_c = ball_->getDeltaVector().first;
-            double dy_c = ball_->getDeltaVector().second;
-            if (intersects(Circle(x_b + dx, y_b + dy, r), Circle(x_b_c + dx_c,
-                y_b_c + dy_c, r_c))) {
-                if (ball->bounce()) {
-                    ball->add_bounce();
-                    return ball_circle_collision(r, dx, dy, r_c, dx_c, dy_c);
-                }
-                return {dx_o, dy_o};
-            }
-        }
-    }
-    
-    return {dx_o, dy_o};
-}*/
-
-void update_brick(const unique_ptr<Brick>& brick, double dx, double dy) {
-    double x_ = brick->getRectangle().getCentre().first;
-    double y_ = brick->getRectangle().getCentre().second;
-    double w_ = brick->getRectangle().getWidth();
-
-    switch (brick->get_destroyed())
-    {
-    case 0: 
-        game_data.bricks.erase(find(game_data.bricks.begin(), game_data.bricks.end(),
-                                    brick));
-        game_data.score += score_per_hit;
-        break;
-    
-    case 1:
-        game_data.score += score_per_hit;
-        break;
-
-    case 2:
-        game_data.bricks.erase(find(game_data.bricks.begin(), game_data.bricks.end(),
-                                    brick));
-        game_data.new_balls.push_back(make_unique<Ball>(x_, y_, new_ball_radius, dx, dy));
-        game_data.score += score_per_hit;
-        break;
-    
-    case 3:
-        new_spltbricks(x_, y_, w_);
-        game_data.bricks.erase(find(game_data.bricks.begin(), game_data.bricks.end(),
-                                    brick));
-        game_data.score += score_per_hit;
-        break;
-    
-    default:
-        break;
-    }
-    
+    ball->setDeltaVector(dx, dy);
 }
 
-void new_spltbricks(double x, double y, double w) {
-    double w_n = (w - split_brick_gap) / 2;
-    double d = (w + split_brick_gap) / 4;
-    game_data.new_bricks.push_back(make_unique<SpltBrick>(x - d, y - d, w_n, w_n));
-    game_data.new_bricks.push_back(make_unique<SpltBrick>(x + d, y - d, w_n, w_n));
-    game_data.new_bricks.push_back(make_unique<SpltBrick>(x - d, y + d, w_n, w_n));
-    game_data.new_bricks.push_back(make_unique<SpltBrick>(x + d, y + d, w_n, w_n));
-}
+// Collision des balls avec les bricks (rebond réaliste)
+void ball_bricks_collision(const unique_ptr<Ball>& ball, const unique_ptr<Brick>& brick) { 
 
-void ball_bricks_collision(const unique_ptr<Ball>& ball, const unique_ptr<Brick>& brick) {        
     // Coordonnées centre balle
     double x_b = ball->getCentre_ball().first;
     double y_b = ball->getCentre_ball().second;
@@ -929,6 +880,7 @@ void ball_bricks_collision(const unique_ptr<Ball>& ball, const unique_ptr<Brick>
     ball->setDeltaVector(limit_delta(dx, dy).first, limit_delta(dx, dy).second);
 }  
 
+
 double check_inclusion(double h, double diff){
     
     if (diff < -h) return -h; 
@@ -936,27 +888,28 @@ double check_inclusion(double h, double diff){
     else return diff;
 }
 
+// Collisions des balls avec le paddle (paddle = ball de rayon infini)
 void ball_paddle_collision(const unique_ptr<Ball>& ball) {
     double dx = ball->getDeltaVector().first;
     double dy = ball->getDeltaVector().second;
     double dx_p = game_data.paddle->getLast_delta();
 
-    // Position balle et paddle
+    // Position ball et paddle
     double x_i = ball->getCentre_ball().first;
     double y_i = ball->getCentre_ball().second;
     double x_p = game_data.paddle->getCenter_paddle().first;
     double y_p = game_data.paddle->getCenter_paddle().second;
 
-    // Normale balle → centre raquette
+    //Distance normale entre les deux centres
     double dist = sqrt(pow(x_p - x_i, 2) + pow(y_p - y_i, 2));
     double nx = (x_p - x_i) / dist;
     double ny = (y_p - y_i) / dist;
 
-    // Projection des vitesses sur la normale
+    //Projection des vitesses sur la normale
     double vn_ball   = dx*nx + dy*ny;
-    double vn_paddle = dx_p*nx; // dy_paddle = 0
+    double vn_paddle = dx_p*nx;
 
-    // Rayon raquette → infini donc coeff = 2
+    // Rayon raquette infini
     double impulsion = (-vn_ball + vn_paddle) * 2.0;
 
     double dx_new = dx + impulsion * nx;
@@ -966,23 +919,9 @@ void ball_paddle_collision(const unique_ptr<Ball>& ball) {
     ball->setDeltaVector(dx_lim, dy_lim);
 }
 
+// Collisions des balls entre elles (Rebond réaliste / Choc élatisque)
 void ball_circle_collision(const unique_ptr<Ball>& ball, const unique_ptr<Ball>& ball_) {
-    // double r = ball->getCircle().getRadius();
-    // double dx = ball->getDeltaVector().first;
-    // double dy = ball->getDeltaVector().second;
-    // double r_c = ball_->next_circle().getRadius();
-    // double dx_c = ball_->get_copy_deltaVector().first;
-    // double dy_c = ball_->get_copy_deltaVector().second;
-
-    // double coeff = 2*pow(r_c,2)/(pow(r,2) + pow(r_c,2));
-
-    // double dx_ = dx + coeff*(dx_c - dx);
-    // double dy_ = dy + coeff*(dy_c - dy);
-
-    // tie (dx_, dy_) = limit_delta(dx_, dy_);
-
-    // ball->setDeltaVector(dx_, dy_);
-
+  
     double r_i = ball->getCircle().getRadius();
     double dx_i = ball->getDeltaVector().first;
     double dy_i = ball->getDeltaVector().second;
@@ -1000,12 +939,14 @@ void ball_circle_collision(const unique_ptr<Ball>& ball, const unique_ptr<Ball>&
     double y_norm = (y_j - y_i) / sqrt(pow(x_i - x_j, 2) + pow(y_i - y_j, 2));
 
     //Projection des vitesses sur la normale
-    double v_norm_i = dx_i*x_norm + dy_i*y_norm; // v de ball_i selon n
-    double v_norm_j = dx_j*x_norm + dy_j*y_norm; // v de ball_j selon n
+    double v_norm_i = dx_i*x_norm + dy_i*y_norm;
+    double v_norm_j = dx_j*x_norm + dy_j*y_norm; 
     
 
-    double impulsion_i = (-v_norm_i + v_norm_j)*(2*pow(r_j,2) / (pow(r_i,2) + pow(r_j,2)));
-    double impulsion_j = (-v_norm_j + v_norm_i)*(2*pow(r_i,2) / (pow(r_i,2) + pow(r_j,2)));
+    double impulsion_i = (-v_norm_i + v_norm_j)*(2*pow(r_j,2) / 
+                         (pow(r_i,2) + pow(r_j,2)));
+    double impulsion_j = (-v_norm_j + v_norm_i)*(2*pow(r_i,2) / 
+                         (pow(r_i,2) + pow(r_j,2)));
 
 
     // Implémentation du nouveau delta
@@ -1029,6 +970,9 @@ void ball_circle_collision(const unique_ptr<Ball>& ball, const unique_ptr<Ball>&
     }
 }
 
+//---------------- Fonction d'affichage de l'état final du jeu ------------------------
+
+// Résultat du jeu
 bool game_ended() {
     if (game_data.lives == 0 and game_data.balls.empty() 
              && !game_data.game_ended) {
