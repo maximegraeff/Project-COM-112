@@ -104,10 +104,6 @@ void save_game(string& file_name);
 
 void update_game(DrawingArea& drawing);
 
-// void first_balls_tests(DrawingArea& drawing);
-
-// void second_balls_tests(DrawingArea& drawing);
-
 void collision(const unique_ptr<Ball>& ball);
 
 bool bounce_balls(const unique_ptr<Ball>& ball);
@@ -124,13 +120,7 @@ void create_new_ball(DrawingArea& drawing);
 
 bool new_ball_intersects(const Circle& new_ball);
 
-//void update_balls(DrawingArea& drawing);
-
-//pair<double, double> pre_tests(const unique_ptr<Ball>& ball);
-
 void new_components();
-
-//pair<double, double> ball_collision(const unique_ptr<Ball>& ball, double dx, double dy);
 
 void update_brick(const unique_ptr<Brick>& brick, double dx, double dy);
 
